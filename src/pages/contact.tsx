@@ -11,7 +11,7 @@ const ContactPage = () => (
         textAlign: `left`,
       }}
     >
-      <h1>Contactez-moi</h1>
+      <h1>Contact me</h1>
       <p>Je suis disponible pour discuter de nouveaux projets ! Veuillez remplir le formulaire ci-dessous pour me contacter.</p>
       <form
         method="POST"
