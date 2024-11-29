@@ -7,12 +7,12 @@ const ContactPage = () => (
       style={{
         maxWidth: `600px`,
         margin: `0 auto`,
-        padding: `1rem`, // Marge générale pour l'intérieur
+        padding: `1rem`, // General padding inside
         textAlign: `left`,
       }}
     >
       <h1>Contact me</h1>
-      <p>Je suis disponible pour discuter de nouveaux projets ! Veuillez remplir le formulaire ci-dessous pour me contacter.</p>
+      <p>I am available to discuss new projects! Please fill out the form below to get in touch with me.</p>
       <form
         method="POST"
         action="/contact"
@@ -21,7 +21,7 @@ const ContactPage = () => (
         style={{
           textAlign: `left`,
           margin: `0 auto`,
-          padding: `1rem`, // Ajout d'un padding général pour l'ensemble du formulaire
+          padding: `1rem`, // Added general padding for the entire form
           boxSizing: `border-box`,
           border: `1px solid #ddd`,
           borderRadius: `8px`,
@@ -29,7 +29,7 @@ const ContactPage = () => (
         }}
       >
         <div style={{ marginBottom: `1rem` }}>
-          <label htmlFor="name">Votre nom</label>
+          <label htmlFor="name">Your Name</label>
           <input
             type="text"
             id="name"
@@ -43,7 +43,7 @@ const ContactPage = () => (
           />
         </div>
         <div style={{ marginBottom: `1rem` }}>
-          <label htmlFor="email">Votre email</label>
+          <label htmlFor="email">Your Email</label>
           <input
             type="email"
             id="email"
@@ -55,6 +55,23 @@ const ContactPage = () => (
               marginTop: `0.5rem`,
             }}
           />
+        </div>
+        <div style={{ marginBottom: `1rem` }}>
+          <label htmlFor="project-type">Project Type</label>
+          <select
+            id="project-type"
+            name="project-type"
+            style={{
+              width: `100%`,
+              padding: `0.5rem`,
+              marginTop: `0.5rem`,
+            }}
+          >
+            <option value="portrait">Portrait</option>
+            <option value="event">Event</option>
+            <option value="commercial">Commercial</option>
+            <option value="other">Other</option>
+          </select>
         </div>
         <div style={{ marginBottom: `1rem` }}>
           <label htmlFor="message">Message</label>
@@ -70,23 +87,6 @@ const ContactPage = () => (
             }}
           />
         </div>
-        <div style={{ marginBottom: `1rem` }}>
-          <label htmlFor="project-type">Type de projet</label>
-          <select
-            id="project-type"
-            name="project-type"
-            style={{
-              width: `100%`,
-              padding: `0.5rem`,
-              marginTop: `0.5rem`,
-            }}
-          >
-            <option value="portrait">Portrait</option>
-            <option value="événement">Événement</option>
-            <option value="commercial">Commercial</option>
-            <option value="autre">Autre</option>
-          </select>
-        </div>
         <button
           type="submit"
           style={{
@@ -98,7 +98,7 @@ const ContactPage = () => (
             borderRadius: `4px`,
           }}
         >
-          Envoyer
+          Send
         </button>
       </form>
     </div>

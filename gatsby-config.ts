@@ -9,13 +9,14 @@ const config: GatsbyConfig = {
     // You can also add new values here to query them like usual
     // See all options: https://github.com/LekoArts/gatsby-themes/blob/main/themes/gatsby-theme-jodie/gatsby-config.mjs
     siteTitle: `@nathanglhf`,
-    siteTitleAlt: `@nathanglhf - Urban portrait photographer`,
-    siteHeadline: `@nathanglhf - Urban portrait photographer`,
+    siteTitleAlt: `@nathanglhf - Urban portrait photographer in Tokyo`,
+    siteHeadline: `Professional Photography - Tokyo and Yokohama`,
     siteUrl: `https://nathanglhf.portfolio.com`,
-    siteDescription: `Photography portfolio about my works.`,
+    siteDescription: `Professional photographer based in Tokyo and Yokohama, specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
-    author: `@lekoarts_de`,
+    author: `Nathan RIHET - @nathanglhf`,
+    keywords: [`Tokyo photographer`, `urban portraits`, `cinematic photography`, `professional photography`, `night photography`, `Yokohama`, `freelance photographer Japan`, '写真家','ポートレート写真','東京 夜景写真','プロフェッショナルフォトグラファー','東京の @nathanglhf フォトグラファー'],
   },
   trailingSlash: `always`,
   plugins: [
@@ -24,9 +25,9 @@ const config: GatsbyConfig = {
       // See the theme's README for all available options
       options: {
         navigation: [
-          { name: `Projects`, slug: `/projects` },
-          { name: `Contact`, slug: `/contact` },
-          { name: `About`, slug: `/about` },
+          { name: `Work`, slug: `/projects` },
+          { name: `Mail`, slug: `/contact` },
+          { name: `Bio`, slug: `/biography` },
         ],
       },
     },
