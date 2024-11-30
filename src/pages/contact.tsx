@@ -7,7 +7,7 @@ const ContactPage = () => (
       style={{
         maxWidth: `600px`,
         margin: `0 auto`,
-        padding: `1rem`, // General padding inside
+        padding: `1rem`,
         textAlign: `left`,
       }}
     >
@@ -15,19 +15,16 @@ const ContactPage = () => (
       <p>I am available to discuss new projects! Please fill out the form below to get in touch with me.</p>
       <form
         method="POST"
-        action="/contact"
         name="contact"
         data-netlify="true"
-        style={{
-          textAlign: `left`,
-          margin: `0 auto`,
-          padding: `1rem`, // Added general padding for the entire form
-          boxSizing: `border-box`,
-          border: `1px solid #ddd`,
-          borderRadius: `8px`,
-          backgroundColor: `#f9f9f9`,
-        }}
+        data-netlify-honeypot="bot-field"
+        data-netlify-recaptcha="true"
+        action="/thank-you"
       >
+        {/* Champs cachés nécessaires pour Netlify */}
+        <input type="hidden" name="form-name" value="contact" />
+        <input type="hidden" name="bot-field" />
+        
         <div style={{ marginBottom: `1rem` }}>
           <label htmlFor="name">Your Name</label>
           <input
@@ -87,6 +84,8 @@ const ContactPage = () => (
             }}
           />
         </div>
+        {/* Ajout du reCAPTCHA */}
+        <div data-netlify-recaptcha="true" style={{ marginBottom: `1rem` }}></div>
         <button
           type="submit"
           style={{
