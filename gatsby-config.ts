@@ -8,7 +8,7 @@ const config: GatsbyConfig = {
     siteTitle: `@nathanglhf`,
     siteTitleAlt: `@nathanglhf - Urban portrait photographer in Nice`,
     siteHeadline: `Professional Photography - Nice`,
-    siteUrl: `https://nathanglhf.portfolio.com`,
+    siteUrl: `https://nathanglhf.netlify.app/`,
     siteDescription: `Professional photographer based in Nice specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
@@ -32,11 +32,12 @@ const config: GatsbyConfig = {
         ],
       },
     },
+    `gatsby-plugin-react-helmet`,
     {
       resolve: `gatsby-plugin-robots-txt`,
       options: {
-        host: `https://nathanglhf.portfolio.com`,
-        sitemap: `https://nathanglhf.portfolio.com/sitemap-index.xml`,
+        host: `https://nathanglhf.netlify.app/`,
+        sitemap: `https://nathanglhf.netlify.app/sitemap-index.xml`,
         policy: [{ userAgent: `*`, allow: `/` }],
       },
     },    

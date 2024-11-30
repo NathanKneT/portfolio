@@ -16,27 +16,7 @@ const Footer = ({ bg }: { bg: string }) => {
   )
 
   return (
-    <footer
-      sx={{
-        position: [`relative`, `relative`, `relative`, `fixed`],
-        width: (t) => [`100%`, `100%`, `100%`, get(t, `sidebar.normal`), get(t, `sidebar.wide`)],
-        bottom: 0,
-        color: text,
-        fontSize: 0,
-        p: [3, 3, 4],
-        background: bg,
-        a: {
-          color: readableColor(bg),
-          "&:hover,&:focus": {
-            color: readableColor(bg, `primary`, `primaryLight`, false),
-          },
-        },
-        variant: `footer`,
-      }}
-    >
-      <div>
-        &copy; {new Date().getFullYear()} by {siteTitle}.
-      </div>
+    <footer>
     </footer>
   )
 }

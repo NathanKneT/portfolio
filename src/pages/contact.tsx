@@ -1,8 +1,23 @@
 import * as React from "react"
+import { Helmet } from "react-helmet"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 
 const ContactPage = () => (
   <Layout>
+    <Helmet>
+      <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+      <style>
+        {`
+          .hidden {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            pointer-events: none;
+          }
+        `}
+      </style>
+    </Helmet>
     <div
       style={{
         maxWidth: `600px`,
@@ -19,11 +34,12 @@ const ContactPage = () => (
         data-netlify="true"
         data-netlify-honeypot="bot-field"
         data-netlify-recaptcha="true"
-        action="/thank-you"
       >
-        {/* Champs cachés nécessaires pour Netlify */}
+        {/* Ces champs cachés sont nécessaires pour Netlify Forms */}
         <input type="hidden" name="form-name" value="contact" />
-        <input type="hidden" name="bot-field" />
+        <div className="hidden">
+          <input name="bot-field" />
+        </div>
         
         <div style={{ marginBottom: `1rem` }}>
           <label htmlFor="name">Your Name</label>
@@ -84,8 +100,11 @@ const ContactPage = () => (
             }}
           />
         </div>
-        {/* Ajout du reCAPTCHA */}
-        <div data-netlify-recaptcha="true" style={{ marginBottom: `1rem` }}></div>
+        {/* Div pour le reCAPTCHA */}
+        <div 
+          data-netlify-recaptcha="true" 
+          style={{ marginBottom: `1rem` }}
+        ></div>
         <button
           type="submit"
           style={{
