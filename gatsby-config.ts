@@ -28,6 +28,11 @@ const config: GatsbyConfig = {
           { name: `Work`, slug: `/projects` },
           { name: `Mail`, slug: `/contact` },
           { name: `Bio`, slug: `/biography` },
+          { 
+            name: `Instagram`, 
+            slug: `https://instagram.com/nathanglhf`, 
+            isExternal: true, 
+          },
         ],
       },
     },
