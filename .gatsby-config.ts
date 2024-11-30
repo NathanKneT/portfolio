@@ -6,14 +6,14 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 const config: GatsbyConfig = {
   siteMetadata: {
     siteTitle: `@nathanglhf`,
-    siteTitleAlt: `@nathanglhf - Urban portrait photographer in Nice`,
-    siteHeadline: `Professional Photography - Nice`,
+    siteTitleAlt: `@nathanglhf - Urban portrait photographer in Tokyo`,
+    siteHeadline: `Professional Photography - Tokyo and Yokohama`,
     siteUrl: `https://nathanglhf.portfolio.com`,
-    siteDescription: `Professional photographer based in Nice specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
+    siteDescription: `Professional photographer based in Tokyo and Yokohama, specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
     author: `Nathan RIHET - @nathanglhf`,
-    keywords: [`Nice photographer`, `urban portraits`, `cinematic photography`, `professional photography`, `night photography`, `Cannes`, `freelance photographer France`, '写真家','ポートレート写真','東京 夜景写真','プロフェッショナルフォトグラファー','東京の @nathanglhf フォトグラファー'],
+    keywords: [`Tokyo photographer`, `urban portraits`, `cinematic photography`, `professional photography`, `night photography`, `Yokohama`, `freelance photographer Japan`, '写真家','ポートレート写真','東京 夜景写真','プロフェッショナルフォトグラファー','東京の @nathanglhf フォトグラファー'],
   },
   trailingSlash: `always`,
   plugins: [
@@ -51,7 +51,7 @@ const config: GatsbyConfig = {
       options: {
         name: `Nathan Rihet`,
         short_name: `@nathanglhf`,
-        description: `Professional photographer based in Nice, specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
+        description: `Professional photographer based in Tokyo and Yokohama, specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
         start_url: `/`,
         background_color: `#ffffff`,
         display: `standalone`,
