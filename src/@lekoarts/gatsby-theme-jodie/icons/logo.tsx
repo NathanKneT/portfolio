@@ -37,6 +37,7 @@ const styles = {
     maxWidth: "400px",       // Ajuste la taille maximale de l'image
     width: "100%",           // La largeur de l'image s'ajuste à l'écran
     height: "auto",          // Maintient le ratio de l'image
+    filter: "invert(1)", 
   },
 };
 

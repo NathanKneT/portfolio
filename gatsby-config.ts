@@ -54,7 +54,7 @@ const config: GatsbyConfig = {
         short_name: `@nathanglhf`,
         description: `Professional photographer based in Nice, specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
         start_url: `/`,
-        background_color: `#ffffff`,
+        background_color: `#0f0f15`,
         display: `standalone`,
         icons: [
           {
