@@ -86,6 +86,7 @@ const ContactPage = () => {
         margin: `0 auto`,
         padding: `1rem`,
         textAlign: `left`,
+        flexGrow: 1,
       }}>
         <h1>Contact me</h1>
         

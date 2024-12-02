@@ -16,6 +16,30 @@ body {
   line-height: 1.6;
 }
 
+h1, h2, h3, h4 {
+  margin-top: 2rem; /* Augmente l'espacement avant les titres */
+  margin-bottom: 1rem; /* Ajoute de l'espace après les titres */
+  color : #E0E0E0 !important;
+  border-bottom: 2px solid #E0E0E0; /* Ligne décorative sous le titre */
+  padding-bottom: 0.5rem;
+}
+
+
+p {
+  text-align: justify;
+  line-height: 1.8; /* Améliore la lisibilité avec une ligne plus aérée */
+  margin-bottom: 1.5rem; /* Ajoute de l'espace entre les paragraphes */
+  color: #E0E0E0; /* Texte clair sur fond sombre */
+}
+
+hr {
+  border: none;
+  height: 2px;
+  background: hsl(0deg 0% 20% / 0%) !important;
+  margin: 3rem 0; /* Ajoute de l'espace avant et après */
+  margin-bottom: 4rem !important;
+}
+
 .css-12bmxii {
   background-color: rgba(15, 15, 21, 0.9) !important;
 }
@@ -33,11 +57,17 @@ body {
   margin-bottom: 2rem !important;
 }
 
-.css-owdjxl a {
+ a {
   color: #FFA500 !important;
   text-decoration: none !important;
   transition: color 0.3s ease !important;
 }
+
+a:hover {
+  color: orange !important;
+  text-decoration: underline !important;
+}
+
 
 .css-1h6k5qg {
   color: #ffffff !important;
@@ -48,18 +78,12 @@ body {
   font-weight: bold !important;
 }
 
-.css-om8s92 >span {
-  letter-spacing: -1px !important;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
-  text-transform: uppercase;
-  transform: skewX(-16deg);
-  color: #E0E0E0 !important;
-}
-
-.css-16dh929 >span {
-  letter-spacing: -1px !important;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
-  text-transform: uppercase !important;
-  transform: skewX(-16deg) !important;
-  color: #E0E0E0 !important;
+.profile-picture {
+  display: block;
+  margin: 0 auto; /* Centre l'image horizontalement */
+  max-width: 230px;
+  height: auto; /* Conserve le ratio de l'image */
+  border-radius: 50%; /* Ajoute un effet de cercle à l'image */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ajoute une ombre subtile */
+  border: 3px solid #ffffff; /* Encadre l'image avec une bordure blanche */
 }

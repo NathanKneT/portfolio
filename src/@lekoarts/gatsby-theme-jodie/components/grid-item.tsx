@@ -28,7 +28,7 @@ const GridItem: React.FC<React.PropsWithChildren<{ to: string; className?: strin
         right: 0,
         bottom: 0,
         zIndex: 5,
-        background: `linear-gradient(-45deg, rgba(22,22,22,0) 50%, rgba(0,0,0,15) 100%)`,
+        background: `linear-gradient(51deg, rgba(22,22,22,0) 50%, rgba(0,0,0,15) 100%)`,
         },
       "> div:after": {
         position: `absolute`,
@@ -49,8 +49,9 @@ const GridItem: React.FC<React.PropsWithChildren<{ to: string; className?: strin
         position: `absolute`,
         left: 0,
         right: 0,
-        textAlign: `left`, // Centrer le texte
+        textAlign: `right`,
         fontWeight: `bold`,
+        textTransform: "uppercase !important",
         fontSize: [3, 4, 5], // Responsive
         padding: 3,
         textShadow: `0 2px 6px rgba(0, 0, 0, 0.7)`, // Meilleure lisibilité
