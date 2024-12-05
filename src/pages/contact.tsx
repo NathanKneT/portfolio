@@ -13,111 +13,121 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitStatus('submitting')
-    
+
     try {
-      // Log form data being sent
-      console.log('Form data:', state)
-      
       const form = e.target
       const formData = new FormData(form)
-      
-      // Log the actual data being sent
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1])
-      }
 
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString()
+        body: new URLSearchParams(formData).toString(),
       })
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const responseText = await response.text()
-      console.log('Response:', responseText)
-      
       setSubmitStatus('success')
       setState({})
-      alert("Thank you for your message!")
-      
     } catch (error) {
       console.error('Submission error:', error)
       setSubmitStatus('error')
-      alert(`Error submitting form: ${error.message}`)
     }
   }
 
   return (
     <Layout>
       <Helmet>
-        {/* <script src="https://www.google.com/recaptcha/api.js" async defer></script> */}
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
       </Helmet>
 
-      {/* Form status debugging */}
       {submitStatus && (
-        <div style={{ 
-          padding: '1rem', 
-          margin: '1rem', 
-          backgroundColor: submitStatus === 'error' ? '#ffebee' : '#e8f5e9',
-          border: '1px solid ' + (submitStatus === 'error' ? '#ef5350' : '#66bb6a')
-        }}>
-          Form status: {submitStatus}
+        <div
+          style={{
+            padding: '1rem',
+            margin: '1rem auto',
+            maxWidth: '600px',
+            textAlign: 'center',
+            borderRadius: '8px',
+            color: submitStatus === 'error' ? '#ef5350' : '#66bb6a',
+            backgroundColor: submitStatus === 'error' ? '#ffebee' : '#e8f5e9',
+            border: `1px solid ${submitStatus === 'error' ? '#ef5350' : '#66bb6a'}`,
+          }}
+        >
+          {submitStatus === 'success' ? 'Message sent successfully!' : 'There was an error submitting the form.'}
         </div>
       )}
 
-      {/* Hidden form for Netlify form detection */}
-      <form 
-        name="contact" 
-        data-netlify="true" 
-        data-netlify-honeypot="bot-field" 
-        hidden
+      <div
+        style={{
+          maxWidth: '600px',
+          margin: 'auto',
+          padding: '2rem',
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+          color: 'white',
+        }}
       >
-        <input type="text" name="name" />
-        <input type="email" name="email" />
-        <select name="project-type" />
-        <textarea name="message" />
-      </form>
-
-      <div style={{
-        maxWidth: `600px`,
-        margin: `0 auto`,
-        padding: `1rem`,
-        textAlign: `left`,
-        flexGrow: 1,
-      }}>
-        <h1>Contact me</h1>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>Contact me</h1>
         
         <form
           method="POST"
           name="contact"
           onSubmit={handleSubmit}
+          style={{
+            width: '100%',
+          }}
         >
           <input type="hidden" name="form-name" value="contact" />
           <div hidden>
             <input name="bot-field" onChange={handleChange} />
           </div>
-          
-          <div style={{ marginBottom: `1rem` }}>
-            <label htmlFor="name">Your Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              onChange={handleChange}
-              style={{
-                width: `100%`,
-                padding: `0.5rem`,
-                marginTop: `0.5rem`,
-              }}
-            />
-          </div>
-          
-          <div style={{ marginBottom: `1rem` }}>
-            <label htmlFor="email">Your Email</label>
+
+          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+          <label 
+            htmlFor="name" 
+            style={{ 
+              display: 'block', 
+              fontSize: '1.2rem', 
+              marginBottom: '0.5rem', 
+              color: 'white' 
+            }}
+          >
+            Your Name
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            required
+            onChange={handleChange}
+            style={{
+              width: '100%',
+              padding: '0.8rem',
+              fontSize: '1rem',
+              backgroundColor: '#2c2c2c',
+              color: 'white',
+              border: 'none',
+              borderBottom: '2px solid white',
+            }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+          <label 
+            htmlFor="name" 
+            style={{ 
+              display: 'block', 
+              fontSize: '1.2rem', 
+              marginBottom: '0.5rem', 
+              color: 'white' 
+            }}
+          >Your Email</label>
             <input
               type="email"
               id="email"
@@ -125,23 +135,39 @@ const ContactPage = () => {
               required
               onChange={handleChange}
               style={{
-                width: `100%`,
-                padding: `0.5rem`,
-                marginTop: `0.5rem`,
+                width: '100%',
+                padding: '0.8rem',
+                fontSize: '1rem',
+                backgroundColor: '#2c2c2c',
+                color: 'white',
+                border: 'none',
+                borderBottom: '2px solid white',
               }}
             />
           </div>
 
-          <div style={{ marginBottom: `1rem` }}>
-            <label htmlFor="project-type">Project Type</label>
+          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+          <label 
+            htmlFor="name" 
+            style={{ 
+              display: 'block', 
+              fontSize: '1.2rem', 
+              marginBottom: '0.5rem', 
+              color: 'white' 
+            }}
+          >Project Type</label>
             <select
               id="project-type"
               name="project-type"
               onChange={handleChange}
               style={{
-                width: `100%`,
-                padding: `0.5rem`,
-                marginTop: `0.5rem`,
+                width: '100%',
+                padding: '0.8rem',
+                fontSize: '1rem',
+                backgroundColor: '#2c2c2c',
+                color: 'white',
+                border: 'none',
+                borderBottom: '2px solid white',
               }}
             >
               <option value="">Select a project type</option>
@@ -152,39 +178,45 @@ const ContactPage = () => {
             </select>
           </div>
 
-          <div style={{ marginBottom: `1rem` }}>
-            <label htmlFor="message">Message</label>
+          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
+          <label 
+            htmlFor="name" 
+            style={{ 
+              display: 'block', 
+              fontSize: '1.2rem', 
+              marginBottom: '0.5rem', 
+              color: 'white' 
+            }}
+          >Message</label>
             <textarea
               id="message"
               name="message"
               required
               onChange={handleChange}
               style={{
-                width: `100%`,
-                padding: `0.5rem`,
-                marginTop: `0.5rem`,
-                minHeight: `150px`,
+                width: '100%',
+                padding: '0.8rem',
+                fontSize: '1rem',
+                backgroundColor: '#2c2c2c',
+                color: 'white',
+                border: 'none',
+                borderBottom: '2px solid white',
+                minHeight: '150px',
               }}
             />
           </div>
-
-          {/* Explicitly add recaptcha div */}
-          <div 
-            className="g-recaptcha" 
-            data-sitekey={process.env.GATSBY_SITE_RECAPTCHA_KEY}
-            style={{ marginBottom: `1rem` }}
-          ></div>
 
           <button
             type="submit"
             disabled={submitStatus === 'submitting'}
             style={{
-              backgroundColor: submitStatus === 'submitting' ? '#cccccc' : '#007ACC',
-              color: `white`,
-              padding: `0.5rem 1rem`,
-              border: `none`,
+              backgroundColor: submitStatus === 'submitting' ? '#555' : '#007ACC',
+              color: 'white',
+              padding: '0.8rem 2rem',
+              fontSize: '1.2rem',
+              border: 'none',
               cursor: submitStatus === 'submitting' ? 'not-allowed' : 'pointer',
-              borderRadius: `4px`,
+              borderRadius: '4px',
             }}
           >
             {submitStatus === 'submitting' ? 'Sending...' : 'Send'}
