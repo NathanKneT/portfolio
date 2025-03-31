@@ -6,14 +6,33 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 const config: GatsbyConfig = {
   siteMetadata: {
     siteTitle: `@nathanglhf`,
-    siteTitleAlt: `Nathan RIHET - Urban portrait photographer in Tokyo`,
-    siteHeadline: `Professional Photography - Tokyo and Yokohama`,
-    siteUrl: `https://nathanglhf.portfolio.com`,
-    siteDescription: `Professional photographer based in Tokyo and Yokohama, specializing in urban cinematic and portrait photography. Capturing the beauty of nightscapes, portraits, and events.`,
+    siteTitleAlt: `Nathan RIHET - Professional Portrait Photographer in Tokyo`,
+    siteHeadline: `Award-Winning Photographer - Tokyo, Japan`,
+    siteUrl: `https://nathanglhf.com/`,
+    siteDescription: `Professional photographer based in Tokyo, specializing in portrait, urban cinematic and event photography. Capturing the essence of Tokyo's nightscapes, delivering high-quality portrait sessions, and documenting special events with a unique artistic vision.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
     author: `Nathan RIHET - @nathanglhf`,
-    keywords: [`Tokyo photographer`, `urban portraits`, `cinematic photography`, `professional photography`, `night photography`, `Yokohama`, `freelance photographer Japan`, '写真家','ポートレート写真','東京 夜景写真','プロフェッショナルフォトグラファー','東京の @nathanglhf フォトグラファー'],
+    keywords: [
+      `Tokyo photographer`, 
+      `portrait photographer Tokyo`, 
+      `professional photography Tokyo`, 
+      `cinematic photography Japan`, 
+      `urban portrait photography`, 
+      `night photography Tokyo`, 
+      `Yokohama photographer`, 
+      `freelance photographer Japan`, 
+      `commercial photographer Tokyo`,
+      `English speaking photographer Tokyo`,
+      `写真家`,
+      `ポートレート写真家 東京`,
+      `プロフェッショナルフォトグラファー`,
+      `東京 夜景写真`,
+      `ポートレート撮影 東京`,
+      `東京の @nathanglhf フォトグラファー`,
+      `外国人向け写真家`,
+      `イベント写真 東京`
+    ],
   },
   trailingSlash: `always`,
   plugins: [
@@ -32,11 +51,25 @@ const config: GatsbyConfig = {
         ],
       },
     },
+    // For server-side redirects
+    {
+      resolve: `gatsby-plugin-netlify`,
+      options: {
+        redirects: [
+          {
+            from: `/`,
+            to: `/projects/`,
+            status: 200,
+            force: true // Ensures the redirect happens even if the page exists
+          }
+        ],
+      },
+    },
     {
       resolve: `gatsby-plugin-robots-txt`,
       options: {
-        host: `https://nathanglhf.portfolio.com`,
-        sitemap: `https://nathanglhf.portfolio.com/sitemap-index.xml`,
+        host: `https://nathanglhf.com`,
+        sitemap: `https://nathanglhf.com/sitemap-index.xml`,
         policy: [{ userAgent: `*`, allow: `/` }],
       },
     },    
@@ -49,10 +82,10 @@ const config: GatsbyConfig = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Nathan Rihet`,
+        name: `Nathan Rihet - Professional Photographer Tokyo`,
         short_name: `@nathanglhf`,
-        description: `Professional photographer based in Tokyo and Yokohama, specializing in urban and cinematic photography. Capturing the beauty of nightscapes, portraits, and events.`,
-        start_url: `/`,
+        description: `Professional photographer based in Tokyo and Yokohama, specializing in portrait, urban and cinematic photography. Capturing the beauty of Tokyo nightscapes, professional portraits, and special events.`,
+        start_url: `/projects/`,
         background_color: `#ffffff`,
         display: `standalone`,
         icons: [
@@ -69,6 +102,7 @@ const config: GatsbyConfig = {
         ],
       },
     },
+    'gatsby-plugin-react-helmet',
     // You can remove this plugin if you don't need it
     shouldAnalyseBundle && {
       resolve: `gatsby-plugin-webpack-statoscope`,
@@ -80,5 +114,17 @@ const config: GatsbyConfig = {
     },
   ].filter(Boolean) as Array<PluginRef>,
 }
+
+// For creating a redirect in gatsby-node.js
+exports.createPages = ({ actions }) => {
+  const { createRedirect } = actions;
+
+  createRedirect({
+    fromPath: `/`,
+    toPath: `/projects/`,
+    isPermanent: false,
+    redirectInBrowser: true,
+  });
+};
 
 export default config
