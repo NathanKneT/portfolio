@@ -6,63 +6,61 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 const config: GatsbyConfig = {
   siteMetadata: {
     siteTitle: `@nathanglhf`,
-    siteTitleAlt: `Nathan RIHET - Professional Portrait Photographer in Tokyo`,
-    siteHeadline: `Award-Winning Photographer - Tokyo, Japan`,
+    siteTitleAlt: `Nathan RIHET - Software Engineer & Photographer in Osaka`,
+    siteHeadline: `Software Engineer & Creative - Osaka, Japan`,
     siteUrl: `https://nathanglhf.com/`,
-    siteDescription: `Professional photographer based in Tokyo, specializing in portrait, urban cinematic and event photography. Capturing the essence of Tokyo's nightscapes, delivering high-quality portrait sessions, and documenting special events with a unique artistic vision.`,
+    siteDescription: `Software Engineer based in Osaka, Japan, specializing in AI-powered applications, full-stack development, and creative visual solutions. Combining technical expertise with photography background to build intuitive user experiences.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
     author: `Nathan RIHET - @nathanglhf`,
     keywords: [
-      `Tokyo photographer`, 
-      `portrait photographer Tokyo`, 
-      `professional photography Tokyo`, 
-      `cinematic photography Japan`, 
-      `urban portrait photography`, 
-      `night photography Tokyo`, 
-      `Yokohama photographer`, 
-      `freelance photographer Japan`, 
-      `commercial photographer Tokyo`,
-      `English speaking photographer Tokyo`,
-      `写真家`,
-      `ポートレート写真家 東京`,
-      `プロフェッショナルフォトグラファー`,
-      `東京 夜景写真`,
-      `ポートレート撮影 東京`,
-      `東京の @nathanglhf フォトグラファー`,
-      `外国人向け写真家`,
-      `イベント写真 東京`
+      `Software Engineer Osaka`, 
+      `Full-stack developer Japan`, 
+      `AI developer Osaka`, 
+      `TypeScript React developer`, 
+      `Python FastAPI engineer`, 
+      `RAG implementation specialist`, 
+      `Frontend architect Japan`, 
+      `Creative developer Osaka`,
+      `Photography software engineer`,
+      `Generative AI applications`,
+      `大阪 ソフトウェアエンジニア`,
+      `フルスタック開発者 日本`,
+      `AI開発者 大阪`,
+      `クリエイティブ開発者`,
+      `写真家エンジニア`,
+      `外国人エンジニア 大阪`,
+      `TypeScript開発者 関西`
     ],
   },
   trailingSlash: `always`,
-  plugins: [
+plugins: [
     {
       resolve: `@lekoarts/gatsby-theme-jodie`,
       options: {
         navigation: [
-          { name: `Work`, slug: `/projects` },
+          { name: `Dev`, slug: `/dev-projects` },
+          { name: `Print`, slug: `/projects` },
           { name: `Bio`, slug: `/biography` },
           { name: `Mail`, slug: `/contact` },
           { 
-            name: `Insta`, 
-            slug: `https://instagram.com/nathanglhf`, 
+            name: `LinkedIn`, 
+            slug: `https://www.linkedin.com/in/nathan-rihet/`, 
+            isExternal: true, 
+          },
+          { 
+            name: `GitHub`, 
+            slug: `https://github.com/nathanrihet`, 
             isExternal: true, 
           },
         ],
       },
     },
-    // For server-side redirects
+    // Use gatsby-plugin-redirect instead of netlify redirects
     {
       resolve: `gatsby-plugin-netlify`,
       options: {
-        redirects: [
-          {
-            from: `/`,
-            to: `/projects/`,
-            status: 200,
-            force: true // Ensures the redirect happens even if the page exists
-          }
-        ],
+        // Remove redirects from here - use gatsby-node.js instead
       },
     },
     {
@@ -82,10 +80,10 @@ const config: GatsbyConfig = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Nathan Rihet - Professional Photographer Tokyo`,
+        name: `Nathan Rihet - Software Engineer & Photographer Osaka`,
         short_name: `@nathanglhf`,
-        description: `Professional photographer based in Tokyo and Yokohama, specializing in portrait, urban and cinematic photography. Capturing the beauty of Tokyo nightscapes, professional portraits, and special events.`,
-        start_url: `/projects/`,
+        description: `Software Engineer based in Osaka, Japan, specializing in AI-powered applications and creative development. Combining technical expertise with visual storytelling.`,
+        start_url: `/biography/`,
         background_color: `#ffffff`,
         display: `standalone`,
         icons: [
@@ -102,7 +100,9 @@ const config: GatsbyConfig = {
         ],
       },
     },
-    'gatsby-plugin-react-helmet',
+    {
+      resolve: `gatsby-plugin-react-helmet`,
+    },
     // You can remove this plugin if you don't need it
     shouldAnalyseBundle && {
       resolve: `gatsby-plugin-webpack-statoscope`,
@@ -115,13 +115,21 @@ const config: GatsbyConfig = {
   ].filter(Boolean) as Array<PluginRef>,
 }
 
-// For creating a redirect in gatsby-node.js
-exports.createPages = ({ actions }) => {
+// Create permanent redirect from home to biography
+export const createPages = ({ actions }) => {
   const { createRedirect } = actions;
 
   createRedirect({
     fromPath: `/`,
-    toPath: `/projects/`,
+    toPath: `/biography/`,
+    isPermanent: true,
+    redirectInBrowser: true,
+  });
+
+  // Also redirect the default projects page
+  createRedirect({
+    fromPath: `/projects/`,
+    toPath: `/biography/`,
     isPermanent: false,
     redirectInBrowser: true,
   });

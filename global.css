@@ -17,26 +17,25 @@ body {
 }
 
 h1, h2, h3, h4 {
-  margin-top: 2rem; /* Augmente l'espacement avant les titres */
-  margin-bottom: 1rem; /* Ajoute de l'espace après les titres */
+  margin-top: 2rem;
+  margin-bottom: 1rem;
   color : #E0E0E0 !important;
-  border-bottom: 2px solid #E0E0E0; /* Ligne décorative sous le titre */
+  border-bottom: 2px solid #E0E0E0;
   padding-bottom: 0.5rem;
 }
 
-
 p {
   text-align: justify;
-  line-height: 1.8; /* Améliore la lisibilité avec une ligne plus aérée */
-  margin-bottom: 1.5rem; /* Ajoute de l'espace entre les paragraphes */
-  color: #E0E0E0; /* Texte clair sur fond sombre */
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  color: #E0E0E0;
 }
 
 hr {
   border: none;
   height: 2px;
   background: hsl(0deg 0% 20% / 0%) !important;
-  margin: 3rem 0; /* Ajoute de l'espace avant et après */
+  margin: 3rem 0;
   margin-bottom: 4rem !important;
 }
 
@@ -46,7 +45,6 @@ hr {
 
 .css-o07dia {
   color: #ffffff !important;
-
 }
 
 .css-5ez7p3 {
@@ -57,7 +55,7 @@ hr {
   margin-bottom: 2rem !important;
 }
 
- a {
+a {
   color: #FFA500 !important;
   text-decoration: none !important;
   transition: color 0.3s ease !important;
@@ -68,7 +66,6 @@ a:hover {
   text-decoration: underline !important;
 }
 
-
 .css-1h6k5qg {
   color: #ffffff !important;
 }
@@ -78,12 +75,21 @@ a:hover {
   font-weight: bold !important;
 }
 
+/* NOUVELLE RÈGLE POUR LE PADDING DES ICÔNES */
+@media screen and (min-width: 1024px) {
+  .css-1a6tn5y a {
+    font-size: 1.875rem;
+    margin-left: 0;
+    padding-top: 0.25rem; /* Ajustez cette valeur selon vos préférences */
+  }
+}
+
 .profile-picture {
   display: block;
-  margin: 0 auto; /* Centre l'image horizontalement */
+  margin: 0 auto;
   max-width: 230px;
-  height: auto; /* Conserve le ratio de l'image */
-  border-radius: 50%; /* Ajoute un effet de cercle à l'image */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ajoute une ombre subtile */
-  border: 3px solid #ffffff; /* Encadre l'image avec une bordure blanche */
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 3px solid #ffffff;
 }

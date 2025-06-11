@@ -23,6 +23,31 @@ const Navigation = ({ bg }: { bg: string }) => {
     return replaceSlashes(`/${basePath}/${slug}`)
   }
 
+const getIcon = (name: string, slug: string) => {
+  const iconStyle = {
+    paddingTop: '0.75rem', // Ajoute le padding-top léger
+    display: 'inline-block'
+  }
+
+  if (name.toLowerCase().includes('linkedin') || slug.includes('linkedin')) {
+    return <i className="fab fa-linkedin" title="LinkedIn" style={iconStyle} />
+  }
+  if (name.toLowerCase().includes('github') || slug.includes('github')) {
+    return <i className="fab fa-github" title="GitHub" style={iconStyle} />
+  }
+  if (name.toLowerCase().includes('insta') || slug.includes('instagram')) {
+    return <i className="fab fa-instagram" title="Instagram" style={iconStyle} />
+  }
+  return null
+}
+
+  const shouldShowOnlyIcon = (name: string, slug: string) => {
+    const socialNames = ['linkedin', 'github', 'insta']
+    return socialNames.some(social => 
+      name.toLowerCase().includes(social) || slug.includes(social)
+    )
+  }
+
   return (
     <nav
       aria-label="Primary Navigation"
@@ -50,27 +75,32 @@ const Navigation = ({ bg }: { bg: string }) => {
       }}
     >
       <ul>
-        {navigation.map((navItem: NavItem) => (
-          <li key={navItem.slug}>
-            {navItem.isExternal ? (
-              <a
-                href={navItem.slug}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={(t) => ({ ...t.styles?.a })}
-              >
-                {navItem.name}
-              </a>
-            ) : (
-              <Link
-                sx={(t) => ({ ...t.styles?.a })}
-                to={formatLink(navItem.slug)}
-              >
-                {navItem.name}
-              </Link>
-            )}
-          </li>
-        ))}
+        {navigation.map((navItem: NavItem) => {
+          const icon = getIcon(navItem.name, navItem.slug)
+          const showOnlyIcon = shouldShowOnlyIcon(navItem.name, navItem.slug)
+          
+          return (
+            <li key={navItem.slug}>
+              {navItem.isExternal ? (
+                <a
+                  href={navItem.slug}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={(t) => ({ ...t.styles?.a })}
+                >
+                  {showOnlyIcon ? icon : navItem.name}
+                </a>
+              ) : (
+                <Link
+                  sx={(t) => ({ ...t.styles?.a })}
+                  to={formatLink(navItem.slug)}
+                >
+                  {showOnlyIcon ? icon : navItem.name}
+                </Link>
+              )}
+            </li>
+          )
+        })}
       </ul>
     </nav>
   )
