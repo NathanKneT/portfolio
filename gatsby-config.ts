@@ -5,44 +5,65 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    siteTitle: `@nathanglhf`,
-    siteTitleAlt: `Nathan RIHET - Software Engineer & Photographer in Osaka`,
-    siteHeadline: `Software Engineer & Creative - Osaka, Japan`,
-    siteUrl: `https://nathanglhf.com/`,
-    siteDescription: `Software Engineer based in Osaka, Japan, specializing in AI-powered applications, full-stack development, and creative visual solutions. Combining technical expertise with photography background to build intuitive user experiences.`,
+    // Enhanced titles and descriptions
+    siteTitle: `Nathan RIHET | Software Engineer Osaka`,
+    siteTitleAlt: `Nathan RIHET - Full-Stack Developer & AI Engineer in Osaka, Japan`,
+    siteHeadline: `Full-Stack Software Engineer specializing in AI/RAG Systems - Osaka, Japan`,
+    siteUrl: `https://nathanglhf.com`,
+    siteDescription: `Experienced Full-Stack Software Engineer in Osaka, Japan. Building production AI applications with TypeScript, React, Python, and FastAPI. 3+ years experience, Master's in Applied AI. Available for immediate hire with visa sponsorship.`,
     siteImage: `/banner.jpg`,
     siteLanguage: `en`,
-    author: `Nathan RIHET - @nathanglhf`,
+    author: `Nathan RIHET`,
+    
+    // Expanded keywords for better SEO
     keywords: [
-      `Software Engineer Osaka`, 
-      `Full-stack developer Japan`, 
-      `AI developer Osaka`, 
-      `TypeScript React developer`, 
-      `Python FastAPI engineer`, 
-      `RAG implementation specialist`, 
-      `Frontend architect Japan`, 
-      `Creative developer Osaka`,
-      `Photography software engineer`,
-      `Generative AI applications`,
+      // Primary keywords
+      `software engineer Osaka`,
+      `full stack developer Japan`,
+      `AI engineer Osaka`,
+      `React developer Japan`,
+      `TypeScript developer Osaka`,
+      `Python engineer Japan`,
+      `FastAPI developer Osaka`,
+      `web developer Osaka`,
+      `frontend engineer Japan`,
+      `backend developer Osaka`,
+      
+      // Japanese keywords for local search
       `大阪 ソフトウェアエンジニア`,
-      `フルスタック開発者 日本`,
-      `AI開発者 大阪`,
-      `クリエイティブ開発者`,
-      `写真家エンジニア`,
+      `大阪 エンジニア 採用`,
       `外国人エンジニア 大阪`,
-      `TypeScript開発者 関西`
+      `フルスタック開発者 大阪`,
+      `AI開発者 大阪`,
+      `React開発者 大阪`,
+      `Python開発者 大阪`,
+      `ビザサポート エンジニア`,
+      
+      // Specific skills
+      `RAG systems developer`,
+      `LangChain engineer`,
+      `MongoDB developer`,
+      `Docker engineer`,
+      `Next.js developer Osaka`,
+      
+      // Hiring keywords
+      `hire developer Osaka`,
+      `software engineer for hire Japan`,
+      `available developer Osaka`,
+      `visa sponsorship developer Japan`
     ],
   },
   trailingSlash: `always`,
-plugins: [
+  plugins: [
     {
       resolve: `@lekoarts/gatsby-theme-jodie`,
       options: {
         navigation: [
-          { name: `Dev`, slug: `/dev-projects` },
           { name: `Print`, slug: `/projects` },
-          { name: `Bio`, slug: `/biography` },
-          { name: `Mail`, slug: `/contact` },
+          { name: `Dev`, slug: `/dev-projects` },
+          { name: `Bio`, slug: `/biography` },         
+          { name: `CV`, slug: `/resume` },
+          { name: `Mail`, slug: `/contact` }, 
           { 
             name: `LinkedIn`, 
             slug: `https://www.linkedin.com/in/nathan-rihet/`, 
@@ -50,41 +71,101 @@ plugins: [
           },
           { 
             name: `GitHub`, 
-            slug: `https://github.com/nathanrihet`, 
+            slug: `https://github.com/NathanKneT`, 
             isExternal: true, 
           },
         ],
       },
     },
-    // Use gatsby-plugin-redirect instead of netlify redirects
+    
+    // Your existing plugins remain the same
     {
       resolve: `gatsby-plugin-netlify`,
       options: {
-        // Remove redirects from here - use gatsby-node.js instead
+        // Keep empty as before
       },
     },
+    
+    // Enhanced robots.txt
     {
       resolve: `gatsby-plugin-robots-txt`,
       options: {
         host: `https://nathanglhf.com`,
         sitemap: `https://nathanglhf.com/sitemap-index.xml`,
-        policy: [{ userAgent: `*`, allow: `/` }],
+        policy: [
+          { 
+            userAgent: `*`, 
+            allow: `/`,
+            crawlDelay: 1,
+          },
+          {
+            userAgent: `Googlebot`,
+            allow: `/`,
+          },
+          {
+            userAgent: `Bingbot`, 
+            allow: `/`,
+          }
+        ],
       },
-    },    
+    },
+    
+    // Enhanced sitemap with priorities
     {
       resolve: `gatsby-plugin-sitemap`,
       options: {
         output: `/`,
+        excludes: [`/dev/`, `/404/`, `/404.html`],
+        query: `
+          {
+            site {
+              siteMetadata {
+                siteUrl
+              }
+            }
+            allSitePage {
+              nodes {
+                path
+              }
+            }
+          }
+        `,
+        resolveSiteUrl: () => `https://nathanglhf.com`,
+        serialize: ({ path }) => {
+          // Set priority for important pages
+          let priority = 0.7
+          let changefreq = `monthly`
+          
+          if (path === `/biography/`) {
+            priority = 1.0
+            changefreq = `weekly`
+          } else if (path === `/dev-projects/`) {
+            priority = 0.9
+            changefreq = `weekly`
+          } else if (path === `/contact/`) {
+            priority = 0.9
+            changefreq = `monthly`
+          }
+          
+          return {
+            url: path,
+            changefreq,
+            priority,
+          }
+        },
       },
     },
+    
+    // Enhanced manifest
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `Nathan Rihet - Software Engineer & Photographer Osaka`,
-        short_name: `@nathanglhf`,
-        description: `Software Engineer based in Osaka, Japan, specializing in AI-powered applications and creative development. Combining technical expertise with visual storytelling.`,
+        name: `Nathan RIHET - Software Engineer Osaka | Full-Stack & AI Developer`,
+        short_name: `Nathan RIHET`,
+        description: `Full-Stack Software Engineer in Osaka, Japan. React, TypeScript, Python, AI/RAG systems. 3+ years experience, seeking opportunities with visa sponsorship.`,
         start_url: `/biography/`,
         background_color: `#ffffff`,
+        theme_color: `#000000`,
         display: `standalone`,
         icons: [
           {
@@ -100,10 +181,12 @@ plugins: [
         ],
       },
     },
+    
     {
       resolve: `gatsby-plugin-react-helmet`,
     },
-    // You can remove this plugin if you don't need it
+    
+    // Your existing bundle analyzer
     shouldAnalyseBundle && {
       resolve: `gatsby-plugin-webpack-statoscope`,
       options: {
@@ -115,7 +198,7 @@ plugins: [
   ].filter(Boolean) as Array<PluginRef>,
 }
 
-// Create permanent redirect from home to biography
+// Keep your existing redirects
 export const createPages = ({ actions }) => {
   const { createRedirect } = actions;
 
@@ -132,6 +215,19 @@ export const createPages = ({ actions }) => {
     toPath: `/biography/`,
     isPermanent: false,
     redirectInBrowser: true,
+  });
+  
+  // Add a few SEO-friendly redirects
+  createRedirect({
+    fromPath: `/about/`,
+    toPath: `/biography/`,
+    isPermanent: true,
+  });
+  
+  createRedirect({
+    fromPath: `/hire/`,
+    toPath: `/contact/`,
+    isPermanent: true,
   });
 };
 

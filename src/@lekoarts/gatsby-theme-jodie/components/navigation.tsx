@@ -38,14 +38,18 @@ const getIcon = (name: string, slug: string) => {
   if (name.toLowerCase().includes('insta') || slug.includes('instagram')) {
     return <i className="fab fa-instagram" title="Instagram" style={iconStyle} />
   }
+  if (name.toLowerCase().includes('mail') || slug.includes('mailto:') || slug.includes('@')) {
+    return <i className="fas fa-envelope" title="Email" style={iconStyle} />
+  }
   return null
 }
 
   const shouldShowOnlyIcon = (name: string, slug: string) => {
-    const socialNames = ['linkedin', 'github', 'insta']
+    const socialNames = ['linkedin', 'github', 'insta', 'mail']
+    const hasEmailInSlug = slug.includes('mailto:') || slug.includes('@')
     return socialNames.some(social => 
       name.toLowerCase().includes(social) || slug.includes(social)
-    )
+    ) || hasEmailInSlug
   }
 
   return (
