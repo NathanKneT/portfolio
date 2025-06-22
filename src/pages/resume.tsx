@@ -95,14 +95,15 @@ const ResumePage = () => {
       ]
     },
     {
-      name: "Asylum – Interactive Storytelling Platform",
-      tech: "Next.js, Tailwind, React",
-      link: "https://github.com/NathanKneT/asylum-interactive-story-nextjs",
-      linkText: "github.com/NathanKneT/asylum-interactive-story-nextjs",
+      name: "NarrativeForge – AI-Powered Interactive Storytelling Platform",
+      tech: "Next.js 14, TypeScript, React Flow, OpenAI GPT-4, Zustand, Tailwind CSS, Framer Motion",
+      link: "https://github.com/NathanKneT/NarrativeForge-nextjs",
+      linkText: "github.com/NathanKneT/NarrativeForge-nextjs",
       period: "May 2025 – Present",
       bullets: [
-        "Designed visual editor using React Flow with specialized node types (Start, Scene, End) and dynamic connections",
-        "Architected system with strict TypeScript, lazy loading, and modular components"
+      "Developed AI-powered visual editor using React Flow with custom node types (Start, Story, End) and intelligent connection validation",
+      "Integrated OpenAI GPT-4 for bulk story generation (8-30 nodes) with genre, tone, and complexity customization",
+      "Architected scalable system with strict TypeScript, lazy-loaded components, Zustand state management, and comprehensive error handling"
       ]
     }
   ]

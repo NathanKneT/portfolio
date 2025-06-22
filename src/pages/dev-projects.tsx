@@ -18,7 +18,7 @@ const DevProjectsPage = () => {
       color: "#1E40AF",
       link: "https://docsretriever.com",
       isExternal: true,
-      category: "Production Ready",
+      category: "SaaS Online",
       completion: "85%",
       metrics: [
         "80% faster document retrieval",
@@ -28,6 +28,78 @@ const DevProjectsPage = () => {
       ],
       year: "2024",
       type: "B2B SaaS Product",
+    },
+        {
+      id: "conversational-agents",
+      title: "AI Course Curriculum - University Architecture",
+      mission: "Complete Master's level AI course bridging theory and production-ready applications",
+      problem: "AI education often lacks practical implementation skills for real-world deployment",
+      solution: "7-workshop progression from LLM basics to production FastAPI deployment with hands-on projects",
+      challenge: "Designing curriculum that balances academic rigor with industry-relevant practical skills",
+      impact: "Successfully trained Master's AI students at Université Côte d'Azur in modern AI development practices",
+      stack: "FastAPI for API development, Langchain for LLM orchestration, OpenAI API for demonstrations, pedagogical design principles",
+      learnings: "Educational technology design, curriculum development, and bridging academic-industry knowledge gaps",
+      tech: "Python, FastAPI, Langchain, OpenAI API, Pedagogical Design",
+      color: "#EA580C",
+      link: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
+      isExternal: true,
+      category: "Teaching",
+      completion: "100%",
+      metrics: [
+        "7 comprehensive workshop modules",
+        "Master's AI students successfully trained",
+        "2-month intensive curriculum delivered"
+      ],
+      year: "2024-2025",
+      type: "Educational Framework"
+    },
+        {
+      id: "rtht-3d",
+      title: "RTHT-3D - Hand Tracking 3D Interface",
+      mission: "Minority Report-style 3D manipulation interface using natural hand gestures",
+      problem: "3D modeling requires complex keyboard shortcuts and steep learning curves for non-technical users",
+      solution: "Intuitive hand gesture interface for Blender with Y2K aesthetic and two-hand coordination",
+      challenge: "Synchronizing hand tracking data with 3D engine while maintaining visual appeal and responsiveness",
+      impact: "Featured in creative coding communities, inspiring new interaction paradigms for 3D software",
+      stack: "Blender for 3D rendering, MediaPipe for hand detection, Blender Python API for integration, UDP for real-time communication",
+      learnings: "Client-server architecture design, 3D transformation mathematics, and creative technology development",
+      tech: "MediaPipe, Blender, Python",
+      color: "#059669",
+      link: "https://github.com/NathanKneT/RTHT-3D",
+      isExternal: true,
+      category: "AI/Computer Vision",
+      completion: "85%",
+      metrics: [
+        "Dual-hand gesture recognition",
+        "Real-time 3D object manipulation",
+        "Production-ready with community adoption"
+      ],
+      year: "2025",
+      type: "Creative Technology Tool"
+    },
+        {
+      id: "narrativeforge-interactive",
+      title: "NarrativeForge - AI-Powered Storytelling Platform",
+      mission: "Cutting-edge platform for creating and experiencing interactive narratives with AI-driven content generation and visual node-based editing",
+      problem: "Traditional storytelling tools lack AI integration, visual workflows, and scalable web architectures",
+      solution: "AI-powered story generation with OpenAI GPT-4, React Flow-based visual editor, real-time preview, multi-format export, and 100% type-safe TypeScript",
+      challenge: "Integrating complex AI generation workflows with node-based editing while optimizing performance and ensuring narrative coherence",
+      impact: "Showcases mastery of full-stack development, AI integration, and enterprise-grade UI/UX for interactive applications",
+      stack: "Next.js 14 for full-stack framework, React Flow for visual editing, OpenAI GPT-4 for AI content generation, Zustand for state management, TypeScript for type safety, Tailwind CSS for styling, Framer Motion for animations",
+      learnings: "Advanced AI integration, optimized React patterns, complex state management, and scalable web architecture",
+      tech: "TypeScript, Next.js 14, React Flow, OpenAI GPT-4, Zustand, Tailwind CSS, Framer Motion",
+      color: "#0891B2",
+      link: "https://github.com/NathanKneT/NarrativeForge-nextjs",
+      isExternal: true,
+      category: "Full-Stack",
+      completion: "90%",
+      metrics: [
+        "AI-powered visual node-based editor with GPT-4 integration",
+        "Create story and modify it under 60 seconds",
+        "Zero TypeScript errors with 90%+ test coverage"
+      ],
+      year: "2024",
+      type: "Creative Technology Platform"
     },
     {
       id: "synesthesia",
@@ -54,30 +126,6 @@ const DevProjectsPage = () => {
       type: "Interactive Art Framework"
     },
     {
-      id: "rtht-3d",
-      title: "RTHT-3D - Hand Tracking 3D Interface",
-      mission: "Minority Report-style 3D manipulation interface using natural hand gestures",
-      problem: "3D modeling requires complex keyboard shortcuts and steep learning curves for non-technical users",
-      solution: "Intuitive hand gesture interface for Blender with Y2K aesthetic and two-hand coordination",
-      challenge: "Synchronizing hand tracking data with 3D engine while maintaining visual appeal and responsiveness",
-      impact: "Featured in creative coding communities, inspiring new interaction paradigms for 3D software",
-      stack: "Blender for 3D rendering, MediaPipe for hand detection, Blender Python API for integration, UDP for real-time communication",
-      learnings: "Client-server architecture design, 3D transformation mathematics, and creative technology development",
-      tech: "MediaPipe, Blender, Python",
-      color: "#059669",
-      link: "https://github.com/NathanKneT/RTHT-3D",
-      isExternal: true,
-      category: "Production Ready",
-      completion: "85%",
-      metrics: [
-        "Dual-hand gesture recognition",
-        "Real-time 3D object manipulation",
-        "Production-ready with community adoption"
-      ],
-      year: "2025",
-      type: "Creative Technology Tool"
-    },
-    {
       id: "empty-my-wallet",
       title: "EmptyMyWallet - Intelligent DeFi Analysis Bot",
       mission: "Educational DeFi bot leveraging ML to detect scams and analyze token launches",
@@ -101,57 +149,9 @@ const DevProjectsPage = () => {
       year: "2024",
       type: "Educational FinTech Tool"
     },
-    {
-      id: "conversational-agents",
-      title: "AI Course Curriculum - University Architecture",
-      mission: "Complete Master's level AI course bridging theory and production-ready applications",
-      problem: "AI education often lacks practical implementation skills for real-world deployment",
-      solution: "7-workshop progression from LLM basics to production FastAPI deployment with hands-on projects",
-      challenge: "Designing curriculum that balances academic rigor with industry-relevant practical skills",
-      impact: "Successfully trained Master's AI students at Université Côte d'Azur in modern AI development practices",
-      stack: "FastAPI for API development, Langchain for LLM orchestration, OpenAI API for demonstrations, pedagogical design principles",
-      learnings: "Educational technology design, curriculum development, and bridging academic-industry knowledge gaps",
-      tech: "Python, FastAPI, Langchain, OpenAI API, Pedagogical Design",
-      color: "#EA580C",
-      link: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
-      isExternal: true,
-      category: "Teaching",
-      completion: "100%",
-      metrics: [
-        "7 comprehensive workshop modules",
-        "Master's AI students successfully trained",
-        "2-month intensive curriculum delivered"
-      ],
-      year: "2024-2025",
-      type: "Educational Framework"
-    },
-    {
-      id: "asylum-interactive",
-      title: "Asylum - Visual Story Engine Platform",
-      mission: "Modern storytelling platform combining interactive narratives with visual node-based editing",
-      problem: "Existing story creation tools lack visual workflows and modern web technologies",
-      solution: "React Flow-powered editor with real-time preview, multi-format export, and TypeScript safety",
-      challenge: "Building complex state management for node-based editing while maintaining performance",
-      impact: "Demonstrates mastery of modern React architecture and complex UI state management",
-      stack: "Next.js for full-stack framework, React Flow for visual editing, Zustand for state management, TypeScript for type safety",
-      learnings: "Advanced React patterns, complex state management, and interactive UI development",
-      tech: "TypeScript, Next.js, React Flow, Zustand, Tailwind",
-      color: "#0891B2",
-      link: "https://github.com/NathanKneT/asylum-interactive-story-nextjs",
-      isExternal: true,
-      category: "Full-Stack",
-      completion: "90%",
-      metrics: [
-        "Visual node-based editor implemented",
-        "Multi-format export (JSON, Twine)",
-        "Zero TypeScript errors maintained"
-      ],
-      year: "2024",
-      type: "Creative Technology Platform"
-    }
   ]
 
-  const categories = ["Production Ready", "AI/Computer Vision", "Full-Stack", "FinTech/ML", "Teaching"]
+  const categories = ["SaaS Online", "AI/Computer Vision", "Full-Stack", "FinTech/ML", "Teaching"]
   const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null)
   const [expandedProject, setExpandedProject] = React.useState<string | null>(null)
 
