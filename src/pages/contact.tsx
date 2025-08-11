@@ -155,7 +155,7 @@ const ContactPage = () => {
               marginBottom: '0.5rem', 
               color: 'white' 
             }}
-          >Project Type</label>
+          >Inquiry Type</label>
             <select
               id="project-type"
               name="project-type"
@@ -170,12 +170,14 @@ const ContactPage = () => {
                 borderBottom: '2px solid white',
               }}
             >
-              <option value="">Select a project type</option>
-              <option value="portrait">Portrait</option>
-              <option value="event">Event</option>
-              <option value="commercial">Commercial</option>
-              <option value="other">Other</option>
-            </select>
+            <option value="">Select an inquiry type</option>
+            <option value="recruitment">Recruitment Inquiry / Job Offer</option>
+            <option value="dev-mission">Full-Stack or AI Engineering Mission</option>
+            <option value="commercial-photo">Commercial Photography Project</option>
+            <option value="event-portrait">Event / Portrait Photography</option>
+            <option value="partnership">Partnership or Collaboration</option>
+            <option value="general">General Inquiry</option>
+          </select>
           </div>
 
           <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>

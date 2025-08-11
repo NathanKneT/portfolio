@@ -2,37 +2,58 @@ import React from "react"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import { Box, Heading, Text, Link as ThemeLink, Flex, Button } from "theme-ui"
 
+// --- Reusable Section Component ---
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <Box as="section" sx={{ mb: [5, 5] }}>
+    <Heading as="h2" sx={{
+      fontSize: 4,
+      mb: 4,
+      display: "flex",
+      alignItems: "center",
+      gap: 3,
+      borderBottom: "1px solid",
+      borderColor: "rgba(255, 255, 255, 0.08)",
+      pb: 3,
+    }}>
+      <Box sx={{ width: "4px", height: "24px", bg: "var(--primary)", borderRadius: "2px" }} />
+      {title}
+    </Heading>
+    <Box className="glass-card" sx={{ p: [3, 4] }}>
+      {children}
+    </Box>
+  </Box>
+)
+
 const ResumePage = () => {
   const skills = {
-    "Tech & Frameworks": "TypeScript, Python, React, FastAPI, Next.js, Angular, Node.js",
-    "Databases": "MongoDB, PostgreSQL",
-    "DevOps & Tools": "Git, Docker, CI/CD, Jenkins",
-    "Languages": "French (Native), English (Professional), Japanese (Elementary)"
+    "Tech & Frameworks": "TypeScript, Python, React, FastAPI, Next.js, LangChain, Angular, Node.js",
+    "Databases & Vector": "MongoDB (Atlas), PostgreSQL, FAISS, Pinecone",
+    "DevOps & Tools": "Git, Docker, Terraform, CI/CD (GitHub Actions, Jenkins), AWS, Azure",
+    "Languages": "French (Native), English (Professional), Japanese (N5+)"
   }
 
   const workExperience = [
     {
+      company: "FREELANCE",
+      location: "Osaka, Japan",
+      title: "Full Stack AI Engineer & SaaS Founder",
+      period: "Mar 2025 – Present",
+      bullets: [
+        "Launched DocsRetriever, a production B2B RAG SaaS serving 10+ paying enterprise customers.",
+        "Architected and delivered 2 full-stack MVPs, each with custom APIs, dashboards, authentication, and automated CI/CD deployment.",
+        "Currently developing second B2B SaaS (Suru [する]) for the Japanese market with full i18n support."
+      ]
+    },
+    {
       company: "CAPGEMINI",
-      subtitle: "Global technology consulting company",
       location: "Valbonne, France",
       title: "Software Engineer (1-Year Contract)",
       period: "Apr 2024 – Mar 2025",
       bullets: [
-        "Built 2 GenAI applications using FastAPI, Langchain, and React, deployed via Docker/Terraform (Azure)",
-        "Optimized Flask-to-FastAPI migration: reduced p95 latency from 500ms to 200ms through async operations",
-        "Implemented hybrid search RAG system combining semantic (sentence-transformers) and keyword search",
-        "Implemented secure document processing pipeline with role-based access control and audit logging"
-      ]
-    },
-    {
-      company: "FREELANCE",
-      location: "Remote",
-      title: "Full Stack Developer",
-      period: "Mar 2025 – Present",
-      bullets: [
-        "Delivered 2 MVPs, each with custom APIs, dashboards, auth, and CI/CD deployment",
-        "Launched DocsRetriever, a production B2B SaaS serving 10 paying enterprise customers",
-        "Currently developing second MVP (Suru [する]) for Japanese market with i18n support"
+        "Led development of 2 production GenAI applications using FastAPI, LangChain, and React, deployed on Azure with Docker and Terraform.",
+        "Engineered a Flask-to-FastAPI migration, achieving a 60% performance boost (p95 latency from 500ms to 200ms) by leveraging async operations.",
+        "Implemented a hybrid search RAG system combining semantic (sentence-transformers) and keyword search (BM25) for high-relevancy results.",
+        "Built a secure document processing pipeline featuring role-based access control (RBAC) and comprehensive audit logging."
       ]
     },
     {
@@ -41,8 +62,8 @@ const ResumePage = () => {
       title: "Full Stack Developer",
       period: "Sep 2022 – Aug 2023",
       bullets: [
-        "Developed scalable web applications using MEAN stack (MongoDB, Express, Angular, Node.js)",
-        "Implemented Jenkins CI/CD pipeline reducing deployment time from 2 hours to 15 minutes"
+        "Developed and maintained scalable web applications using the MEAN stack (MongoDB, Express, Angular, Node.js).",
+        "Automated deployment workflows by implementing a Jenkins CI/CD pipeline, reducing deployment time from 2 hours to under 15 minutes."
       ]
     }
   ]
@@ -52,60 +73,14 @@ const ResumePage = () => {
       degree: "Master of Computer Science in Applied Artificial Intelligence (MIAGE)",
       school: "Université Côte d'Azur",
       location: "Nice, France",
-      period: "Sep 2022 – Sep 2024",
-      details: "Relevant Coursework: Algorithms, System Design, DevOps, Software Architecture"
+      period: "2022 – 2024",
     },
     {
       degree: "Master's Exchange Program in Computer Science (AI Specialization)",
       school: "Université Laval",
       location: "Quebec, Canada",
-      period: "Sep 2023 – Mar 2024"
+      period: "2023 – 2024"
     },
-    {
-      degree: "Bachelor's Degree in Computer Methods Applied to Business Management",
-      school: "Université Côte d'Azur",
-      location: "Nice, France",
-      period: "Sep 2021 – Sep 2022"
-    }
-  ]
-
-  const projects = [
-    {
-      name: "DocsRetriever – French Enterprise Document AI",
-      tech: "Langchain, FastAPI, Next.js, MongoDB Atlas",
-      link: "https://docsretriever.com/",
-      linkText: "docsretriever.com",
-      period: "May 2024 – Present",
-      bullets: [
-        "Implemented hybrid RAG pipeline: semantic search + BM25, achieving <2s query on 10K docs",
-        "Architected async document processing handling PDF/DOCX/TXT with job queue system",
-        "Deployed on VPS with custom Docker orchestration, 99.9% uptime since launch"
-      ]
-    },
-    {
-      name: "RTHT-3D – Hand Tracking Interface",
-      tech: "Python, Blender, Mediapipe",
-      link: "https://github.com/NathanKneT/RTHT-3D",
-      linkText: "github.com/NathanKneT/RTHT-3D",
-      period: "April 2025",
-      bullets: [
-        "Built real-time gesture recognition system for 3D object manipulation using Python and MediaPipe",
-        "Implemented dual-hand tracking at 30 FPS using MediaPipe's hand landmark detection",
-        "Featured on SNS with 200k+ reach and video demonstration"
-      ]
-    },
-    {
-      name: "NarrativeForge – AI-Powered Interactive Storytelling Platform",
-      tech: "Next.js 14, TypeScript, React Flow, OpenAI GPT-4, Zustand, Tailwind CSS, Framer Motion",
-      link: "https://github.com/NathanKneT/NarrativeForge-nextjs",
-      linkText: "github.com/NathanKneT/NarrativeForge-nextjs",
-      period: "May 2025 – Present",
-      bullets: [
-      "Developed AI-powered visual editor using React Flow with custom node types (Start, Story, End) and intelligent connection validation",
-      "Integrated OpenAI GPT-4 for bulk story generation (8-30 nodes) with genre, tone, and complexity customization",
-      "Architected scalable system with strict TypeScript, lazy-loaded components, Zustand state management, and comprehensive error handling"
-      ]
-    }
   ]
 
   const handlePrint = () => {
@@ -114,131 +89,92 @@ const ResumePage = () => {
 
   return (
     <Layout>
-      <Box sx={{ maxWidth: "900px", mx: "auto", px: [3, 4], py: [4, 5] }}>
-        {/* Print Button */}
+      <Box sx={{ maxWidth: "1000px", mx: "auto", px: [3, 4], py: [4, 5] }}>
+
+        {/* --- PRINT BUTTON --- */}
         <Button
-          onClick={handlePrint}
+          as="a" // Use the 'as' prop to render this as an <a> tag
+          href="/nathan-rihet-resume.pdf" // Link to your PDF in the /static folder
+          download // This attribute triggers the download
+          className="contact-btn"
           sx={{
             position: "fixed",
             bottom: 4,
             right: 4,
-            bg: "#FFA500",
-            color: "#0c0c0c",
-            fontWeight: "bold",
-            px: 3,
-            py: 2,
-            borderRadius: "25px",
             cursor: "pointer",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            transition: "all 0.3s",
             zIndex: 9999,
+            textDecoration: "none !important", // Ensure no underline
             "@media print": { display: "none" },
-            "&:hover": {
-              transform: "translateY(-2px)",
-              boxShadow: "0 6px 12px rgba(0, 0, 0, 0.15)"
-            }
           }}
         >
-          📄 Print Resume
+          📄 Download PDF
         </Button>
 
-        {/* Header */}
-        <Box sx={{ textAlign: "center", mb: 5, pb: 4, borderBottom: "2px solid", borderColor: "muted" }}>
-          <Heading as="h1" sx={{ fontSize: [5, 6], mb: 2, fontWeight: "bold" }}>
+        {/* --- HEADER --- */}
+        <Box sx={{ textAlign: "center", mb: 6, pb: 4 }}>
+          <Heading as="h1" className="text-gradient" sx={{
+            fontSize: [5, 6, 7],
+            fontWeight: "800",
+            letterSpacing: "-0.02em",
+            mb: 0,
+          }}>
             NATHAN RIHET
           </Heading>
-          <Text sx={{ fontSize: [2, 3], color: "text", mb: 3, lineHeight: 1.5 }}>
+          <Text sx={{ fontSize: [2, 3], color: "text", mb: 4, lineHeight: 1.6, maxWidth: "720px", mx: "auto" }}>
             Full-Stack Engineer specializing in GenAI/RAG systems with 3+ years building scalable applications.
-            <br />Currently in Japan, open to opportunities requiring visa sponsorship.
+            <br />
+            📍 Osaka, Japan
           </Text>
-          <Flex sx={{ 
-            justifyContent: "center", 
-            flexWrap: "wrap", 
-            gap: [2, 3],
-            fontSize: [1, 2],
-            "& > div": { display: "flex", alignItems: "center", gap: 1 }
+          <Flex sx={{
+            justifyContent: "center",
+            flexWrap: "wrap",
+            gap: [3, 4],
+            fontSize: 1,
+            "& a": {
+              color: "muted !important",
+              textDecoration: "none !important",
+              fontWeight: 500,
+              "&:hover": {
+                color: "primary !important",
+              }
+            },
+            "& > div": { display: "flex", alignItems: "center", gap: 2 }
           }}>
-            <Box>📍 Osaka, Japan</Box>
-            <Box>
-              📱 <ThemeLink href="tel:+81708544481" sx={{ color: "primary" }}>+81 7 08 54 46 481</ThemeLink>
-            </Box>
-            <Box>
-              ✉️ <ThemeLink href="mailto:nathan.rihet06@gmail.com" sx={{ color: "primary" }}>nathan.rihet06@gmail.com</ThemeLink>
-            </Box>
-            <Box>
-              💼 <ThemeLink href="https://linkedin.com/in/nathan-rihet" target="_blank" sx={{ color: "primary" }}>LinkedIn</ThemeLink>
-            </Box>
-            <Box>
-              🐙 <ThemeLink href="https://github.com/NathanKneT" target="_blank" sx={{ color: "primary" }}>GitHub</ThemeLink>
-            </Box>
           </Flex>
         </Box>
 
-        {/* Technical Skills */}
-        <Box sx={{ mb: 5 }}>
-          <Heading as="h2" sx={{ fontSize: 3, mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ width: "4px", height: "20px", bg: "primary", borderRadius: "2px" }} />
-            TECHNICAL SKILLS
-          </Heading>
-          <Box sx={{ 
-            display: "grid", 
-            gap: 2,
-            bg: "rgb(36 37 39 / 43%)",
-            p: 3,
-            borderRadius: "8px"
-          }}>
+        {/* --- TECHNICAL SKILLS --- */}
+        <Section title="Technical Skills">
+          <Box sx={{ display: "grid", gap: 3 }}>
             {Object.entries(skills).map(([category, items]) => (
-              <Flex key={category} sx={{ gap: 3, alignItems: "flex-start", flexWrap: ["wrap", "nowrap"] }}>
-                <Text sx={{ fontWeight: "bold", minWidth: ["auto", "150px"], color: "#abbcbd", fontSize: 1 }}>
-                  {category}:
+              <Flex key={category} sx={{ flexDirection: ['column', 'row'], gap: [1, 3], borderBottom: "1px solid", borderColor: "rgba(255,255,255,0.05)", pb: 3, "&:last-of-type": { border: "none", pb: 0 } }}>
+                <Text sx={{ fontWeight: 700, minWidth: ["auto", "180px"], color: "text", fontSize: 1 }}>
+                  {category}
                 </Text>
-                <Text sx={{ flex: 1 }}>{items}</Text>
+                <Text sx={{ flex: 1, color: "muted", lineHeight: 1.7 }}>{items}</Text>
               </Flex>
             ))}
           </Box>
-        </Box>
+        </Section>
 
-        {/* Work Experience */}
-        <Box sx={{ mb: 5 }}>
-          <Heading as="h2" sx={{ fontSize: 3, mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ width: "4px", height: "20px", bg: "primary", borderRadius: "2px" }} />
-            WORK EXPERIENCE
-          </Heading>
+        {/* --- WORK EXPERIENCE --- */}
+        <Section title="Work Experience">
           {workExperience.map((job, index) => (
-            <Box key={index} sx={{ 
-              mb: 4, 
-              p: 3, 
-              bg: "rgb(36 37 39 / 43%)", 
-              borderRadius: "8px",
-              transition: "box-shadow 0.2s",
-              "&:hover": { boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }
-            }}>
-              <Flex sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
+            <Box key={index} sx={{ mb: 4, "&:last-of-type": { mb: 0 } }}>
+              <Flex sx={{ justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 1, mb: 2 }}>
                 <Box>
-                  <Text sx={{ fontWeight: "bold", fontSize: 2, mb: 1 }}>{job.company}</Text>
-                  {job.subtitle && (
-                    <Text sx={{ color: "#abbcbd", fontSize: 1, mb: 2 }}>{job.subtitle} • {job.location}</Text>
-                  )}
-                  {!job.subtitle && (
-                    <Text sx={{ color: "#abbcbd", fontSize: 1, mb: 2 }}>{job.location}</Text>
-                  )}
-                  <Text sx={{ fontWeight: "medium" }}>{job.title}</Text>
+                  <Heading as="h4" sx={{ fontSize: 2, color: "text", m: 0, mb: 1 }}>{job.company}{" "}</Heading>
+                  <Text sx={{ color: "text", fontWeight: 500, mb: 1 }}>{job.title}</Text>
+                  <Text sx={{ color: "muted", fontSize: 1 }}>{" "}{job.location}</Text>
                 </Box>
-                <Text sx={{ color: "#abbcbd", fontSize: 1, whiteSpace: "nowrap" }}>{job.period}</Text>
+                <Text sx={{ color: "muted", fontSize: 1, whiteSpace: "nowrap", fontWeight: 500, pt: 1, flexShrink: 0 }}>{job.period}</Text>
               </Flex>
-              <Box as="ul" sx={{ listStyle: "none", pl: 0, mt: 2 }}>
+              <Box as="ul" sx={{ listStyle: "none", pl: 0, mt: 3 }}>
                 {job.bullets.map((bullet, i) => (
-                  <Box as="li" key={i} sx={{ 
-                    position: "relative", 
-                    pl: 3, 
-                    mb: 2,
-                    fontSize: 1,
-                    lineHeight: 1.6,
+                  <Box as="li" key={i} sx={{
+                    position: "relative", pl: "20px", mb: 2, fontSize: 1, color: "text",
                     "&::before": {
-                      content: '"▸"',
-                      position: "absolute",
-                      left: 0,
-                      color: "primary"
+                      content: '"▸"', position: "absolute", left: 0, color: "primary", top: "2px"
                     }
                   }}>
                     {bullet}
@@ -247,262 +183,95 @@ const ResumePage = () => {
               </Box>
             </Box>
           ))}
-        </Box>
+        </Section>
 
-        {/* Education */}
-        <Box sx={{ mb: 5 }}>
-          <Heading as="h2" sx={{ fontSize: 3, mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ width: "4px", height: "20px", bg: "primary", borderRadius: "2px" }} />
-            EDUCATION
-          </Heading>
-          {education.map((edu, index) => (
-            <Box key={index} sx={{ mb: 3, p: 3, bg: "rgb(36 37 39 / 43%)", borderRadius: "8px" }}>
-              <Text sx={{ fontWeight: "bold", mb: 1 }}>{edu.degree}</Text>
-              <Text sx={{ color: "#abbcbd", fontSize: 1 }}>
-                {edu.school} • {edu.location} • {edu.period}
-              </Text>
-              {edu.details && (
-                <Text sx={{ mt: 1, fontSize: 1 }}>{edu.details}</Text>
-              )}
-            </Box>
-          ))}
-        </Box>
-
-        {/* Teaching Experience */}
-        <Box sx={{ mb: 5 }}>
-          <Heading as="h2" sx={{ fontSize: 3, mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ width: "4px", height: "20px", bg: "primary", borderRadius: "2px" }} />
-            TEACHING EXPERIENCE
-          </Heading>
-          <Box sx={{ 
-            p: 3, 
-            bg: "rgb(36 37 39 / 43%)", 
-            borderRadius: "8px",
-            transition: "box-shadow 0.2s",
-            "&:hover": { boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }
-          }}>
-            <Flex sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
-              <Box>
-                <Text sx={{ fontWeight: "bold", fontSize: 2, mb: 1 }}>Université Côte d'Azur</Text>
-                <Text sx={{ color: "#abbcbd", fontSize: 1, mb: 2 }}>Nice, France</Text>
-                <Text sx={{ fontWeight: "medium" }}>
-                  Academic Instructor (Part-time, 7 workshops) – Conversational Agents & LLMs (AI Course)
+        {/* --- EDUCATION & TEACHING --- */}
+        <Section title="Education & Teaching">
+            {/* Education Items */}
+            {education.map((edu, index) => (
+              <Box key={index} sx={{ mb: 3, pb: 3, borderBottom: "1px solid", borderColor: "rgba(255,255,255,0.05)" }}>
+                <Heading as="h5" sx={{ fontWeight: "bold", color: "text", fontSize: 2, m: 0, mb: 1 }}>{edu.degree}</Heading>
+                <Text sx={{ color: "muted", fontSize: 1 }}>
+                  {edu.school} • {edu.location} • {edu.period}
                 </Text>
               </Box>
-              <Text sx={{ color: "#abbcbd", fontSize: 1, whiteSpace: "nowrap" }}>Dec 2024 – Jan 2025</Text>
-            </Flex>
-            <Box sx={{ my: 2 }}>
-              <Text sx={{ color: "#abbcbd", fontSize: 1 }}>
-                Tech: FastAPI, Langchain, React{" "}
-                <ThemeLink href="https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024" target="_blank" sx={{ ml: 2 }}>
-                  View Course Materials
+            ))}
+            {/* Teaching Item */}
+            <Box sx={{ pt: 3 }}>
+              <Heading as="h5" sx={{ fontWeight: "bold", color: "text", fontSize: 2, m: 0, mb: 1 }}>
+                Academic Instructor – Conversational Agents & LLMs
+              </Heading>
+              <Text sx={{ display: 'block', color: "muted", fontSize: 1, mb: 2 }}>
+                Université Côte d'Azur • Nice, France • Dec 2024 – Jan 2025
+              </Text>
+              <Text sx={{ display: 'block', fontSize: 1, color: "text", lineHeight: 1.7 }}>
+                Designed and delivered 7 practical workshops for 20+ Master's students, covering applied prompt engineering, RAG systems, and FastAPI deployment. {" "}
+                <ThemeLink href="https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024" target="_blank" sx={{ color: "primary !important", fontWeight: 600 }}>
+                  View Course Materials →
                 </ThemeLink>
               </Text>
             </Box>
-            <Box as="ul" sx={{ listStyle: "none", pl: 0 }}>
-              <Box as="li" sx={{ 
-                position: "relative", 
-                pl: 3, 
-                mb: 2,
-                fontSize: 1,
-                "&::before": {
-                  content: '"▸"',
-                  position: "absolute",
-                  left: 0,
-                  color: "primary"
-                }
-              }}>
-                Designed and delivered 7 practical workshops on conversational agents and LLM development for Master's students
-              </Box>
-              <Box as="li" sx={{ 
-                position: "relative", 
-                pl: 3,
-                fontSize: 1,
-                "&::before": {
-                  content: '"▸"',
-                  position: "absolute",
-                  left: 0,
-                  color: "primary"
-                }
-              }}>
-                Trained 20+ students in building LLM-powered apps, prompt engineering, and FastAPI-based deployment
-              </Box>
-            </Box>
-          </Box>
-        </Box>
+        </Section>
 
-        {/* Projects */}
-        <Box sx={{ mb: 5 }}>
-          <Heading as="h2" sx={{ fontSize: 3, mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ width: "4px", height: "20px", bg: "primary", borderRadius: "2px" }} />
-            PROJECTS
-          </Heading>
-          {projects.map((project, index) => (
-            <Box key={index} sx={{ 
-              mb: 3, 
-              p: 3, 
-              borderLeft: "3px solid",
-              borderColor: "primary",
-              bg: "rgb(36 37 39 / 43%)",
-              borderRadius: "0 8px 8px 0"
-            }}>
-              <Flex sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
-                <Box>
-                  <Text sx={{ fontWeight: "bold", fontSize: 2 }}>{project.name}</Text>
-                  <Text sx={{ color: "#abbcbd", fontSize: 1, mb: 1 }}>Tech: {project.tech}</Text>
-                  <ThemeLink href={project.link} target="_blank" sx={{ fontSize: 1 }}>
-                    {project.linkText}
-                  </ThemeLink>
-                </Box>
-                <Text sx={{ color: "#abbcbd", fontSize: 1 }}>{project.period}</Text>
-              </Flex>
-              <Box as="ul" sx={{ listStyle: "none", pl: 0, mt: 2 }}>
-                {project.bullets.map((bullet, i) => (
-                  <Box as="li" key={i} sx={{ 
-                    position: "relative", 
-                    pl: 3, 
-                    mb: 2,
-                    fontSize: 1,
-                    lineHeight: 1.6,
-                    "&::before": {
-                      content: '"▸"',
-                      position: "absolute",
-                      left: 0,
-                      color: "primary"
-                    }
-                  }}>
-                    {bullet}
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          ))}
-        </Box>
-
-        {/* Community & Creative */}
-        <Box sx={{ mb: 5 }}>
-          <Heading as="h2" sx={{ fontSize: 3, mb: 3, display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ width: "4px", height: "20px", bg: "primary", borderRadius: "2px" }} />
-            COMMUNITY & CREATIVE INITIATIVES
-          </Heading>
-          
-          {/* Photography */}
-          <Box sx={{ 
-            mb: 3,
-            p: 3, 
-            bg: "rgb(36 37 39 / 43%)", 
-            borderRadius: "8px",
-            transition: "box-shadow 0.2s",
-            "&:hover": { boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }
-          }}>
-            <Flex sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
-              <Box>
-                <Text sx={{ fontWeight: "bold", fontSize: 2, mb: 1 }}>Freelance Photographer</Text>
-                <Text sx={{ color: "#abbcbd", fontSize: 1 }}>Canada, France, Japan</Text>
-              </Box>
-              <Text sx={{ color: "#abbcbd", fontSize: 1, whiteSpace: "nowrap" }}>2019 – Present</Text>
-            </Flex>
-            <Box sx={{ mb: 2 }}>
-              <Text sx={{ color: "#abbcbd", fontSize: 1 }}>
-                Tech: Next.js{" "}
-                <ThemeLink href="https://nathanglhf.com" target="_blank" sx={{ ml: 2 }}>
-                  nathanglhf.com
+        {/* --- COMMUNITY & CREATIVE --- */}
+        <Section title="Community & Creative Initiatives">
+            {/* Photography */}
+            <Box sx={{ mb: 3, pb: 3, borderBottom: "1px solid", borderColor: "rgba(255,255,255,0.05)" }}>
+              <Heading as="h5" sx={{ fontWeight: "bold", color: "text", fontSize: 2, m: 0, mb: 1 }}>Freelance Photographer & Visual Storyteller</Heading>
+              <Text sx={{ display: 'block', color: "muted", fontSize: 1, mb: 2 }}>
+                Canada, France, Japan • 2019 – Present
+              </Text>
+               <Text sx={{ display: 'block', fontSize: 1, color: "text", lineHeight: 1.7 }}>
+                Built and maintain a high-performance photography portfolio with Next.js, applying visual storytelling to improve layout, accessibility, and engagement (300K+ views). {" "}
+                <ThemeLink href="https://nathanglhf.com" target="_blank" sx={{ color: "primary !important", fontWeight: 600 }}>
+                  View Portfolio →
                 </ThemeLink>
               </Text>
             </Box>
-            <Box as="ul" sx={{ listStyle: "none", pl: 0 }}>
-              <Box as="li" sx={{ 
-                position: "relative", 
-                pl: 3, 
-                mb: 2,
-                fontSize: 1,
-                "&::before": {
-                  content: '"▸"',
-                  position: "absolute",
-                  left: 0,
-                  color: "primary"
-                }
-              }}>
-                Built and maintained a high-performance photography portfolio with Next.js
-              </Box>
-              <Box as="li" sx={{ 
-                position: "relative", 
-                pl: 3,
-                fontSize: 1,
-                "&::before": {
-                  content: '"▸"',
-                  position: "absolute",
-                  left: 0,
-                  color: "primary"
-                }
-              }}>
-                Applied visual storytelling and user testing to improve layout, accessibility, and engagement (40K+ views)
-              </Box>
+            {/* Student Association */}
+            <Box sx={{ pt: 3 }}>
+              <Heading as="h5" sx={{ fontWeight: "bold", color: "text", fontSize: 2, m: 0, mb: 1 }}>MIAGE Student Association Lead</Heading>
+              <Text sx={{ display: 'block', color: "muted", fontSize: 1, mb: 2 }}>
+                Université Côte d'Azur • Nice, France • 2022 – 2023
+              </Text>
+              <Text sx={{ display: 'block', fontSize: 1, color: "text", lineHeight: 1.7 }}>
+                Managed a 7-member team to launch a university-wide DevTalk series and organize AI-focused workshops, reaching over 150 attendees per session.
+              </Text>
             </Box>
-          </Box>
+        </Section>
 
-          {/* Student Association */}
-          <Box sx={{ 
-            p: 3, 
-            bg: "rgb(36 37 39 / 43%)", 
-            borderRadius: "8px",
-            transition: "box-shadow 0.2s",
-            "&:hover": { boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)" }
-          }}>
-            <Flex sx={{ justifyContent: "space-between", flexWrap: "wrap", gap: 2, mb: 2 }}>
-              <Box>
-                <Text sx={{ fontWeight: "bold", fontSize: 2, mb: 1 }}>MIAGE Student Association – Université Côte d'Azur</Text>
-                <Text sx={{ color: "#abbcbd", fontSize: 1 }}>Nice, France</Text>
-              </Box>
-              <Text sx={{ color: "#abbcbd", fontSize: 1, whiteSpace: "nowrap" }}>Sep 2022 – Jun 2023</Text>
-            </Flex>
-            <Box as="ul" sx={{ listStyle: "none", pl: 0 }}>
-              <Box as="li" sx={{ 
-                position: "relative", 
-                pl: 3, 
-                mb: 2,
-                fontSize: 1,
-                "&::before": {
-                  content: '"▸"',
-                  position: "absolute",
-                  left: 0,
-                  color: "primary"
-                }
-              }}>
-                Launched university-wide DevTalk series reaching 150+ attendees per session
-              </Box>
-              <Box as="li" sx={{ 
-                position: "relative", 
-                pl: 3,
-                fontSize: 1,
-                "&::before": {
-                  content: '"▸"',
-                  position: "absolute",
-                  left: 0,
-                  color: "primary"
-                }
-              }}>
-                Managed a 7-member team to organize AI-focused workshops, panels, and hackathons
-              </Box>
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Print styles */}
+        {/* --- PRINT STYLES --- */}
         <style jsx global>{`
           @media print {
             body {
-              font-size: 11pt;
+              font-size: 10.5pt;
+              background: #fff !important;
+              color: #000 !important;
             }
-            
+            .glass-card, .layout-container {
+              background: transparent !important;
+              box-shadow: none !important;
+              border: none !important;
+              color: #000 !important;
+              padding: 0 !important;
+            }
+            h1, h2, h3, h4, h5, h6, p, a, span, li, div {
+              color: #000 !important;
+              background: transparent !important;
+            }
+            a {
+              text-decoration: none !important;
+            }
+            .css-sngorz {
+              padding: 0 !important;
+            }
             * {
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
               color-adjust: exact !important;
             }
-            
             @page {
-              margin: 0.5in;
+              margin: 0.7in;
             }
           }
         `}</style>
