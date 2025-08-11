@@ -89,7 +89,7 @@ const DevProjectsPage: React.FC = () => {
       category: "SaaS Online",
       completion: "85%",
       metrics: ["80% faster document retrieval", "92% user satisfaction rate", "3K+ documents indexed", "€0 external funding raised"],
-      year: "2024",
+      year: "2025",
       type: "B2B SaaS Product",
     },
     {
@@ -156,7 +156,7 @@ const DevProjectsPage: React.FC = () => {
         "Create story and modify it under 60 seconds",
         "Zero TypeScript errors with 90%+ test coverage"
       ],
-      year: "2024",
+      year: "2023-2025",
       type: "Creative Technology Platform"
     },
     {
@@ -177,7 +177,7 @@ const DevProjectsPage: React.FC = () => {
       category: "AI/Computer Vision",
       completion: "50%",
       metrics: ["30 FPS real-time processing", "5 gesture patterns with 95% accuracy", "720p input with adaptive thresholds"],
-      year: "2024",
+      year: "2025",
       type: "Interactive Art Framework"
     },
     {
