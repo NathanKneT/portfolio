@@ -35,9 +35,10 @@ const LiquidCursor: React.FC = () => {
       if (cursorRef.current) {
         // Apply the transform to the visible cursor element.
         // We subtract half the size (80px / 2) to center it.
-        cursorRef.current.style.transform = `translate(
+        cursorRef.current.style.transform = `translate3d(
           ${currentPos.current.x - 40}px, 
-          ${currentPos.current.y - 40}px
+          ${currentPos.current.y - 40}px, 
+          0
         )`;
       }
       

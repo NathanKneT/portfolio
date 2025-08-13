@@ -111,7 +111,7 @@ const ResumePage = () => {
         </Button>
 
         {/* --- HEADER --- */}
-        <Box sx={{ textAlign: "center", mb: 6, pb: 4 }}>
+        <Box sx={{ textAlign: "center", mb: 4, pb: 4 }}>
           <Heading as="h1" className="text-gradient" sx={{
             fontSize: [5, 6, 7],
             fontWeight: "800",

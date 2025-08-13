@@ -216,21 +216,21 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 0.8rem 1.1rem;
-  border-radius: 14px;
-  font-weight: 700;
-  border: 1.5px solid rgba(255,255,255,0.18);
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04));
-  color: var(--text);
-  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  gap: 0.4rem !important;
+  padding: 0.8rem 1.1rem !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  border: 1.5px solid rgba(255,255,255,0.18) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04)) !important;
+  color: var(--text) !important;
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
 }
 .contact-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.2), 0 0 0 4px rgba(59,130,246,0.18) inset;
-  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.2), 0 0 0 4px rgba(59,130,246,0.18) inset !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05)) !important;
 }
 
 /* Animations */
@@ -377,6 +377,8 @@ a:hover {
   transform: translate(-50%, -50%);
   will-change: transform;
   z-index: 9999;
+  backface-visibility: hidden; /* Prevents flickering */
+  perspective: 1000px; /* Forces GPU layer */
 }
 /* Magnetic button effect + glow */
 .magnetic-button { position: relative; transition: transform 0.2s ease; }
@@ -389,22 +391,56 @@ a:hover {
 .hover-lift { transition: transform 0.3s ease, box-shadow 0.3s ease; }
 .hover-lift:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
 
-/* 
-  1. MOBILE-FIRST STYLES (screens smaller than 768px)
-  By default, we apply padding on all sides to look good on mobile.
-*/
-.css-sngorz {
-  /* 4rem top/bottom, 2rem left/right */
-  padding: 4rem 2rem; 
-}
 
-/* 
-  2. DESKTOP OVERRIDE (screens 768px and wider)
-  Here, we override the default styles to achieve the desired desktop look.
-*/
 @media screen and (min-width: 768px) {
   .css-sngorz {
     /* 8rem top/bottom, 0 left/right */
-    padding: 8rem 0;
+    padding: 0rem 0 !important;
+    padding-top: 6rem !important;
   }
+}
+
+pre {
+  background: #000000 !important;
+  border: 2px solid #00ff00 !important;
+  border-radius: 0 !important; /* No rounded corners = more retro */
+  padding: 1.5rem !important;
+  margin: 2rem 0 !important;
+  position: relative;
+  overflow-x: auto;
+  
+  /* CRT monitor glow effect */
+  box-shadow: 
+    inset 0 0 50px rgba(0, 255, 0, 0.1),
+    0 0 20px rgba(0, 255, 0, 0.3) !important;
+}
+
+/* Code text styling */
+pre code {
+  background: transparent !important;
+  color: #00ff00 !important;
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.terminal-code {
+  background: rgba(0, 0, 0, 0.9) !important;
+  color: #00ff00 !important;
+  padding: 0.3em 0.6em;
+  border-radius: 0;
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+  font-size: 0.9em;
+  border: 1px solid #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.1);
+  position: relative;
+}
+
+.terminal-code::after {
+  content: "█";
+  color: #00ff00;
+  animation: blink-cursor 1s infinite;
+  margin-left: 2px;
 }
