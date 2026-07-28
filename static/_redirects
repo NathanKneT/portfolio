@@ -1,4 +1,0 @@
-# Netlify redirects file (place in /static/_redirects)
-
-# Simple redirect from root to biography
-/                    /biography            301!
