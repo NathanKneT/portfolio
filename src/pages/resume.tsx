@@ -92,8 +92,11 @@ const ResumePage = () => (
             <dd>PostgreSQL, MongoDB, generative AI, RAG</dd>
           </div>
           <div>
-            <dt>Delivery</dt>
-            <dd>Docker, GitHub Actions, Terraform, Azure</dd>
+            <dt>Cloud & delivery</dt>
+            <dd>
+              Amazon S3, Amazon EC2, Amazon ECS, AWS Lambda, Amazon RDS, Azure,
+              Docker, Terraform, GitHub Actions
+            </dd>
           </div>
         </dl>
       </section>

@@ -10,6 +10,14 @@ The site deliberately presents two complementary practices:
 
 Live site: [nathanglhf.com](https://nathanglhf.com)
 
+## Highlights
+
+- A dual-track landing page for engineering and photography
+- Typed engineering project data with explicit lifecycle states
+- Accessible navigation, forms, focus states and reduced-motion behavior
+- Responsive image processing for photography-heavy pages
+- Privacy-aware professional content without customer or internal details
+
 ## Technology
 
 - Gatsby 5 and React 18

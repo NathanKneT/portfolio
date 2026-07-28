@@ -218,9 +218,10 @@ def build_resume():
                 ),
             ],
             [
-                Paragraph("<b>Delivery</b>", styles["Small"]),
+                Paragraph("<b>Cloud &amp; delivery</b>", styles["Small"]),
                 Paragraph(
-                    "Docker, GitHub Actions, Terraform, Azure, Jenkins",
+                    "Amazon S3, Amazon EC2, Amazon ECS, AWS Lambda, Amazon RDS, "
+                    "Azure, Docker, Terraform, GitHub Actions, Jenkins",
                     styles["Small"],
                 ),
             ],
