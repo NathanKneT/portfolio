@@ -1,0 +1,2 @@
+# Serve the dual-track landing page at the site root.
+/  /index.html  200!
