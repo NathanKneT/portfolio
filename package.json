@@ -1,41 +1,40 @@
 {
   "private": true,
-  "name": "jodie",
-  "description": "Image-heavy photography portfolio with colorful accents & customizable pages. Includes adaptive image grids powered by CSS grid and automatic image integration into projects.",
-  "version": "0.1.9",
-  "author": "LekoArts",
+  "name": "nathan-rihet-portfolio",
+  "description": "Dual-track software engineering and photography portfolio for Nathan Rihet.",
+  "version": "1.0.0",
+  "author": "Nathan Rihet",
   "license": "0BSD",
-  "starter-name": "gatsby-starter-portfolio-jodie",
   "scripts": {
     "build": "gatsby clean && gatsby build",
-    "deploy": "npm install @parcel/watcher-linux-x64-glibc && gatsby clean && gatsby build",
+    "check": "npm run typecheck && npm run build",
+    "deploy": "gatsby clean && gatsby build",
     "develop": "gatsby develop -H 0.0.0.0",
     "develop:cypress": "cross-env CYPRESS_SUPPORT=y yarn develop",
     "build:cypress": "cross-env CYPRESS_SUPPORT=y yarn build",
     "start": "gatsby develop -H 0.0.0.0",
     "serve": "gatsby serve",
-    "clean": "gatsby clean"
+    "clean": "gatsby clean",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^6.7.2",
-    "@lekoarts/gatsby-theme-jodie": "^5.1.4",
-    "ajv": "^8.17.1",
-    "gatsby": "^5.13.6",
-    "gatsby-plugin-client-side-redirect": "^1.0.0",
-    "gatsby-plugin-manifest": "^5.13.1",
-    "gatsby-plugin-netlify": "^5.1.1",
-    "gatsby-plugin-react-helmet": "^6.14.0",
-    "gatsby-plugin-robots-txt": "^1.8.0",
-    "gatsby-plugin-sitemap": "^6.13.1",
-    "gatsby-plugin-webpack-statoscope": "^1.0.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@fortawesome/fontawesome-free": "6.7.2",
+    "@lekoarts/gatsby-theme-jodie": "5.1.4",
+    "ajv": "8.17.1",
+    "gatsby": "5.13.6",
+    "gatsby-plugin-manifest": "5.13.1",
+    "gatsby-plugin-netlify": "5.1.1",
+    "gatsby-plugin-robots-txt": "1.8.0",
+    "gatsby-plugin-sitemap": "6.13.1",
+    "gatsby-plugin-webpack-statoscope": "1.0.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.14.10",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "cross-env": "^7.0.3",
-    "typescript": "^5.5.3"
+    "@types/react": "18.2.79",
+    "@types/react-dom": "18.2.25",
+    "cross-env": "7.0.3",
+    "typescript": "5.5.3"
   }
 }

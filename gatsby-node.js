@@ -1,11 +1,17 @@
 exports.createPages = ({ actions }) => {
-  const { createRedirect } = actions;
+  const { createRedirect } = actions
 
-  // Simple redirect from root to biography
   createRedirect({
-    fromPath: `/`,
-    toPath: `/biography`,
+    fromPath: `/about/`,
+    toPath: `/biography/`,
     isPermanent: true,
     redirectInBrowser: true,
-  });
-};
+  })
+
+  createRedirect({
+    fromPath: `/hire/`,
+    toPath: `/contact/`,
+    isPermanent: true,
+    redirectInBrowser: true,
+  })
+}

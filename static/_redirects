@@ -1,4 +1,2 @@
-# Netlify redirects file (place in /static/_redirects)
-
-# Simple redirect from root to biography
-/                    /biography            301!
+# Serve the dual-track landing page at the site root.
+/  /index.html  200!

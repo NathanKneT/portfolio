@@ -1,24 +1,15 @@
-import React from "react";
-import { useThemeUI, get } from "theme-ui"
-import { readableColor } from "polished"
-import useSiteMetadata from "../hooks/use-site-metadata"
+import React from "react"
 
-const Footer = ({ bg }: { bg: string }) => {
-  const { siteTitle } = useSiteMetadata()
-  const {
-    theme: { rawColors },
-  } = useThemeUI()
-
-  const text = readableColor(
-    bg,
-    rawColors!.textMuted as string | undefined,
-    rawColors!.textMutedLight as string | undefined
-  )
-
-  return (
-    <footer>
-    </footer>
-  )
-}
+const Footer = () => (
+  <footer className="site-footer">
+    <p>© {new Date().getFullYear()} Nathan Rihet</p>
+    <p>Full Stack Engineer &amp; Visual Creator · Osaka, Japan</p>
+    <nav aria-label="Footer navigation">
+      <a href="mailto:nathan.rihet06@gmail.com">Email</a>
+      <a href="https://github.com/NathanKneT">GitHub</a>
+      <a href="https://www.linkedin.com/in/nathan-rihet/">LinkedIn</a>
+    </nav>
+  </footer>
+)
 
 export default Footer

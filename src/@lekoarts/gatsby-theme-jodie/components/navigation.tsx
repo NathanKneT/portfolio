@@ -15,18 +15,20 @@ const Navigation = ({ bg }: { bg: string }) => {
   const { navigation, basePath } = useJodieConfig()
 
   const formatLink = (slug: string) => {
-    // Ne pas modifier les URLs externes
     if (slug.startsWith('http://') || slug.startsWith('https://')) {
       return slug
     }
-    // Formater les liens internes
     return replaceSlashes(`/${basePath}/${slug}`)
   }
 
 const getIcon = (name: string, slug: string) => {
   const iconStyle = {
-    paddingTop: '0.75rem', // Ajoute le padding-top léger
-    display: 'inline-block'
+    paddingTop: '0.75rem',
+    display: 'inline-flex',
+    width: '1.75rem',
+    minHeight: '2rem',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 
   if (name.toLowerCase().includes('linkedin') || slug.includes('linkedin')) {
@@ -59,7 +61,7 @@ const getIcon = (name: string, slug: string) => {
         a: {
           color: readableColor(bg),
           textDecoration: `none`,
-          fontSize: [1, 2, 3, 4],
+          fontSize: [1, 1, 2, 2],
           marginLeft: [2, 3, 3, 0],
           display: `flex`,
           alignItems: `center`,
@@ -90,6 +92,7 @@ const getIcon = (name: string, slug: string) => {
                   href={navItem.slug}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={showOnlyIcon ? navItem.name : undefined}
                   sx={(t) => ({ ...t.styles?.a })}
                 >
                   {showOnlyIcon ? icon : navItem.name}
@@ -98,6 +101,7 @@ const getIcon = (name: string, slug: string) => {
                 <Link
                   sx={(t) => ({ ...t.styles?.a })}
                   to={formatLink(navItem.slug)}
+                  aria-label={showOnlyIcon ? navItem.name : undefined}
                 >
                   {showOnlyIcon ? icon : navItem.name}
                 </Link>

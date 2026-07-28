@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
+import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
 
 const ThankYouPage = () => (
   <Layout>
@@ -34,3 +35,12 @@ const ThankYouPage = () => (
 )
 
 export default ThankYouPage
+
+export const Head = () => (
+  <SEO
+    pathname="/thank-you/"
+    title="Message received"
+    description="Contact form confirmation."
+    noIndex
+  />
+)

@@ -6,6 +6,12 @@
     "jsxImportSource": "theme-ui",
     "module": "esnext",
     "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@lekoarts/gatsby-theme-jodie/src/components/layout": [
+        "src/types/theme-layout.d.ts"
+      ]
+    },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -13,8 +19,8 @@
   },
   "include": [
     "./src/**/*",
-    "./gatsby-node.ts",
-    ".gatsby-config.ts",
+    "./gatsby-node.js",
+    "./gatsby-config.ts",
     "./plugins/**/*"
   ]
 }
