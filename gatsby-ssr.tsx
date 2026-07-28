@@ -10,11 +10,6 @@ export const onRenderBody: GatsbySSR["onRenderBody"] = ({ setHeadComponents }) =
       type="font/woff2"
       crossOrigin="anonymous"
       key="workSansFont"
-    />,
-    <link
-      key="font-awesome"
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
     />
   ])
 }

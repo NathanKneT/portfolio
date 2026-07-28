@@ -1,232 +1,139 @@
-import * as React from "react"
-import { Helmet } from "react-helmet"
+import React from "react"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
+import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
+
+type SubmitStatus = "idle" | "submitting" | "success" | "error"
 
 const ContactPage = () => {
-  const [state, setState] = React.useState({})
-  const [submitStatus, setSubmitStatus] = React.useState('')
+  const [submitStatus, setSubmitStatus] = React.useState<SubmitStatus>("idle")
 
-  const handleChange = e => {
-    setState({ ...state, [e.target.name]: e.target.value })
-  }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setSubmitStatus("submitting")
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setSubmitStatus('submitting')
+    const form = event.currentTarget
+    const formData = new FormData(form)
+    const body = new URLSearchParams()
+    formData.forEach((value, key) => body.append(key, String(value)))
 
     try {
-      const form = e.target
-      const formData = new FormData(form)
-
       const response = await fetch("/", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(formData).toString(),
+        body: body.toString(),
       })
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`Contact form returned ${response.status}`)
       }
 
-      setSubmitStatus('success')
-      setState({})
-    } catch (error) {
-      console.error('Submission error:', error)
-      setSubmitStatus('error')
+      form.reset()
+      setSubmitStatus("success")
+    } catch {
+      setSubmitStatus("error")
     }
   }
 
   return (
     <Layout>
-      <Helmet>
-        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-      </Helmet>
+      <main className="portfolio-page contact-page">
+        <header className="page-header">
+          <p className="eyebrow">Contact</p>
+          <h1>Start a conversation</h1>
+          <p>
+            For technical collaboration, creative projects, professional
+            opportunities or a simple introduction, send a short note below.
+          </p>
+          <p>
+            Prefer email?{" "}
+            <a href="mailto:nathan.rihet06@gmail.com">
+              nathan.rihet06@gmail.com
+            </a>
+          </p>
+        </header>
 
-      {submitStatus && (
-        <div
-          style={{
-            padding: '1rem',
-            margin: '1rem auto',
-            maxWidth: '600px',
-            textAlign: 'center',
-            borderRadius: '8px',
-            color: submitStatus === 'error' ? '#ef5350' : '#66bb6a',
-            backgroundColor: submitStatus === 'error' ? '#ffebee' : '#e8f5e9',
-            border: `1px solid ${submitStatus === 'error' ? '#ef5350' : '#66bb6a'}`,
-          }}
-        >
-          {submitStatus === 'success' ? 'Message sent successfully!' : 'There was an error submitting the form.'}
-        </div>
-      )}
-
-      <div
-        style={{
-          maxWidth: '600px',
-          margin: 'auto',
-          padding: '2rem',
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '100vh',
-          color: 'white',
-        }}
-      >
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>Contact me</h1>
-        
         <form
+          className="contact-form"
           method="POST"
           name="contact"
+          data-netlify="true"
+          data-netlify-honeypot="bot-field"
           onSubmit={handleSubmit}
-          style={{
-            width: '100%',
-          }}
         >
           <input type="hidden" name="form-name" value="contact" />
-          <div hidden>
-            <input name="bot-field" onChange={handleChange} />
+          <p className="visually-hidden">
+            <label htmlFor="bot-field">
+              Do not fill this field
+              <input id="bot-field" name="bot-field" />
+            </label>
+          </p>
+
+          <div className="form-field">
+            <label htmlFor="name">Name</label>
+            <input id="name" name="name" type="text" autoComplete="name" required />
           </div>
 
-          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-          <label 
-            htmlFor="name" 
-            style={{ 
-              display: 'block', 
-              fontSize: '1.2rem', 
-              marginBottom: '0.5rem', 
-              color: 'white' 
-            }}
-          >
-            Your Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            required
-            onChange={handleChange}
-            style={{
-              width: '100%',
-              padding: '0.8rem',
-              fontSize: '1rem',
-              backgroundColor: '#2c2c2c',
-              color: 'white',
-              border: 'none',
-              borderBottom: '2px solid white',
-            }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-          <label 
-            htmlFor="name" 
-            style={{ 
-              display: 'block', 
-              fontSize: '1.2rem', 
-              marginBottom: '0.5rem', 
-              color: 'white' 
-            }}
-          >Your Email</label>
+          <div className="form-field">
+            <label htmlFor="email">Email</label>
             <input
-              type="email"
               id="email"
               name="email"
+              type="email"
+              autoComplete="email"
               required
-              onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '0.8rem',
-                fontSize: '1rem',
-                backgroundColor: '#2c2c2c',
-                color: 'white',
-                border: 'none',
-                borderBottom: '2px solid white',
-              }}
             />
           </div>
 
-          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-          <label 
-            htmlFor="name" 
-            style={{ 
-              display: 'block', 
-              fontSize: '1.2rem', 
-              marginBottom: '0.5rem', 
-              color: 'white' 
-            }}
-          >Inquiry Type</label>
-            <select
-              id="project-type"
-              name="project-type"
-              onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '0.8rem',
-                fontSize: '1rem',
-                backgroundColor: '#2c2c2c',
-                color: 'white',
-                border: 'none',
-                borderBottom: '2px solid white',
-              }}
-            >
-            <option value="">Select an inquiry type</option>
-            <option value="recruitment">Recruitment Inquiry / Job Offer</option>
-            <option value="dev-mission">Full-Stack or AI Engineering Mission</option>
-            <option value="commercial-photo">Commercial Photography Project</option>
-            <option value="event-portrait">Event / Portrait Photography</option>
-            <option value="partnership">Partnership or Collaboration</option>
-            <option value="general">General Inquiry</option>
-          </select>
+          <div className="form-field">
+            <label htmlFor="inquiry-type">What would you like to discuss?</label>
+            <select id="inquiry-type" name="inquiry-type" required defaultValue="">
+              <option value="" disabled>
+                Select an inquiry type
+              </option>
+              <option value="technical-collaboration">
+                Technical collaboration
+              </option>
+              <option value="creative-collaboration">
+                Creative collaboration
+              </option>
+              <option value="professional-opportunity">
+                Professional opportunity
+              </option>
+              <option value="general">General inquiry</option>
+            </select>
           </div>
 
-          <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}>
-          <label 
-            htmlFor="name" 
-            style={{ 
-              display: 'block', 
-              fontSize: '1.2rem', 
-              marginBottom: '0.5rem', 
-              color: 'white' 
-            }}
-          >Message</label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              onChange={handleChange}
-              style={{
-                width: '100%',
-                padding: '0.8rem',
-                fontSize: '1rem',
-                backgroundColor: '#2c2c2c',
-                color: 'white',
-                border: 'none',
-                borderBottom: '2px solid white',
-                minHeight: '150px',
-              }}
-            />
+          <div className="form-field">
+            <label htmlFor="message">Message</label>
+            <textarea id="message" name="message" rows={7} required />
           </div>
 
           <button
+            className="button button-primary"
             type="submit"
-            disabled={submitStatus === 'submitting'}
-            style={{
-              backgroundColor: submitStatus === 'submitting' ? '#555' : '#007ACC',
-              color: 'white',
-              padding: '0.8rem 2rem',
-              fontSize: '1.2rem',
-              border: 'none',
-              cursor: submitStatus === 'submitting' ? 'not-allowed' : 'pointer',
-              borderRadius: '4px',
-            }}
+            disabled={submitStatus === "submitting"}
           >
-            {submitStatus === 'submitting' ? 'Sending...' : 'Send'}
+            {submitStatus === "submitting" ? "Sending…" : "Send message"}
           </button>
+
+          <div className="form-status" aria-live="polite" role="status">
+            {submitStatus === "success" &&
+              "Thanks—your message has been sent."}
+            {submitStatus === "error" &&
+              "The form could not send your message. Please email me directly instead."}
+          </div>
         </form>
-      </div>
+      </main>
     </Layout>
   )
 }
 
 export default ContactPage
+
+export const Head = () => (
+  <SEO
+    pathname="/contact/"
+    title="Contact"
+    description="Contact Nathan Rihet about technical collaboration, creative projects, networking or professional opportunities."
+  />
+)

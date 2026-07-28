@@ -14,7 +14,7 @@ const GridItem: React.FC<React.PropsWithChildren<{ to: string; className?: strin
       position: `relative`,
       // @ts-ignore
       "> div": {
-        position: `absolute !important`,
+        position: `absolute`,
         top: 0,
         right: 0,
         bottom: 0,
@@ -51,7 +51,7 @@ const GridItem: React.FC<React.PropsWithChildren<{ to: string; className?: strin
         right: 0,
         textAlign: `right`,
         fontWeight: `bold`,
-        textTransform: "uppercase !important",
+        textTransform: "uppercase",
         fontSize: [3, 4, 5], // Responsive
         padding: 3,
         textShadow: `0 2px 6px rgba(0, 0, 0, 0.7)`, // Meilleure lisibilité
