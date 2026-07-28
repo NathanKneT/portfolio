@@ -12,7 +12,7 @@ const LandingPage = () => (
         <h1 id="landing-title">Full Stack Engineer &amp; Visual Creator</h1>
         <p className="hero-copy">
           I build thoughtful digital products with TypeScript, Next.js, Python
-          and FastAPI—and use photography to explore people, place and light.
+          and FastAPI. Photography helps me explore people, place and light.
         </p>
         <div className="button-row">
           <Link className="button button-primary" to="/dev-projects/">

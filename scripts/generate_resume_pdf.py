@@ -220,7 +220,7 @@ def build_resume():
             [
                 Paragraph("<b>Delivery</b>", styles["Small"]),
                 Paragraph(
-                    "Docker, GitHub Actions, Terraform, AWS, Azure, Jenkins",
+                    "Docker, GitHub Actions, Terraform, Azure, Jenkins",
                     styles["Small"],
                 ),
             ],

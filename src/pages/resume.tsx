@@ -93,7 +93,7 @@ const ResumePage = () => (
           </div>
           <div>
             <dt>Delivery</dt>
-            <dd>Docker, GitHub Actions, Terraform, AWS, Azure</dd>
+            <dd>Docker, GitHub Actions, Terraform, Azure</dd>
           </div>
         </dl>
       </section>
