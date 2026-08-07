@@ -61,18 +61,17 @@ const ContactPage = () => {
           onSubmit={handleSubmit}
         >
           <input type="hidden" name="form-name" value="contact" />
-          <p className="visually-hidden">
+          <div hidden aria-hidden="true">
             <label htmlFor="bot-field">
               Do not fill this field
               <input
                 id="bot-field"
                 name="bot-field"
                 tabIndex={-1}
-                aria-hidden="true"
                 autoComplete="off"
               />
             </label>
-          </p>
+          </div>
 
           <div className="form-field">
             <label htmlFor="name">Name</label>

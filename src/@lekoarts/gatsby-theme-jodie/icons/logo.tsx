@@ -5,7 +5,7 @@ const Logo = () => (
     aria-hidden="true"
     style={{
       display: "inline-block",
-      color: "#111116",
+      color: "var(--text)",
       fontSize: "1.35rem",
       fontWeight: 700,
       letterSpacing: "-0.06em",

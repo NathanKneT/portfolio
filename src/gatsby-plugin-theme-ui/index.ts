@@ -3,15 +3,24 @@ import originalTheme from "@lekoarts/gatsby-theme-jodie/src/gatsby-plugin-theme-
 
 const theme = merge(originalTheme, {
   fonts: {
-    body: `"Helvetica", Work Sans, -apple-system, BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`,
-    heading: `"Helvetica", Work Sans, -apple-system, BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"`,
+    body: `"Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`,
+    heading: `"Work Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`,
   },
 
   colors: {
-    text: "#E0E0E0",
-    background: "#0f0f15",
-    primary: "#E0E0E0",
-    secondary: "#E0E0E0",
+    text: "#F2EDE4",
+    heading: "#F2EDE4",
+    background: "#0E0C0A",
+    primary: "#CE8B45",
+    primaryLight: "#E3A461",
+    secondary: "#ADA69B",
+    textMuted: "#ADA69B",
+    textMutedLight: "#918A7E",
+  },
+
+  sidebar: {
+    normal: `220px`,
+    wide: `220px`,
   },
 
   styles: {

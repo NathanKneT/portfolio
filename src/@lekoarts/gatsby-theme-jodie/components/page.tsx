@@ -31,15 +31,15 @@ const Page: React.FC<React.PropsWithChildren<PageProps<PageData>>> = ({
       className="about-page"
       sx={{
         variant: page.custom ? `content.custom` : `content.page`,
-        color: `#f4f4f5`,
+        color: `var(--text)`,
         "h1, h2, h3": {
-          color: `#f4f4f5`,
+          color: `var(--text)`,
         },
         p: {
-          color: `#a1a1aa`,
+          color: `var(--muted)`,
         },
         strong: {
-          color: `#f4f4f5`,
+          color: `var(--text)`,
         },
       }}
       data-testid="page-content"

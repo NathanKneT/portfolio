@@ -2,7 +2,6 @@
 import { jsx, get } from "theme-ui"
 import { Link } from "gatsby"
 import * as React from "react"
-import { readableColor } from "polished"
 import Logo from "../icons/logo"
 import useSiteMetadata from "../hooks/use-site-metadata"
 import useJodieConfig from "../hooks/use-jodie-config"
@@ -27,7 +26,8 @@ const Sidebar = ({ bg }: SidebarProps) => {
           get(t, `sidebar.normal`),
           get(t, `sidebar.wide`),
         ],
-        backgroundColor: bg,
+        backgroundColor: `var(--background)`,
+        borderRight: [0, 0, 0, `1px solid var(--line)`],
         position: [`relative`, `relative`, `relative`, `fixed`],
         height: `100%`,
         display: `flex`,
@@ -39,9 +39,7 @@ const Sidebar = ({ bg }: SidebarProps) => {
           `space-between`,
           `flex-start`,
         ],
-        svg: {
-          fill: readableColor(bg),
-        },
+        svg: { fill: `var(--text)` },
         variant: `sidebar`,
       }}
       data-testid="sidebar"

@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { jsx } from "theme-ui"
 import { Link } from "gatsby"
-import { readableColor } from "polished"
 import { replaceSlashes } from "../utils/replace-slashes"
 import useJodieConfig from "../hooks/use-jodie-config"
 
@@ -68,14 +67,14 @@ const getIcon = (name: string, slug: string) => {
       aria-label="Primary Navigation"
       sx={{
         a: {
-          color: readableColor(bg),
+          color: `var(--muted)`,
           textDecoration: `none`,
           fontSize: [1, 1, 2, 2],
           marginLeft: [2, 3, 3, 0],
           display: `flex`,
           alignItems: `center`,
           "&:hover,&:focus": {
-            color: readableColor(bg, `primary`, `primaryLight`, false),
+            color: `var(--text)`,
           },
         },
         ul: {

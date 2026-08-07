@@ -2,7 +2,6 @@
 import { jsx } from "theme-ui"
 import * as React from "react"
 import type { HeadFC, PageProps } from "gatsby"
-import { transparentize } from "polished"
 import { GatsbyImage, type IGatsbyImageData } from "gatsby-plugin-image"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import Seo from "./seo"
@@ -45,13 +44,13 @@ const Project: React.FC<
     <header
       sx={{
         variant: `content.project`,
-        color: `#f4f4f5`,
-        "h1, p": { color: `#f4f4f5` },
+        color: `var(--text)`,
+        "h1, p": { color: `var(--text)` },
       }}
     >
       <p
         sx={{
-          color: `#8da2ff`,
+          color: `var(--faint)`,
           fontSize: 2,
           fontWeight: 700,
           textTransform: `uppercase`,
@@ -61,14 +60,14 @@ const Project: React.FC<
       >
         {project.category}
       </p>
-      <h1 sx={{ color: `#f4f4f5`, mt: 0 }}>
+      <h1 sx={{ color: `var(--text)`, mt: 0 }}>
         {project.title}
       </h1>
-      <div sx={{ maxWidth: `70ch`, my: 4, color: `#d4d4d8` }}>{children}</div>
+      <div sx={{ maxWidth: `var(--measure)`, my: 4, color: `var(--text-2)` }}>{children}</div>
     </header>
     <section
       aria-label={`${project.shortTitle} photo gallery`}
-      sx={{ backgroundColor: transparentize(0.9, project.color) }}
+      sx={{ backgroundColor: `var(--gallery)` }}
     >
       <div sx={{ variant: `content.imageList` }}>
         {images.nodes.map((image, index) => (
