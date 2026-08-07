@@ -1,7 +1,7 @@
 /** @jsx jsx */
 import { jsx, get } from "theme-ui"
 import { Link } from "gatsby"
-import { readableColor } from "polished"
+import * as React from "react"
 import Logo from "../icons/logo"
 import useSiteMetadata from "../hooks/use-site-metadata"
 import useJodieConfig from "../hooks/use-jodie-config"
@@ -12,9 +12,11 @@ type SidebarProps = { bg: string }
 const Sidebar = ({ bg }: SidebarProps) => {
   const { siteTitle } = useSiteMetadata()
   const { basePath } = useJodieConfig()
+  const [isNavigationOpen, setIsNavigationOpen] = React.useState(false)
 
   return (
     <header
+      className="site-sidebar"
       sx={{
         p: [3, 3, 4],
         width: (t) => [
@@ -24,7 +26,8 @@ const Sidebar = ({ bg }: SidebarProps) => {
           get(t, `sidebar.normal`),
           get(t, `sidebar.wide`),
         ],
-        backgroundColor: bg,
+        backgroundColor: `var(--background)`,
+        borderRight: [0, 0, 0, `1px solid var(--line)`],
         position: [`relative`, `relative`, `relative`, `fixed`],
         height: `100%`,
         display: `flex`,
@@ -36,9 +39,7 @@ const Sidebar = ({ bg }: SidebarProps) => {
           `space-between`,
           `flex-start`,
         ],
-        svg: {
-          fill: readableColor(bg),
-        },
+        svg: { fill: `var(--text)` },
         variant: `sidebar`,
       }}
       data-testid="sidebar"
@@ -53,8 +54,26 @@ const Sidebar = ({ bg }: SidebarProps) => {
       >
         <Logo />
       </Link>
+      <button
+        className="mobile-nav-toggle"
+        type="button"
+        aria-expanded={isNavigationOpen}
+        aria-controls="primary-navigation"
+        onClick={() => setIsNavigationOpen((isOpen) => !isOpen)}
+      >
+        <span className="visually-hidden">
+          {isNavigationOpen ? "Close navigation" : "Open navigation"}
+        </span>
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+      </button>
       <div sx={{ py: 4, display: [`none`, `none`, `none`, `block`] }} />
-      <Navigation bg={bg} />
+      <Navigation
+        bg={bg}
+        id="primary-navigation"
+        isOpen={isNavigationOpen}
+        onNavigate={() => setIsNavigationOpen(false)}
+      />
     </header>
   )
 }

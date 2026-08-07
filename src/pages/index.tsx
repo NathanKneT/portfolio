@@ -2,7 +2,7 @@ import React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
-import { projects } from "../data/projects"
+import { projectPath, projects } from "../data/projects"
 
 const LandingPage = () => (
   <Layout>
@@ -38,13 +38,20 @@ const LandingPage = () => (
         <div className="project-grid">
           {projects.slice(0, 3).map((project) => (
             <article className="project-card" key={project.title}>
-              <div className="project-meta">
-                <span>{project.status}</span>
-                <span>{project.year}</span>
-              </div>
-              <h3>{project.title}</h3>
-              <p>{project.summary}</p>
-              <p className="stack">{project.stack.join(" · ")}</p>
+              <Link
+                className="project-card-link"
+                to={projectPath(project)}
+                aria-label={`View ${project.title} case study`}
+              >
+                <div className="project-meta">
+                  <span>{project.status}</span>
+                  <span>{project.year}</span>
+                </div>
+                <h3>{project.title}</h3>
+                <p>{project.summary}</p>
+                <p className="stack">{project.stack.join(" · ")}</p>
+                <span className="card-action">View case study →</span>
+              </Link>
             </article>
           ))}
         </div>

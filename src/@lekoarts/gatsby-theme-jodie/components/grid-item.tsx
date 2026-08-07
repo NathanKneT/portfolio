@@ -38,10 +38,10 @@ const GridItem: React.FC<React.PropsWithChildren<{ to: string; className?: strin
         right: 0,
         bottom: 0,
         boxShadow: (t) => `inset 0 0 0 0px ${get(t, `colors.white`)}`,
-        transition: `all 0.3s ease-in-out`,
+        transition: `box-shadow 120ms cubic-bezier(.2, 0, .4, 1)`,
       },
       "> div img": {
-        transition: `all 0.3s ease 0s !important`,
+        transition: `transform 240ms cubic-bezier(.2, 0, .4, 1) !important`,
       },
         "> span": {
         zIndex: 10, // Plus haut que l'overlay
