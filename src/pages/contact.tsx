@@ -64,7 +64,13 @@ const ContactPage = () => {
           <p className="visually-hidden">
             <label htmlFor="bot-field">
               Do not fill this field
-              <input id="bot-field" name="bot-field" />
+              <input
+                id="bot-field"
+                name="bot-field"
+                tabIndex={-1}
+                aria-hidden="true"
+                autoComplete="off"
+              />
             </label>
           </p>
 

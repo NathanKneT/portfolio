@@ -11,7 +11,14 @@ type NavItem = {
   isExternal?: boolean
 }
 
-const Navigation = ({ bg }: { bg: string }) => {
+type NavigationProps = {
+  bg: string
+  id?: string
+  isOpen?: boolean
+  onNavigate?: () => void
+}
+
+const Navigation = ({ bg, id, isOpen = false, onNavigate }: NavigationProps) => {
   const { navigation, basePath } = useJodieConfig()
 
   const formatLink = (slug: string) => {
@@ -32,16 +39,16 @@ const getIcon = (name: string, slug: string) => {
   }
 
   if (name.toLowerCase().includes('linkedin') || slug.includes('linkedin')) {
-    return <i className="fab fa-linkedin" title="LinkedIn" style={iconStyle} />
+    return <i className="fab fa-linkedin" aria-hidden="true" style={iconStyle} />
   }
   if (name.toLowerCase().includes('github') || slug.includes('github')) {
-    return <i className="fab fa-github" title="GitHub" style={iconStyle} />
+    return <i className="fab fa-github" aria-hidden="true" style={iconStyle} />
   }
   if (name.toLowerCase().includes('insta') || slug.includes('instagram')) {
-    return <i className="fab fa-instagram" title="Instagram" style={iconStyle} />
+    return <i className="fab fa-instagram" aria-hidden="true" style={iconStyle} />
   }
   if (name.toLowerCase().includes('mail') || slug.includes('mailto:') || slug.includes('@')) {
-    return <i className="fas fa-envelope" title="Email" style={iconStyle} />
+    return <i className="fas fa-envelope" aria-hidden="true" style={iconStyle} />
   }
   return null
 }
@@ -56,6 +63,8 @@ const getIcon = (name: string, slug: string) => {
 
   return (
     <nav
+      id={id}
+      className={`site-navigation${isOpen ? " is-open" : ""}`}
       aria-label="Primary Navigation"
       sx={{
         a: {
@@ -93,17 +102,31 @@ const getIcon = (name: string, slug: string) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={showOnlyIcon ? navItem.name : undefined}
+                  className={showOnlyIcon ? "social-link" : undefined}
+                  onClick={onNavigate}
                   sx={(t) => ({ ...t.styles?.a })}
                 >
-                  {showOnlyIcon ? icon : navItem.name}
+                  {showOnlyIcon ? (
+                    <span className="nav-social-content">
+                      {icon}
+                      <span className="nav-label">{navItem.name}</span>
+                    </span>
+                  ) : navItem.name}
                 </a>
               ) : (
                 <Link
                   sx={(t) => ({ ...t.styles?.a })}
                   to={formatLink(navItem.slug)}
                   aria-label={showOnlyIcon ? navItem.name : undefined}
+                  className={showOnlyIcon ? "social-link" : undefined}
+                  onClick={onNavigate}
                 >
-                  {showOnlyIcon ? icon : navItem.name}
+                  {showOnlyIcon ? (
+                    <span className="nav-social-content">
+                      {icon}
+                      <span className="nav-label">{navItem.name}</span>
+                    </span>
+                  ) : navItem.name}
                 </Link>
               )}
             </li>

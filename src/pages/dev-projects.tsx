@@ -1,7 +1,9 @@
 import React from "react"
+import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
-import { isOfflineProject, projects } from "../data/projects"
+import ProjectVisual from "../components/project-visual"
+import { isOfflineProject, projectPath, projects } from "../data/projects"
 
 const statusLabel = {
   active: "Active",
@@ -38,6 +40,7 @@ const EngineeringPage = () => (
               </div>
               <h2>{project.title}</h2>
               <p className="case-summary">{project.summary}</p>
+              <ProjectVisual project={project} compact />
               <dl>
                 <div>
                   <dt>Contribution</dt>
@@ -55,11 +58,16 @@ const EngineeringPage = () => (
                 )}
               </dl>
               <div className="text-links">
+                <Link className="case-study-link" to={projectPath(project)}>
+                  View case study
+                </Link>
                 {project.sourceUrl && (
                   <a href={project.sourceUrl}>Source repository</a>
                 )}
                 {project.demoUrl && !isOfflineProject(project) && (
-                  <a href={project.demoUrl}>Live demo</a>
+                  <a href={project.demoUrl}>
+                    {project.demoLabel ?? "View demo"}
+                  </a>
                 )}
               </div>
             </div>
