@@ -6,11 +6,13 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 const config: GatsbyConfig = {
   siteMetadata: {
     siteTitle: `Nathan Rihet`,
-    siteTitleAlt: `Nathan Rihet — Full Stack Engineer & Visual Creator`,
-    siteHeadline: `Full Stack Engineer and visual creator based in Osaka`,
+    siteTitleAlt: `Nathan Rihet — Full Stack Engineer in Osaka`,
+    siteHeadline: `Full Stack Engineer and photographer based in Osaka`,
     siteUrl: `https://nathanglhf.com`,
-    siteDescription: `Portfolio of Nathan Rihet, a Full Stack Engineer and visual creator based in Osaka. TypeScript, Next.js, Python, FastAPI, applied AI and photography.`,
-    siteImage: `/banner.jpg`,
+    siteDescription: `Nathan Rihet is a Full Stack Engineer and photographer based in Osaka. Explore selected work in TypeScript, Next.js, Python, FastAPI, applied AI and photography.`,
+    siteImage: `/social-card.png`,
+    siteImageWidth: 1200,
+    siteImageHeight: 630,
     siteLanguage: `en`,
     author: `Nathan Rihet`,
   },
@@ -62,8 +64,8 @@ const config: GatsbyConfig = {
         short_name: `Nathan Rihet`,
         description: `Full Stack engineering and photography portfolio based in Osaka.`,
         start_url: `/`,
-        background_color: `#0b0b10`,
-        theme_color: `#0b0b10`,
+        background_color: `#0e0c0a`,
+        theme_color: `#0e0c0a`,
         display: `standalone`,
         icons: [
           {

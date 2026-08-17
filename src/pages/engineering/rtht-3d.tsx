@@ -1,6 +1,6 @@
 import React from "react"
 import ProjectCaseStudy from "../../components/project-case-study"
-import SEO from "../../@lekoarts/gatsby-theme-jodie/components/seo"
+import ProjectSEO from "../../components/project-seo"
 import { getProject } from "../../data/projects"
 
 const project = getProject("rtht-3d")
@@ -10,9 +10,12 @@ const RTHT3DPage = () => <ProjectCaseStudy project={project} />
 export default RTHT3DPage
 
 export const Head = () => (
-  <SEO
-    pathname="/engineering/rtht-3d/"
-    title="RTHT-3D Case Study"
-    description="How Nathan Rihet built a real-time MediaPipe and Blender hand-tracking interface whose public demo reached 343K+ views."
+  <ProjectSEO
+    project={project}
+    description="RTHT-3D connects MediaPipe hand tracking to Blender over UDP, turning webcam landmarks into real-time scene controls."
+    image="/evidence/rtht-3d-preview.jpg"
+    imageAlt="RTHT-3D hand-tracking interface controlling a Blender scene"
+    imageWidth={1029}
+    imageHeight={849}
   />
 )

@@ -35,12 +35,12 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
       <section className="project-facts" aria-label="Project overview">
         <div>
           <p className="eyebrow">Problem</p>
-          <h2>What needed to work</h2>
+          <h2>Project brief</h2>
           <p>{project.problem}</p>
         </div>
         <div>
-          <p className="eyebrow">My contribution</p>
-          <h2>Ownership</h2>
+          <p className="eyebrow">Contribution</p>
+          <h2>Role and scope</h2>
           <p>{project.role}.</p>
           <p className="project-stack">{project.stack.join(" · ")}</p>
         </div>
@@ -48,7 +48,7 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
 
       <section className="project-detail-section" aria-labelledby="decisions-title">
         <p className="eyebrow">Implementation</p>
-        <h2 id="decisions-title">Technical decisions</h2>
+        <h2 id="decisions-title">Key technical decisions</h2>
         <ol className="decision-list">
           {project.decisions.map((decision) => (
             <li key={decision}>{decision}</li>
@@ -58,7 +58,7 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
 
       <section className="project-detail-section project-constraints" aria-labelledby="constraints-title">
         <p className="eyebrow">Constraints</p>
-        <h2 id="constraints-title">Designing within limits</h2>
+        <h2 id="constraints-title">Engineering constraints</h2>
         <ul>
           {project.constraints.map((constraint) => (
             <li key={constraint}>{constraint}</li>
@@ -68,7 +68,8 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
 
       <section className="project-outcome" aria-labelledby="outcome-title">
         <p className="eyebrow">Outcome</p>
-        <h2 id="outcome-title">{project.result}</h2>
+        <h2 id="outcome-title">Result</h2>
+        <p className="project-result">{project.result}</p>
         <div className="button-row">
           {project.sourceUrl && (
             <a className="button button-primary" href={project.sourceUrl}>
@@ -86,6 +87,10 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
             </span>
           )}
         </div>
+        <nav className="text-links" aria-label="Case study navigation">
+          <Link to="/dev-projects/">All engineering work</Link>
+          <Link to="/contact/">Discuss a project</Link>
+        </nav>
       </section>
     </main>
   </Layout>

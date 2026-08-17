@@ -41,8 +41,9 @@ const ContactPage = () => {
           <p className="eyebrow">Contact</p>
           <h1>Start a conversation</h1>
           <p>
-            For technical collaboration, creative projects, professional
-            opportunities or a simple introduction, send a short note below.
+            Send a note about a technical collaboration, a photography project,
+            a professional opportunity or anything else you would like to
+            discuss.
           </p>
           <p>
             Prefer email?{" "}
@@ -139,6 +140,11 @@ export const Head = () => (
   <SEO
     pathname="/contact/"
     title="Contact"
-    description="Contact Nathan Rihet about technical collaboration, creative projects, networking or professional opportunities."
+    description="Contact Nathan Rihet in Osaka about software engineering, photography, technical collaboration or professional opportunities."
+    schemaType="ContactPage"
+    breadcrumbs={[
+      { name: "Home", pathname: "/" },
+      { name: "Contact", pathname: "/contact/" },
+    ]}
   />
 )
