@@ -89,9 +89,16 @@ export const Head: HeadFC<ProjectData> = ({
   location,
 }) => (
   <Seo
-    title={project.title}
+    title={`${project.shortTitle} Photography`}
     description={project.excerpt}
     pathname={location.pathname}
     image={project.cover.childImageSharp.resize.src}
+    imageAlt={`${project.shortTitle} photography series by Nathan Rihet`}
+    schemaType="ImageGallery"
+    breadcrumbs={[
+      { name: "Home", pathname: "/" },
+      { name: "Photography", pathname: "/projects/" },
+      { name: project.shortTitle, pathname: project.slug },
+    ]}
   />
 )

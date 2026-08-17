@@ -70,7 +70,7 @@ const ResumePage = () => (
       <section className="resume-section">
         <h2>Profile</h2>
         <p>
-          Full Stack Engineer building scalable SaaS applications with
+          Full Stack Engineer building web and SaaS applications with
           TypeScript, Next.js, Python and FastAPI. Experienced in APIs, secure
           data workflows, automated testing, CI/CD and applied AI.
         </p>
@@ -151,6 +151,10 @@ const ResumePage = () => (
           night, live-performance and event photography across France, Canada
           and Japan.
         </p>
+        <div className="text-links">
+          <a href="/dev-projects/">View engineering case studies</a>
+          <a href="/contact/">Contact Nathan</a>
+        </div>
       </section>
     </main>
   </Layout>
@@ -162,6 +166,11 @@ export const Head = () => (
   <SEO
     pathname="/resume/"
     title="Resume"
-    description="Resume of Nathan Rihet, Full Stack Engineer in Osaka working with TypeScript, Next.js, Python, FastAPI and applied AI."
+    description="Resume of Nathan Rihet, a Full Stack Engineer in Osaka with experience in TypeScript, Next.js, Python, FastAPI, cloud delivery and applied AI."
+    schemaType="ProfilePage"
+    breadcrumbs={[
+      { name: "Home", pathname: "/" },
+      { name: "Resume", pathname: "/resume/" },
+    ]}
   />
 )

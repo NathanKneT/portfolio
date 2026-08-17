@@ -866,8 +866,16 @@ dd {
 
 .project-outcome h2 {
   max-width: 940px;
-  margin: 0.8rem 0 2.5rem;
+  margin: 0.8rem 0 1.25rem;
   font-size: clamp(2.2rem, 5vw, 4.5rem);
+}
+
+.project-result {
+  color: var(--text-2);
+  font-size: clamp(1.25rem, 2.5vw, 2rem);
+  line-height: 1.35;
+  margin: 0 0 2.5rem;
+  max-width: 940px;
 }
 
 .offline-note {
@@ -1633,7 +1641,7 @@ dd {
 
 .project-evidence-compact figcaption {
   position: static;
-  padding: 0.75rem 0;
+  padding: 0.85rem 1.25rem;
   color: var(--muted);
   border: 0;
   border-bottom: 1px solid var(--line);

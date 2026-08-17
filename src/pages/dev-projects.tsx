@@ -19,9 +19,9 @@ const EngineeringPage = () => (
         <p className="eyebrow">Selected technical work</p>
         <h1>Engineering</h1>
         <p>
-          Full-stack products, applied AI and creative technology—presented
-          with honest project status, clear responsibilities and public
-          evidence where available.
+          Four projects covering full-stack development, applied AI, computer
+          vision and technical teaching. Each case study explains the problem,
+          my contribution, the implementation and the result.
         </p>
       </header>
 
@@ -74,6 +74,21 @@ const EngineeringPage = () => (
           </article>
         ))}
       </section>
+
+      <section className="cta-section" aria-labelledby="engineering-contact-heading">
+        <p className="eyebrow">Collaboration</p>
+        <h2 id="engineering-contact-heading">
+          Have a technical project or an idea to compare?
+        </h2>
+        <div className="button-row">
+          <Link className="button button-primary" to="/contact/">
+            Contact me
+          </Link>
+          <Link className="button button-secondary" to="/resume/">
+            View resume
+          </Link>
+        </div>
+      </section>
     </main>
   </Layout>
 )
@@ -83,7 +98,22 @@ export default EngineeringPage
 export const Head = () => (
   <SEO
     pathname="/dev-projects/"
-    title="Engineering"
-    description="Selected full-stack, applied-AI and creative-technology projects by Nathan Rihet."
+    title="Software Engineering Projects"
+    description="Engineering case studies by Nathan Rihet covering Next.js, FastAPI, applied AI, computer vision, APIs and software architecture."
+    schemaType="CollectionPage"
+    breadcrumbs={[
+      { name: "Home", pathname: "/" },
+      { name: "Engineering", pathname: "/dev-projects/" },
+    ]}
+    entity={{
+      "@type": "ItemList",
+      name: "Selected engineering projects by Nathan Rihet",
+      itemListElement: projects.map((project, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: project.title,
+        url: `https://nathanglhf.com${projectPath(project)}`,
+      })),
+    }}
   />
 )

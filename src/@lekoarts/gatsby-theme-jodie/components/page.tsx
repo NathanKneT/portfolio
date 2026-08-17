@@ -54,8 +54,18 @@ export default Page
 export const Head: HeadFC<PageData> = ({ data: { page }, location }) => (
   <Seo
     title={page.title}
-    description={page.excerpt}
+    description={
+      page.slug === "/biography"
+        ? "About Nathan Rihet, a Full Stack Engineer and photographer in Osaka with experience in TypeScript, Next.js, Python, FastAPI and applied AI."
+        : page.excerpt
+    }
     pathname={location.pathname}
     image={page.cover.childImageSharp.resize.src}
+    imageAlt="Portrait of Nathan Rihet, Full Stack Engineer and photographer in Osaka"
+    schemaType={page.slug === "/biography" ? "AboutPage" : "WebPage"}
+    breadcrumbs={[
+      { name: "Home", pathname: "/" },
+      { name: page.title, pathname: page.slug },
+    ]}
   />
 )

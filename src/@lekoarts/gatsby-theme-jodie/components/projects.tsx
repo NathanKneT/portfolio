@@ -64,6 +64,11 @@ export const Head: HeadFC<PhotographyProjectsProps> = ({ location }) => (
   <Seo
     title="Photography"
     pathname={location.pathname}
-    description="Selected portrait, urban, night, performance, wedding and automotive photography by Nathan Rihet."
+    description="Photography by Nathan Rihet across portrait, urban, night, live performance, wedding and automotive series in France, Canada and Japan."
+    schemaType="CollectionPage"
+    breadcrumbs={[
+      { name: "Home", pathname: "/" },
+      { name: "Photography", pathname: "/projects/" },
+    ]}
   />
 )

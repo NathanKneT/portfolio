@@ -25,14 +25,14 @@ export const projects: Project[] = [
     slug: "rtht-3d",
     title: "RTHT-3D",
     summary:
-      "A real-time hand-tracking interface for controlling Blender scenes with natural gestures.",
+      "A webcam-based interface that turns hand movements into real-time controls for Blender.",
     problem:
-      "Make a 3D scene feel directly manipulable through a standard webcam, without requiring a controller or specialized tracking hardware.",
-    role: "Computer-vision pipeline, Blender integration and interaction design",
+      "Control a 3D scene from a standard webcam without a physical controller or dedicated tracking hardware.",
+    role: "Designed and implemented the vision pipeline, gesture model, UDP protocol and Blender integration",
     stack: ["Python", "MediaPipe", "Blender", "UDP"],
     status: "completed",
     result:
-      "Built a working two-hand interaction system and published a creative-coding demo that reached 343K+ views.",
+      "The finished prototype supports one- and two-hand scene controls; its public demonstration reached 343K views.",
     constraints: [
       "Translate noisy landmark data into gestures that remain understandable in motion.",
       "Keep the vision process separate from Blender without making interaction feel delayed.",
@@ -53,14 +53,14 @@ export const projects: Project[] = [
     slug: "conversational-agents-course",
     title: "Conversational Agents Course",
     summary:
-      "Graduate-level practical material for building, deploying and evaluating conversational agents.",
+      "Seven practical workshops on building, exposing and evaluating conversational agents.",
     problem:
-      "Turn conversational-AI concepts into a practical sequence where students progressively build and evaluate a working API-based agent.",
-    role: "Curriculum design, teaching and reference implementations",
+      "Give Master’s students enough structure and hands-on practice to build and assess a complete API-based conversational agent.",
+    role: "Designed the curriculum, taught the workshops and built the reference implementations",
     stack: ["Python", "FastAPI", "LangChain", "LLMs"],
     status: "completed",
     result:
-      "Designed and delivered seven workshops to more than 20 Master’s students, ending with group projects and a demo session.",
+      "More than 20 Master’s students completed the seven-workshop sequence and presented working group projects.",
     constraints: [
       "Fit API fundamentals, LLM orchestration and evaluation into seven progressive workshops.",
       "Keep the reference implementation approachable while preserving a realistic service structure.",
@@ -79,14 +79,14 @@ export const projects: Project[] = [
     slug: "narrative-forge",
     title: "NarrativeForge",
     summary:
-      "A visual environment for creating branching interactive stories with assisted content generation.",
+      "A node-based editor for writing, checking and testing branching interactive stories.",
     problem:
-      "Give authors a visual way to design, validate and test branching stories without losing control of narrative structure.",
-    role: "Full-stack architecture, visual editor and application state",
+      "Let writers manage complex story branches visually while keeping every choice and destination structurally valid.",
+    role: "Designed the application architecture, visual editor, graph validation and persistence model",
     stack: ["TypeScript", "Next.js", "React Flow", "OpenAI"],
     status: "prototype",
     result:
-      "Built a node-based editor that persists projects locally, validates branching connections and exports stories as JSON or Twine.",
+      "The prototype saves projects locally, validates graph connections, runs stories in a reader and exports JSON or Twine files.",
     constraints: [
       "Keep graph state, story content and the playable reader synchronized.",
       "Generate structured content without allowing AI output to break the story graph.",
@@ -105,14 +105,14 @@ export const projects: Project[] = [
     slug: "docs-retriever",
     title: "DocsRetriever",
     summary:
-      "A completed authenticated knowledge-search SaaS combining structured content, vector retrieval and streamed answers.",
+      "An authenticated document workspace with vector retrieval and streamed answers.",
     problem:
-      "Help teams structure internal knowledge and retrieve relevant context before generating a documented answer.",
-    role: "Product design, full-stack development, infrastructure and delivery",
+      "Help teams organise internal documents and retrieve relevant passages before generating an answer.",
+    role: "Owned product design, application architecture, full-stack development and deployment",
     stack: ["Next.js", "NestJS", "FastAPI", "MongoDB", "Keycloak", "OpenAI"],
     status: "archived",
     result:
-      "Delivered a working authenticated SaaS with vectorized content, top-10 contextual retrieval and SSE answer streaming. The service is now offline.",
+      "The completed application combined authenticated workspaces, top-10 vector retrieval and SSE answer streaming. The service is now offline.",
     constraints: [
       "Keep authentication separate from application logic through OpenID Connect and validated RS256 access tokens.",
       "Coordinate TypeScript application services with a dedicated Python GenAI runtime.",
