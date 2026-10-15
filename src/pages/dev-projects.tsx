@@ -19,9 +19,10 @@ const EngineeringPage = () => (
         <p className="eyebrow">Selected technical work</p>
         <h1>Engineering</h1>
         <p>
-          Four projects covering full-stack development, applied AI, computer
-          vision and technical teaching. Each case study explains the problem,
-          my contribution, the implementation and the result.
+          Five projects covering full-stack development, applied AI, computer
+          vision, technical teaching and game development. Each case study
+          explains the problem, my contribution, the implementation and the
+          result.
         </p>
       </header>
 
@@ -40,7 +41,15 @@ const EngineeringPage = () => (
               </div>
               <h2>{project.title}</h2>
               <p className="case-summary">{project.summary}</p>
-              <ProjectVisual project={project} compact />
+              {/* Same destination as "View case study"; kept out of the tab order to avoid a duplicate stop. */}
+              <Link
+                className="case-study-visual-link"
+                to={projectPath(project)}
+                tabIndex={-1}
+                aria-hidden="true"
+              >
+                <ProjectVisual project={project} compact />
+              </Link>
               <dl>
                 <div>
                   <dt>Contribution</dt>

@@ -1,5 +1,6 @@
 import React from "react"
 import type { Project } from "../data/projects"
+import LoopVideo from "./loop-video"
 
 type NodeProps = {
   x: number
@@ -267,6 +268,18 @@ const CourseVisual = ({ compact }: { compact: boolean }) => {
   )
 }
 
+const GameVisual = ({ project, compact }: { project: Project; compact: boolean }) => {
+  const cover = project.cover
+  if (!cover?.loop) return null
+
+  return (
+    <figure className={`project-evidence${compact ? " project-evidence-compact" : ""}`}>
+      <LoopVideo cover={{ ...cover, loop: cover.loop }} eager={!compact} />
+      <figcaption>Pull a block, climb it, return the light · gameplay from the preview</figcaption>
+    </figure>
+  )
+}
+
 const CompactVisual = ({ project }: { project: Project }) => {
   if (project.visual === "narrative") {
     return (
@@ -292,6 +305,10 @@ const CompactVisual = ({ project }: { project: Project }) => {
         {['Next.js', 'Keycloak', 'NestJS', 'FastAPI', 'MongoDB', 'OpenAI'].map((service) => <span key={service}>{service}</span>)}
       </div>
     )
+  }
+
+  if (project.visual === "game") {
+    return <GameVisual project={project} compact />
   }
 
   return <CourseVisual compact />
@@ -338,6 +355,22 @@ const ProjectVisual = ({ project, compact = false }: { project: Project; compact
     return (
       <section className="project-visual-suite" aria-label="DocsRetriever verified system architecture">
         <RetrievalArchitecture />
+      </section>
+    )
+  }
+
+  if (project.visual === "game") {
+    return (
+      <section className="project-visual-suite" aria-label="Kororo gameplay from the itch.io preview">
+        <GameVisual project={project} compact={false} />
+        <figure className="project-evidence">
+          <img
+            src="/evidence/kororo-climb.jpg"
+            alt="A later Kororo wall where pulled blocks form a staircase towards the light"
+            loading="lazy"
+          />
+          <figcaption>Pulled blocks become the route · a later wall</figcaption>
+        </figure>
       </section>
     )
   }

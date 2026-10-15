@@ -1,6 +1,18 @@
 export type ProjectStatus = "active" | "completed" | "prototype" | "archived"
 
-export type ProjectVisual = "tracking" | "course" | "narrative" | "retrieval"
+export type ProjectVisual =
+  | "tracking"
+  | "course"
+  | "narrative"
+  | "retrieval"
+  | "game"
+
+export type ProjectCover = {
+  image: string
+  alt: string
+  // Silent gameplay loop shown in place of the image when motion is allowed.
+  loop?: { webm: string; mp4: string }
+}
 
 export type Project = {
   slug: string
@@ -14,6 +26,7 @@ export type Project = {
   constraints: string[]
   decisions: string[]
   visual: ProjectVisual
+  cover?: ProjectCover
   sourceUrl?: string
   demoUrl?: string
   demoLabel?: string
@@ -22,13 +35,85 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "kororo",
+    title: "Kororo",
+    summary:
+      "A browser-based 3D puzzle game where players push and pull blocks to create a path through each level.",
+    problem:
+      "Make a small puzzle game that runs in a browser tab, plays with a keyboard or on a phone, and lets players undo any move while every level stays solvable.",
+    role: "Built the game simulation, 3D interface, undo and replay, and level solving and validation in Web Workers",
+    stack: [
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Three.js",
+      "React Three Fiber",
+      "Web Workers",
+      "Vitest",
+    ],
+    status: "prototype",
+    result: "Playable preview on itch.io; still in development.",
+    constraints: [
+      "Keep the puzzle rules independent of the 3D scene, so moves can be tested, undone and replayed without rendering anything.",
+      "Search for level solutions without freezing input or animation on the main thread.",
+      "Stay smooth across devices with very different graphics budgets: a performance monitor steps the pixel ratio down from 1.75 to 1 and drops the sea’s finer detail at the lowest tier.",
+    ],
+    decisions: [
+      "Wrote the rules as a pure, deterministic simulation shared by the game and its Vitest suite; animation, camera and dialogue are presentation only.",
+      "Moved level solving and validation into Web Workers, so a search never blocks the scene and can be cancelled by terminating the worker.",
+      "Bound movement to the arrow keys so controls do not depend on keyboard layout, and showed touch buttons on coarse pointers rather than on narrow windows.",
+    ],
+    visual: "game",
+    cover: {
+      image: "/evidence/kororo-loop-poster.jpg",
+      alt: "Kororo gameplay: the player pulls a block from a wall, climbs it and returns the light to the lighthouse",
+      loop: {
+        webm: "/evidence/kororo-loop.webm",
+        mp4: "/evidence/kororo-loop.mp4",
+      },
+    },
+    demoUrl: "https://nathanknet.itch.io/kororo-private-playtest",
+    demoLabel: "Play the preview",
+    year: "2026",
+  },
+  {
+    slug: "conversational-agents-course",
+    title: "Conversational Agents Course",
+    summary:
+      "Seven practical workshops on building, exposing and evaluating conversational agents.",
+    problem:
+      "Give Master’s students enough structure and hands-on practice to build and assess a complete API-based conversational agent.",
+    role: "Designed the curriculum, taught the workshops and built the reference implementations",
+    stack: ["Python", "FastAPI", "LangChain", "LLMs"],
+    status: "completed",
+    result:
+      "Designed and delivered seven practical workshops to more than 20 Master’s students.",
+    constraints: [
+      "Fit API fundamentals, LLM orchestration and evaluation into seven progressive workshops.",
+      "Keep the reference implementation approachable while preserving a realistic service structure.",
+      "Provide exercises that connect theory to observable application behavior.",
+    ],
+    decisions: [
+      "Structured the material from REST and FastAPI fundamentals through tools, function calling and evaluation.",
+      "Separated routes, Pydantic models and the LLM service in the reference application.",
+      "Ended the sequence with a group-project workshop so students could combine the complete workflow.",
+    ],
+    visual: "course",
+    cover: {
+      image: "/evidence/conversational-agents-teaching.jpg",
+      alt: "Nathan Rihet teaching a university class about generative AI integration with LangChain",
+    },
+    sourceUrl: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
+    year: "2024–2025",
+  },
+  {
     slug: "rtht-3d",
     title: "RTHT-3D",
     summary:
       "A webcam-based interface that turns hand movements into real-time controls for Blender.",
     problem:
       "Control a 3D scene from a standard webcam without a physical controller or dedicated tracking hardware.",
-    role: "Designed and implemented the vision pipeline, gesture model, UDP protocol and Blender integration",
+    role: "Designed and implemented the vision pipeline, gesture recognition, UDP protocol and Blender integration",
     stack: ["Python", "MediaPipe", "Blender", "UDP"],
     status: "completed",
     result:
@@ -44,36 +129,14 @@ export const projects: Project[] = [
       "Mapped one-hand and two-hand gestures to distinct operations so complex actions remain intentional.",
     ],
     visual: "tracking",
+    cover: {
+      image: "/evidence/rtht-3d-cover.jpg",
+      alt: "RTHT-3D hand-tracking interface controlling a Blender scene",
+    },
     sourceUrl: "https://github.com/NathanKneT/RTHT-3D",
     demoUrl: "https://www.instagram.com/reel/DJLriUMSSpy/",
     demoLabel: "Watch demo",
     year: "2025",
-  },
-  {
-    slug: "conversational-agents-course",
-    title: "Conversational Agents Course",
-    summary:
-      "Seven practical workshops on building, exposing and evaluating conversational agents.",
-    problem:
-      "Give Master’s students enough structure and hands-on practice to build and assess a complete API-based conversational agent.",
-    role: "Designed the curriculum, taught the workshops and built the reference implementations",
-    stack: ["Python", "FastAPI", "LangChain", "LLMs"],
-    status: "completed",
-    result:
-      "More than 20 Master’s students completed the seven-workshop sequence and presented working group projects.",
-    constraints: [
-      "Fit API fundamentals, LLM orchestration and evaluation into seven progressive workshops.",
-      "Keep the reference implementation approachable while preserving a realistic service structure.",
-      "Provide exercises that connect theory to observable application behavior.",
-    ],
-    decisions: [
-      "Structured the material from REST and FastAPI fundamentals through tools, function calling and evaluation.",
-      "Separated routes, Pydantic models and the LLM service in the reference application.",
-      "Finished with group projects and demonstrations so students had to combine the complete workflow.",
-    ],
-    visual: "course",
-    sourceUrl: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
-    year: "2024–2025",
   },
   {
     slug: "narrative-forge",
@@ -98,6 +161,10 @@ export const projects: Project[] = [
       "Placed structured OpenAI generation behind Next.js API routes, then processed generated nodes and choices before inserting them into the graph.",
     ],
     visual: "narrative",
+    cover: {
+      image: "/evidence/narrative-forge-editor.png",
+      alt: "NarrativeForge React Flow editor showing a branching story graph",
+    },
     sourceUrl: "https://github.com/NathanKneT/NarrativeForge-nextjs",
     year: "2023–2025",
   },
@@ -124,7 +191,7 @@ export const projects: Project[] = [
       "Stored 1536-dimensional vectors with content records and queried a MongoDB cosine index using 100 candidates and a top-10 result limit.",
     ],
     visual: "retrieval",
-    year: "2025",
+    year: "2024–2025",
   },
 ]
 
