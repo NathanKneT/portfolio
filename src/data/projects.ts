@@ -40,7 +40,7 @@ export const projects: Project[] = [
     summary:
       "A browser-based 3D puzzle game where players push and pull blocks to create a path through each level.",
     problem:
-      "Make a small puzzle game that runs in a browser tab, plays with a keyboard or on a phone, and lets players undo any move while every level stays solvable.",
+      "Bring back a push-and-pull puzzle mechanic I loved and see how far it could go as a modern browser game built solo.",
     role: "Built the game simulation, 3D interface, undo and replay, and level solving and validation in Web Workers",
     stack: [
       "TypeScript",
@@ -52,7 +52,8 @@ export const projects: Project[] = [
       "Vitest",
     ],
     status: "prototype",
-    result: "Playable preview on itch.io; still in development.",
+    result:
+      "Playable preview 0.2.0 on itch.io: three worlds, including ice where blocks slide and a cave where light is part of the puzzle. Still in development.",
     constraints: [
       "Keep the puzzle rules independent of the 3D scene, so moves can be tested, undone and replayed without rendering anything.",
       "Search for level solutions without freezing input or animation on the main thread.",
