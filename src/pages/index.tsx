@@ -2,6 +2,7 @@ import React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
+import LoopVideo from "../components/loop-video"
 import { projectPath, projects } from "../data/projects"
 
 const LandingPage = () => (
@@ -11,9 +12,12 @@ const LandingPage = () => (
         <p className="eyebrow">Nathan Rihet · Osaka, Japan</p>
         <h1 id="landing-title">Full Stack Engineer in Osaka</h1>
         <p className="hero-copy">
-          I design and build web products with TypeScript, Next.js, Python and
-          FastAPI. Alongside engineering, I photograph people, cities and live
-          events.
+          I design and build web applications with TypeScript, Next.js, Python
+          and FastAPI. Outside work, I’m developing an{" "}
+          <Link className="inline-link" to="/engineering/kororo/">
+            independent puzzle game
+          </Link>
+          . I also photograph people, cities and live events.
         </p>
         <div className="button-row">
           <Link className="button button-primary" to="/dev-projects/">
@@ -44,6 +48,21 @@ const LandingPage = () => (
                 to={projectPath(project)}
                 aria-label={`View ${project.title} case study`}
               >
+                {project.cover && (
+                  <div className="project-card-media">
+                    {project.cover.loop ? (
+                      <LoopVideo
+                        cover={{ ...project.cover, loop: project.cover.loop }}
+                      />
+                    ) : (
+                      <img
+                        src={project.cover.image}
+                        alt={project.cover.alt}
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
+                )}
                 <div className="project-meta">
                   <span>{project.status}</span>
                   <span>{project.year}</span>
@@ -51,7 +70,9 @@ const LandingPage = () => (
                 <h3>{project.title}</h3>
                 <p>{project.summary}</p>
                 <p className="stack">{project.stack.join(" · ")}</p>
-                <span className="card-action">View case study →</span>
+                <span className="card-action">
+                  View case study <span aria-hidden="true">→</span>
+                </span>
               </Link>
             </article>
           ))}
@@ -99,14 +120,13 @@ const LandingPage = () => (
         </div>
         <div>
           <p>
-            I work across frontend, backend and delivery on medical-imaging and
-            applied-AI software. My day-to-day work includes APIs, secure data
-            workflows, automated tests and CI/CD.
+            I build web applications and backend services around
+            computer-vision pipelines, including video upload and playback,
+            human review of results and access-controlled sharing.
           </p>
           <p>
-            Outside work, I continue to develop independent software and
-            photography projects, and I enjoy exchanging ideas with engineers,
-            designers and photographers.
+            My recent work includes GPU job scheduling and background workflows
+            that handle retries, cancellation and failure recovery.
           </p>
           <Link className="inline-link" to="/biography/">
             More about my path
