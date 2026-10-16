@@ -5,6 +5,7 @@ import type { HeadFC, PageProps } from "gatsby"
 import { GatsbyImage, type IGatsbyImageData } from "gatsby-plugin-image"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import Seo from "./seo"
+import PhotoLightbox from "../../../components/photo-lightbox"
 
 const Image = GatsbyImage as unknown as (
   props: React.ComponentProps<typeof GatsbyImage>
@@ -39,7 +40,17 @@ type ProjectData = {
 
 const Project: React.FC<
   React.PropsWithChildren<PageProps<ProjectData>>
-> = ({ data: { project, images }, children }) => (
+> = ({ data: { project, images }, children }) => {
+  const [openIndex, setOpenIndex] = React.useState<number | null>(null)
+  const gallery = [...images.nodes]
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((image, index) => ({
+      name: image.name,
+      image: image.childImageSharp.gatsbyImageData,
+      alt: `${project.shortTitle} photography by Nathan Rihet — image ${index + 1}`,
+    }))
+
+  return (
   <Layout color={project.color || undefined}>
     <header
       sx={{
@@ -70,17 +81,23 @@ const Project: React.FC<
       sx={{ backgroundColor: `var(--gallery)` }}
     >
       <div sx={{ variant: `content.imageList` }}>
-        {images.nodes.map((image, index) => (
-          <Image
-            key={image.name}
-            alt={`${project.shortTitle} photography by Nathan Rihet — image ${index + 1}`}
-            image={image.childImageSharp.gatsbyImageData}
-          />
+        {gallery.map((photo, index) => (
+          <button
+            type="button"
+            key={photo.name}
+            className="photo-open"
+            aria-label={`Open image ${index + 1} of ${gallery.length}`}
+            onClick={() => setOpenIndex(index)}
+          >
+            <Image alt={photo.alt} image={photo.image} />
+          </button>
         ))}
       </div>
     </section>
+    <PhotoLightbox images={gallery} index={openIndex} onChange={setOpenIndex} />
   </Layout>
-)
+  )
+}
 
 export default Project
 
@@ -90,7 +107,7 @@ export const Head: HeadFC<ProjectData> = ({
 }) => (
   <Seo
     title={`${project.shortTitle} Photography`}
-    description={project.excerpt}
+    description={`${project.shortTitle} photography by Nathan Rihet, photographer and engineer based in Osaka. ${project.excerpt}`}
     pathname={location.pathname}
     image={project.cover.childImageSharp.resize.src}
     imageAlt={`${project.shortTitle} photography series by Nathan Rihet`}
