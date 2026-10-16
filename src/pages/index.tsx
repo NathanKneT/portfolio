@@ -89,7 +89,7 @@ const LandingPage = () => (
           <Link to="/night/" className="photo-preview">
             <img
               src="/previews/night.webp"
-              alt="A cinematic night scene photographed by Nathan Rihet"
+              alt="Red paper lanterns outside an izakaya at night, photographed by Nathan Rihet"
               loading="lazy"
             />
             <span>Night</span>
@@ -97,7 +97,7 @@ const LandingPage = () => (
           <Link to="/portrait/" className="photo-preview">
             <img
               src="/previews/portrait.webp"
-              alt="Editorial portrait photographed by Nathan Rihet"
+              alt="Portrait in red and blue light, photographed by Nathan Rihet"
               loading="lazy"
             />
             <span>Portrait</span>
@@ -105,7 +105,7 @@ const LandingPage = () => (
           <Link to="/urban/" className="photo-preview">
             <img
               src="/previews/urban.webp"
-              alt="Urban architecture photographed by Nathan Rihet"
+              alt="Montreal skyline reflected in a puddle at sunset, photographed by Nathan Rihet"
               loading="lazy"
             />
             <span>Urban</span>
