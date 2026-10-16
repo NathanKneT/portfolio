@@ -1466,8 +1466,8 @@ dd {
 
 .photo-preview {
   display: grid;
-  overflow: visible;
-  border-top: 1px solid var(--line-strong);
+  overflow: hidden;
+  border-top: 0;
   border-radius: 0;
   background: transparent;
   text-decoration: none;

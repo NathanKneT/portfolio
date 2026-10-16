@@ -107,7 +107,7 @@ export const Head: HeadFC<ProjectData> = ({
 }) => (
   <Seo
     title={`${project.shortTitle} Photography`}
-    description={project.excerpt}
+    description={`${project.shortTitle} photography by Nathan Rihet, photographer and engineer based in Osaka. ${project.excerpt}`}
     pathname={location.pathname}
     image={project.cover.childImageSharp.resize.src}
     imageAlt={`${project.shortTitle} photography series by Nathan Rihet`}

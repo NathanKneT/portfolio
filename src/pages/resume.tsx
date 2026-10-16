@@ -284,7 +284,7 @@ export const Head = () => (
   <SEO
     pathname="/resume/"
     title="Resume"
-    description="Resume of Nathan Rihet, a Full Stack Engineer in Osaka working with TypeScript, React, Next.js, Python and FastAPI on computer-vision applications, GPU job scheduling and background workflows."
+    description="Resume of Nathan Rihet, Full Stack Engineer in Osaka: TypeScript, React, Python and FastAPI, computer-vision applications and GPU job scheduling."
     schemaType="ProfilePage"
     breadcrumbs={[
       { name: "Home", pathname: "/" },

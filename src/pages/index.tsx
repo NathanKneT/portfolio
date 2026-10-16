@@ -89,7 +89,7 @@ const LandingPage = () => (
           <Link to="/night/" className="photo-preview">
             <img
               src="/previews/night.webp"
-              alt="Red paper lanterns outside an izakaya at night, photographed by Nathan Rihet"
+              alt="Canal lined with neon signs reflecting on the water at night, photographed by Nathan Rihet"
               loading="lazy"
             />
             <span>Night</span>
