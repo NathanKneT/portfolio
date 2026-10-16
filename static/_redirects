@@ -1,2 +1,10 @@
 # Serve the dual-track landing page at the site root.
 /  /index.html  200!
+
+# Concert and theatre merged into Stage; collaboration merged into Portrait (October 2026).
+/concert        /stage      301
+/concert/       /stage/     301
+/theatre        /stage      301
+/theatre/       /stage/     301
+/collaboration  /portrait   301
+/collaboration/ /portrait/  301
