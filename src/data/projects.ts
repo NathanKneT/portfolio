@@ -6,6 +6,12 @@ export type ProjectVisual =
   | "narrative"
   | "retrieval"
   | "game"
+  | "vr"
+  | "port"
+
+// "games": games, VR and console ports built on my own time; "software": applications, applied AI and teaching.
+// The engineering page lists the two groups in this order, and the home page shows the first three projects.
+export type ProjectTrack = "games" | "software"
 
 export type ProjectCover = {
   image: string
@@ -17,6 +23,7 @@ export type ProjectCover = {
 export type Project = {
   slug: string
   title: string
+  track: ProjectTrack
   summary: string
   problem: string
   role: string
@@ -37,6 +44,7 @@ export const projects: Project[] = [
   {
     slug: "kororo",
     title: "Kororo",
+    track: "games",
     summary:
       "A browser-based 3D puzzle game where players push and pull blocks to create a path through each level.",
     problem:
@@ -78,8 +86,79 @@ export const projects: Project[] = [
     year: "2026",
   },
   {
+    slug: "vrtrakill",
+    title: "VRTRAKILL",
+    track: "games",
+    summary:
+      "A VR mod that makes ULTRAKILL playable with motion controllers on the game’s current Steam version, through SteamVR.",
+    problem:
+      "ULTRAKILL’s community VR mod was built on older versions of the game, and players kept reporting the same problems: a hard setup, controls that needed the game window in focus, missing controller layouts. Starting from the most recent community port, I set out to fix the most-reported problems and to add what the PS VR2 can do.",
+    role: "Lead version 2.0 and maintain it, developed with an AI coding assistant: input and gameplay patches, PS VR2 features, the streamer view, the installer, signed releases and headset testing",
+    stack: ["C#", "Unity", "BepInEx", "Harmony", "OpenVR", "SteamVR Input"],
+    status: "active",
+    result:
+      "Version 2.0 is out on GitHub with signed releases and a one-click installer. Tested on PS VR2, with controller layouts for Quest, Index, Steam Frame, Pico, Vive and WMR. The same install starts flat when SteamVR is off.",
+    constraints: [
+      "Change a shipped game without its source: every change is a Harmony patch on the compiled code, so the mod targets one exact game build and says so.",
+      "Keep the headset at 90 or 120 Hz: the extra camera for streaming renders at 60 frames a second into its own texture and never draws in the headset.",
+      "Make every new motion optional: punches by swinging and movement gestures always keep a button, since players stand, sit and have different comfort limits.",
+    ],
+    decisions: [
+      "Fed the game’s controls from SteamVR actions through a virtual input layer, so buttons work while another window has focus and never reach Windows or other programs.",
+      "Drove the PS VR2 through the PSVR2 Toolkit: each weapon has its own adaptive trigger effect that follows its state, and parried projectiles go where the player’s eyes look.",
+      "Rendered the monitor view from a separate camera with frame-rate-independent smoothing and a level horizon, plus a HUD and gaze overlay drawn only for viewers.",
+      "Added in-game test hooks that play scripted head and controller poses in a real level and log a pass or a difference, so punches, gestures and settings are checked without wearing the headset.",
+      "Shipped RSA-signed checksums with every release and a one-click installer that finds the game through Steam’s libraries and keeps the player’s settings.",
+    ],
+    visual: "vr",
+    cover: {
+      image: "/evidence/vrtrakill-shotgun.jpg",
+      alt: "ULTRAKILL in VR: the shotgun in the gun hand and the Feedbacker in the other, seen from the headset",
+    },
+    sourceUrl: "https://github.com/NathanKneT/VRTRAKILL",
+    demoUrl: "https://github.com/NathanKneT/VRTRAKILL/releases/latest",
+    demoLabel: "Download the mod",
+    year: "2026",
+  },
+  {
+    slug: "duskonvita",
+    title: "DuskOnVita",
+    track: "games",
+    summary:
+      "An unofficial PS Vita port of Twilight Princess that runs the game’s decompiled code natively on the console, without emulation.",
+    problem:
+      "Dusklight builds the Twilight Princess decompilation as a native program. I wanted to know whether the PS Vita could run it natively, at the original 30 FPS, with the game behaving exactly as it was made.",
+    role: "Write the Vita side, developed with AI assistance: the GX-to-GXM renderer, audio, input, memory, the settings page and the measurement tools",
+    stack: ["C++", "GXM", "vitaGL", "VitaSDK", "SDL", "Python"],
+    status: "active",
+    result:
+      "Version 0.9.0 boots from the player’s own disc image, plays the opening in Ordon and saves on a real PS Vita 1000. Outside Link’s house went from 7.4 FPS on an early single-core build (22 Oct) to 29.5 (11 Nov); the busiest places still run between 10 and 19 FPS.",
+    constraints: [
+      "The game issues GameCube GPU commands: each one is translated into the Vita’s GXM API at run time, on a quad-core ARM Cortex-A9 with 512 MB of RAM.",
+      "Keep the game exact: speed-ups that are on by default must give the same results bit for bit; anything that changes the simulation is an opt-in setting.",
+      "Ship no game data or third-party artwork: players bring their own disc, and the button prompts and LiveArea pictures are drawn in code.",
+    ],
+    decisions: [
+      "Wrote a native GXM renderer with resident geometry, packed vertex formats and native primitives; it replaced the vitaGL path as the default (outside Link’s house, 22.9 to 27.2 FPS on the same build).",
+      "Cut the GX worker’s cost: unchanged pipelines are not checked again, uniforms go straight into GPU memory, and rows of identical squares go out as one draw (Palace of Twilight, 7 to 13 FPS).",
+      "Rendered the sound in small steps, which brought late sound buffers in the Palace of Twilight from 29% to 0.2%.",
+      "Measured speed on the console only, one change per run on a scripted route, and checked the exact speed-ups with host tests that compare real functions against frozen earlier versions under AddressSanitizer and UBSan.",
+      "Made the build reproducible: a digest-pinned VitaSDK Docker image, hash-pinned dependencies and networking off.",
+    ],
+    visual: "port",
+    cover: {
+      image: "/evidence/duskonvita-livearea.png",
+      alt: "DuskOnVita’s LiveArea background: a dusk sky over hills, drawn in code by the port’s own tool",
+    },
+    sourceUrl: "https://github.com/NathanKneT/DuskOnVita",
+    demoUrl: "https://github.com/NathanKneT/DuskOnVita/releases/latest",
+    demoLabel: "Download the VPK",
+    year: "2026",
+  },
+  {
     slug: "conversational-agents-course",
     title: "Conversational Agents Course",
+    track: "software",
     summary:
       "Seven practical workshops on building, exposing and evaluating conversational agents.",
     problem:
@@ -110,6 +189,7 @@ export const projects: Project[] = [
   {
     slug: "rtht-3d",
     title: "RTHT-3D",
+    track: "software",
     summary:
       "A webcam-based interface that turns hand movements into real-time controls for Blender.",
     problem:
@@ -142,6 +222,7 @@ export const projects: Project[] = [
   {
     slug: "narrative-forge",
     title: "NarrativeForge",
+    track: "software",
     summary:
       "A node-based editor for writing, checking and testing branching interactive stories.",
     problem:
@@ -172,6 +253,7 @@ export const projects: Project[] = [
   {
     slug: "docs-retriever",
     title: "DocsRetriever",
+    track: "software",
     summary:
       "An authenticated document workspace with vector retrieval and streamed answers.",
     problem:

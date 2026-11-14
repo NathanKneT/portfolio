@@ -388,9 +388,22 @@ img {
   letter-spacing: 0.1em;
 }
 
-.case-study h2 {
+.case-study h2,
+.case-study h3 {
   margin: 0.8rem 0;
   font-size: clamp(2rem, 5vw, 4.2rem);
+}
+
+/* Engineering page: games first, then software (src/pages/dev-projects.tsx) */
+.case-study-group + .case-study-group {
+  margin-top: clamp(4rem, 8vw, 7rem);
+}
+
+.case-study-group-heading > p:not(.eyebrow) {
+  grid-column: 1 / -1;
+  max-width: 760px;
+  margin: 0.4rem 0 0;
+  color: var(--muted);
 }
 
 .case-summary {
@@ -1505,7 +1518,8 @@ dd {
   font-size: 0.8rem;
 }
 
-.case-study h2 {
+.case-study h2,
+.case-study h3 {
   font-size: clamp(2rem, 4vw, 3rem);
 }
 

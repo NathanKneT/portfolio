@@ -13,9 +13,17 @@ const LandingPage = () => (
         <h1 id="landing-title">Full Stack Engineer in Osaka</h1>
         <p className="hero-copy">
           I design and build web applications with TypeScript, Next.js, Python
-          and FastAPI. Outside work, I’m developing an{" "}
+          and FastAPI. Outside work, I make games: an{" "}
           <Link className="inline-link" to="/engineering/kororo/">
             independent puzzle game
+          </Link>
+          , a{" "}
+          <Link className="inline-link" to="/engineering/vrtrakill/">
+            VR mod for ULTRAKILL
+          </Link>{" "}
+          and a{" "}
+          <Link className="inline-link" to="/engineering/duskonvita/">
+            PS Vita port
           </Link>
           . I also photograph people, cities and live events.
         </p>
