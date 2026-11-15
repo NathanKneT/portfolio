@@ -13,23 +13,17 @@ interface IGridItem {
 }
 
 const modifyGrid = (data: Array<IGridItem>): Array<IGridItem> => {
-  console.log("Données avant filtrage:", data)
-  
-  // Filtrer pour exclure biography ET les projets dev
+  // Leave out the biography page and the engineering projects
   const filtered = data.filter(item => {
-    // Exclure la page biography
     if (item.slug === '/biography') return false
     
     const isDevProject = item.category?.toLowerCase().includes('dev') || 
                          item.slug.includes('dev-') ||
                          item.title?.toLowerCase().includes('dev')
     
-    console.log(`Projet: ${item.title}, slug: ${item.slug}, category: ${item.category}, isDevProject: ${isDevProject}`)
-    
     return !isDevProject
   })
   
-  console.log("Données après filtrage:", filtered)
   return filtered
 }
 
