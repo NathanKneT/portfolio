@@ -13,7 +13,7 @@ const LandingPage = () => (
         <h1 id="landing-title">Full Stack Engineer in Osaka</h1>
         <p className="hero-copy">
           I design and build web applications with TypeScript, Next.js, Python
-          and FastAPI. Outside work, I make games: an{" "}
+          and FastAPI. Outside work, I build real-time software: an{" "}
           <Link className="inline-link" to="/engineering/kororo/">
             independent puzzle game
           </Link>
@@ -161,7 +161,7 @@ export const Head = () => (
   <SEO
     pathname="/"
     title="Full Stack Engineer in Osaka"
-    description="Nathan Rihet is a Full Stack Engineer and photographer in Osaka. Explore his work with TypeScript, Next.js, Python, FastAPI and applied AI."
+    description="Nathan Rihet is a Full Stack Engineer and photographer in Osaka. Explore his work with TypeScript, Next.js, Python, FastAPI and applied AI, and his games, VR mod and PS Vita port."
     imageAlt="Nathan Rihet — Full Stack Engineer in Osaka"
     schemaType="ProfilePage"
   />

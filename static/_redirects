@@ -1,6 +1,10 @@
 # Serve the dual-track landing page at the site root.
 /  /index.html  200!
 
+# The case studies live under /engineering/; their list is /dev-projects/.
+/engineering    /dev-projects/  301
+/engineering/   /dev-projects/  301
+
 # Concert and theatre merged into Stage; collaboration merged into Portrait (October 2026).
 /concert        /stage      301
 /concert/       /stage/     301

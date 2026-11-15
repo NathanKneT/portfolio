@@ -320,17 +320,17 @@ const PortArchitecture = () => {
   )
 }
 
-// Console figures from the DuskOnVita README (docs/benchmarks.csv in that repository).
+// Console figures from the DuskOnVita README (docs/benchmarks.csv in that repository): gains, then the slowest places.
 const PortMeasurements = () => (
   <div className="gesture-matrix" aria-label="Frame rates measured on a PS Vita 1000">
     <h2>Measured on a PS Vita 1000</h2>
     <dl>
-      <div><dt>Outside Link’s house</dt><dd>7.4 → 29.5 FPS · 22 Oct to 11 Nov</dd></div>
       <div><dt>Hyrule Field bridge</dt><dd>18.3 → 29.1 FPS · 5 to 11 Nov</dd></div>
       <div><dt>Castle Town, twilight</dt><dd>21.1 → 27.0 FPS · 5 to 11 Nov</dd></div>
-      <div><dt>Snowpeak Ruins, room 9</dt><dd>9 → 19 FPS · one draw per row of squares</dd></div>
       <div><dt>Palace of Twilight</dt><dd>7 → 13 FPS · late sound buffers 29% → 0.2%</dd></div>
-      <div><dt>Goal</dt><dd>A steady 30 FPS, the original frame rate</dd></div>
+      <div><dt>Snowpeak Ruins, room 9</dt><dd>9 → 19 FPS · one draw per row of squares</dd></div>
+      <div><dt>Hyrule Field, enemy areas</dt><dd>Still 14.5 FPS · 82% game speed · 26% late sound buffers</dd></div>
+      <div><dt>Ordon village, widest view</dt><dd>Still 9.9 FPS · 66% game speed · the slowest place</dd></div>
     </dl>
   </div>
 )

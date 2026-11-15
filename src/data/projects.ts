@@ -61,7 +61,7 @@ export const projects: Project[] = [
     ],
     status: "prototype",
     result:
-      "Playable preview 0.2.0 on itch.io: three worlds, including ice where blocks slide and a cave where light is part of the puzzle. Still in development.",
+      "Playable preview 0.4.5 on itch.io: 13 story walls across four worlds, including ice where Pon slides until something stops him, a cave where light wakes the blocks and a building site where doors are joined by pipes, plus a level editor. Still in development.",
     constraints: [
       "Keep the puzzle rules independent of the 3D scene, so moves can be tested, undone and replayed without rendering anything.",
       "Search for level solutions without freezing input or animation on the main thread.",
@@ -93,11 +93,11 @@ export const projects: Project[] = [
       "A VR mod that makes ULTRAKILL playable with motion controllers on the game’s current Steam version, through SteamVR.",
     problem:
       "ULTRAKILL’s community VR mod was built on older versions of the game, and players kept reporting the same problems: a hard setup, controls that needed the game window in focus, missing controller layouts. Starting from the most recent community port, I set out to fix the most-reported problems and to add what the PS VR2 can do.",
-    role: "Lead version 2.0 and maintain it, developed with an AI coding assistant: input and gameplay patches, PS VR2 features, the streamer view, the installer, signed releases and headset testing",
+    role: "Built version 2.0 with an AI coding assistant and maintain it: input and gameplay patches, PS VR2 features, the streamer view, the installer, signed releases and headset testing",
     stack: ["C#", "Unity", "BepInEx", "Harmony", "OpenVR", "SteamVR Input"],
     status: "active",
     result:
-      "Version 2.0 is out on GitHub with signed releases and a one-click installer. Tested on PS VR2, with controller layouts for Quest, Index, Steam Frame, Pico, Vive and WMR. The same install starts flat when SteamVR is off.",
+      "Version 2.0 is out on GitHub with signed releases and a one-click installer. It runs through SteamVR, with controller layouts for PS VR2, Quest, Index, Steam Frame, Pico, Vive and WMR, and the same install starts flat when SteamVR is off.",
     constraints: [
       "Change a shipped game without its source: every change is a Harmony patch on the compiled code, so the mod targets one exact game build and says so.",
       "Keep the headset at 90 or 120 Hz: the extra camera for streaming renders at 60 frames a second into its own texture and never draws in the headset.",
@@ -128,18 +128,18 @@ export const projects: Project[] = [
       "An unofficial PS Vita port of Twilight Princess that runs the game’s decompiled code natively on the console, without emulation.",
     problem:
       "Dusklight builds the Twilight Princess decompilation as a native program. I wanted to know whether the PS Vita could run it natively, at the original 30 FPS, with the game behaving exactly as it was made.",
-    role: "Write the Vita side, developed with AI assistance: the GX-to-GXM renderer, audio, input, memory, the settings page and the measurement tools",
+    role: "Wrote the Vita side with AI assistance: the GX-to-GXM renderer, audio, input, memory, the settings page and the measurement tools",
     stack: ["C++", "GXM", "vitaGL", "VitaSDK", "SDL", "Python"],
     status: "active",
     result:
-      "Version 0.9.0 boots from the player’s own disc image, plays the opening in Ordon and saves on a real PS Vita 1000. Outside Link’s house went from 7.4 FPS on an early single-core build (22 Oct) to 29.5 (11 Nov); the busiest places still run between 10 and 19 FPS.",
+      "Version 0.9.0 boots from the player’s own disc image, plays the opening in Ordon and saves on a real PS Vita 1000. On the console, the Hyrule Field bridge went from 18.3 to 29.1 FPS; the busiest places still run at 10 to 19 FPS against the original 30.",
     constraints: [
       "The game issues GameCube GPU commands: each one is translated into the Vita’s GXM API at run time, on a quad-core ARM Cortex-A9 with 512 MB of RAM.",
       "Keep the game exact: speed-ups that are on by default must give the same results bit for bit; anything that changes the simulation is an opt-in setting.",
       "Ship no game data or third-party artwork: players bring their own disc, and the button prompts and LiveArea pictures are drawn in code.",
     ],
     decisions: [
-      "Wrote a native GXM renderer with resident geometry, packed vertex formats and native primitives; it replaced the vitaGL path as the default (outside Link’s house, 22.9 to 27.2 FPS on the same build).",
+      "Wrote a native GXM renderer with resident geometry, packed vertex formats and native primitives. On the same build it was faster outside Link’s house (22.9 to 27.2 FPS) and in the Faron fight (11.7 to 14.0), slightly slower inside the GPU-bound house (20.2 to 19.4), and it replaced the vitaGL path as the default.",
       "Cut the GX worker’s cost: unchanged pipelines are not checked again, uniforms go straight into GPU memory, and rows of identical squares go out as one draw (Palace of Twilight, 7 to 13 FPS).",
       "Rendered the sound in small steps, which brought late sound buffers in the Palace of Twilight from 29% to 0.2%.",
       "Measured speed on the console only, one change per run on a scripted route, and checked the exact speed-ups with host tests that compare real functions against frozen earlier versions under AddressSanitizer and UBSan.",
