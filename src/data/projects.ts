@@ -160,7 +160,7 @@ export const projects: Project[] = [
     title: "Conversational Agents Course",
     track: "software",
     summary:
-      "Seven practical workshops on building, exposing and evaluating conversational agents.",
+      "Seven practical workshops on building, deploying and evaluating conversational agents.",
     problem:
       "Give Master’s students enough structure and hands-on practice to build and assess a complete API-based conversational agent.",
     role: "Designed the curriculum, taught the workshops and built the reference implementations",
@@ -195,7 +195,7 @@ export const projects: Project[] = [
     problem:
       "Control a 3D scene from a standard webcam without a physical controller or dedicated tracking hardware.",
     role: "Designed and implemented the vision pipeline, gesture recognition, UDP protocol and Blender integration",
-    stack: ["Python", "MediaPipe", "Blender", "UDP"],
+    stack: ["Python", "OpenCV", "MediaPipe", "Blender", "UDP"],
     status: "completed",
     result:
       "The finished prototype supports one- and two-hand scene controls; its public demonstration reached 343K views.",

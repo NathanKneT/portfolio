@@ -508,7 +508,15 @@ const ProjectVisual = ({ project, compact = false }: { project: Project; compact
 
   if (project.visual === "port") {
     return (
-      <section className="project-visual-suite" aria-label="DuskOnVita port architecture and console measurements">
+      <section className="project-visual-suite" aria-label="DuskOnVita on a PS Vita, port architecture and console measurements">
+        <figure className="project-evidence">
+          <img
+            src="/evidence/duskonvita-ordon.jpg"
+            alt="DuskOnVita running on a PS Vita 1000: Link in Ordon village"
+            loading="eager"
+          />
+          <figcaption>Running on a PS Vita 1000 · Ordon village</figcaption>
+        </figure>
         <PortArchitecture />
         <PortMeasurements />
       </section>

@@ -20,7 +20,7 @@ const tracks: { id: ProjectTrack; eyebrow: string; title: string; intro: string 
     eyebrow: "Built on my own time",
     title: "Games, VR and ports",
     intro:
-      "A browser puzzle game, a VR mod and a console port: real-time work where frame rate, input and comfort decide whether it is playable.",
+      "VR mods, console ports and 3D games: real-time work where frame rate, input and comfort decide whether it is playable.",
   },
   {
     id: "software",
@@ -94,7 +94,7 @@ const EngineeringPage = () => (
         <p className="eyebrow">Selected technical work</p>
         <h1>Engineering</h1>
         <p>
-          Seven projects in two groups: games, VR and console ports I build on
+          Two groups of projects: VR mods, console ports and 3D games I build on
           my own time, then full-stack development, applied AI, computer vision
           and technical teaching. Each case study explains the problem, my
           contribution, the implementation and the result.
@@ -146,7 +146,7 @@ export const Head = () => (
   <SEO
     pathname="/dev-projects/"
     title="Software Engineering Projects"
-    description="Engineering case studies by Nathan Rihet: games, a VR mod and a PS Vita port, plus Next.js, FastAPI, applied AI, computer vision and software architecture."
+    description="Engineering case studies by Nathan Rihet: VR mods, console ports and 3D games, plus Next.js, FastAPI, applied AI, computer vision and software architecture."
     schemaType="CollectionPage"
     breadcrumbs={[
       { name: "Home", pathname: "/" },

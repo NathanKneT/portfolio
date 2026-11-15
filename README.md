@@ -1,7 +1,7 @@
 # Nathan Rihet — Engineering & Photography Portfolio
 
 Personal portfolio for [Nathan Rihet](https://github.com/NathanKneT), a Full
-Stack Engineer and visual creator based in Osaka.
+Stack Engineer and photographer based in Osaka.
 
 The site deliberately presents two complementary practices:
 

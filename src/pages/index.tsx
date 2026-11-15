@@ -13,17 +13,9 @@ const LandingPage = () => (
         <h1 id="landing-title">Full Stack Engineer in Osaka</h1>
         <p className="hero-copy">
           I design and build web applications with TypeScript, Next.js, Python
-          and FastAPI. Outside work, I build real-time software: an{" "}
-          <Link className="inline-link" to="/engineering/kororo/">
-            independent puzzle game
-          </Link>
-          , a{" "}
-          <Link className="inline-link" to="/engineering/vrtrakill/">
-            VR mod for ULTRAKILL
-          </Link>{" "}
-          and a{" "}
-          <Link className="inline-link" to="/engineering/duskonvita/">
-            PS Vita port
+          and FastAPI. Outside work, I build real-time software:{" "}
+          <Link className="inline-link" to="/dev-projects/">
+            VR mods, console ports and 3D games
           </Link>
           . I also photograph people, cities and live events.
         </p>
@@ -161,7 +153,7 @@ export const Head = () => (
   <SEO
     pathname="/"
     title="Full Stack Engineer in Osaka"
-    description="Nathan Rihet is a Full Stack Engineer and photographer in Osaka. Explore his work with TypeScript, Next.js, Python, FastAPI and applied AI, and his games, VR mod and PS Vita port."
+    description="Nathan Rihet is a Full Stack Engineer and photographer in Osaka. Explore his work with TypeScript, Next.js, Python, FastAPI and applied AI, and his VR mods, console ports and 3D games."
     imageAlt="Nathan Rihet — Full Stack Engineer in Osaka"
     schemaType="ProfilePage"
   />
