@@ -43,6 +43,9 @@
   --chart-surface: var(--surface);
 
   --ease: cubic-bezier(.2, 0, .4, 1);
+  /* Arrivals only: the hero text on load and the photo viewer opening (a fast start that settles).
+     Everything else moves on --ease. */
+  --ease-arrive: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Type scale (design-phase.md §3, home H1 from §11). Sizes and line heights
      run from the phone value at 375 px to the desktop value at 1440 px. */
@@ -248,87 +251,6 @@ img {
   background: rgba(255, 255, 255, 0.04);
 }
 
-.section-block {
-  padding: clamp(4.5rem, 9vw, 8rem) 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.project-card {
-  min-height: 270px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  transition: border-color 180ms ease, transform 180ms ease;
-}
-
-.project-card:hover,
-.project-card:focus-within {
-  border-color: rgba(141, 162, 255, 0.62);
-  transform: translateY(-3px);
-}
-
-.project-card-link {
-  display: flex;
-  min-height: 100%;
-  padding: 1.5rem;
-  flex-direction: column;
-  color: inherit;
-  text-decoration: none;
-}
-
-.project-card-link:hover {
-  color: inherit;
-}
-
-.project-card h3 {
-  margin: 2.5rem 0 0.7rem;
-  font-size: 1.45rem;
-}
-
-.project-card p {
-  margin: 0;
-}
-
-.project-card .stack {
-  margin-top: 1.5rem;
-  color: #d4d4d8;
-  font-size: 0.85rem;
-}
-
-.card-action {
-  margin-top: auto;
-  padding-top: 1.5rem;
-  color: var(--text);
-  font-size: 0.9rem;
-  font-weight: 650;
-}
-
-.split-section {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(2rem, 7vw, 7rem);
-}
-
-.split-section h2 {
-  margin-top: 0.7rem;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-}
-
-.split-section p:first-child {
-  margin-top: 0;
-}
-
-.inline-link {
-  color: var(--text);
-  font-weight: 600;
-}
-
 dt {
   color: var(--muted);
   font-size: 0.82rem;
@@ -340,363 +262,6 @@ dt {
 dd {
   margin: 0;
   color: #d4d4d8;
-}
-
-.project-visual-suite,
-.retrieval-diagrams {
-  display: grid;
-  gap: 2rem;
-}
-
-.architecture-figure {
-  overflow: hidden;
-  margin: 0;
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) + 6px);
-  background: #101016;
-}
-
-.architecture-figure > figcaption {
-  padding: 1rem 1.25rem;
-  color: var(--muted);
-  border-top: 1px solid var(--line);
-  font-size: 0.82rem;
-}
-
-.architecture-figure > figcaption {
-  border-top: 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.architecture-figure > figcaption span {
-  display: block;
-  margin-bottom: 0.15rem;
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-.architecture-scroll {
-  overflow-x: auto;
-  scrollbar-color: #3f3f50 #111118;
-}
-
-.architecture-scroll:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: -3px;
-}
-
-.architecture-scroll svg {
-  display: block;
-  width: 100%;
-  min-width: var(--diagram-min-width, 1120px);
-  height: auto;
-}
-
-.diagram-lane rect {
-  fill: rgba(11, 11, 16, 0.5);
-  stroke: rgba(255, 255, 255, 0.14);
-  stroke-width: 1;
-}
-
-.diagram-lane text {
-  fill: #8da2ff;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.4px;
-}
-
-.diagram-node rect {
-  fill: #17171e;
-  stroke: #444454;
-  stroke-width: 1.4;
-}
-
-.diagram-node-accent rect {
-  fill: #171925;
-  stroke: #788df0;
-}
-
-.diagram-node-title {
-  fill: #f4f4f5;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.diagram-node-detail {
-  fill: #a1a1aa;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10.5px;
-}
-
-.diagram-arrow line {
-  stroke: #8da2ff;
-  stroke-width: 1.4;
-}
-
-.diagram-arrow path {
-  fill: #8da2ff;
-}
-
-.diagram-arrow .diagram-connector {
-  fill: none;
-  stroke: #8da2ff;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.4;
-}
-
-.diagram-arrow text {
-  fill: #aebaf5;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 9.5px;
-}
-
-.diagram-arrow-dashed line {
-  stroke-dasharray: 6 5;
-}
-
-.project-visual-compact {
-  min-height: 220px;
-  margin: 2rem 0;
-  padding: 1.5rem;
-}
-
-.course-path {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  width: min(100%, 900px);
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-}
-
-.course-step {
-  display: inline-flex;
-  min-height: 82px;
-  padding: 0.65rem 0.85rem;
-  align-items: center;
-  justify-content: center;
-  color: #e4e4e7;
-  border: 1px solid rgba(141, 162, 255, 0.34);
-  background: rgba(20, 20, 25, 0.9);
-  font-size: 0.82rem;
-  font-weight: 650;
-  flex-direction: column;
-  border-radius: 0;
-}
-
-.course-step:first-child {
-  border-radius: 10px 0 0 10px;
-}
-
-.course-step:last-child {
-  border-radius: 0 10px 10px 0;
-}
-
-.course-step small {
-  color: var(--faint);
-  letter-spacing: 0.1em;
-}
-
-.architecture-sequence {
-  overflow: visible;
-}
-
-.technical-sequence {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  margin: 0;
-  padding: 0;
-  counter-reset: sequence;
-  list-style: none;
-}
-
-.technical-sequence li {
-  position: relative;
-  min-height: 220px;
-  padding: 1.5rem;
-  color: var(--muted);
-  border-right: 1px solid var(--line);
-  counter-increment: sequence;
-}
-
-.technical-sequence li:last-child {
-  border-right: 0;
-}
-
-.technical-sequence li::before {
-  display: block;
-  margin-bottom: 2.5rem;
-  color: var(--faint);
-  content: "0" counter(sequence);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.technical-sequence strong {
-  color: var(--text);
-}
-
-.technical-sequence code {
-  padding: 0.08em 0.35em;
-  color: #c4b5fd;
-  border: 1px solid rgba(196, 181, 253, 0.24);
-  border-radius: 4px;
-  background: #1d1b29;
-  font-size: 0.8em;
-  white-space: nowrap;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-}
-
-.gesture-matrix {
-  padding: clamp(1.5rem, 5vw, 3rem);
-  border: 1px solid var(--line);
-  border-radius: calc(var(--radius) + 6px);
-  background: var(--surface);
-}
-
-.gesture-matrix h2 {
-  margin: 0 0 1.5rem;
-  font-size: clamp(1.7rem, 4vw, 2.8rem);
-}
-
-.gesture-matrix dl {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0;
-  border-top: 1px solid var(--line);
-}
-
-.gesture-matrix dl > div {
-  padding: 1rem;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-
-.gesture-matrix dd {
-  margin-top: 0.35rem;
-  font-size: 0.9rem;
-}
-
-.project-detail-page {
-  max-width: 1120px;
-}
-
-.back-link {
-  display: inline-block;
-  margin-bottom: clamp(3rem, 8vw, 6rem);
-  color: var(--muted);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.project-detail-header {
-  max-width: 900px;
-  margin-bottom: 3rem;
-}
-
-.project-detail-header h1 {
-  margin: 0.8rem 0 1.2rem;
-  font-size: clamp(3rem, 8vw, 6.8rem);
-}
-
-.project-detail-header > p {
-  max-width: 760px;
-  color: #d4d4d8;
-  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
-}
-
-.project-facts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(2rem, 7vw, 7rem);
-  padding: clamp(4rem, 9vw, 7rem) 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.project-facts h2,
-.project-detail-section h2 {
-  margin: 0.7rem 0 1.2rem;
-  font-size: clamp(2rem, 4vw, 3.4rem);
-}
-
-.project-facts p:not(.eyebrow) {
-  font-size: 1.05rem;
-}
-
-.project-detail-section {
-  padding: clamp(4rem, 9vw, 7rem) 0;
-  border-bottom: 1px solid var(--line);
-}
-
-.decision-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
-  margin: 2.5rem 0 0;
-  padding: 0;
-  counter-reset: decisions;
-  list-style: none;
-}
-
-.decision-list li {
-  min-height: 220px;
-  padding: 1.5rem;
-  color: #d4d4d8;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
-  counter-increment: decisions;
-}
-
-.decision-list li::before {
-  display: block;
-  margin-bottom: 3rem;
-  color: var(--faint);
-  content: "0" counter(decisions);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-}
-
-.project-constraints ul {
-  display: grid;
-  max-width: 850px;
-  gap: 0;
-  margin: 2rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.project-constraints li {
-  padding: 1rem 0;
-  color: #d4d4d8;
-  border-top: 1px solid var(--line);
-}
-
-.project-outcome {
-  padding: clamp(5rem, 11vw, 9rem) 0 2rem;
-}
-
-.project-outcome h2 {
-  max-width: 940px;
-  margin: 0.8rem 0 1.25rem;
-  font-size: clamp(2.2rem, 5vw, 4.5rem);
-}
-
-.project-result {
-  color: var(--text-2);
-  font-size: clamp(1.25rem, 2.5vw, 2rem);
-  line-height: 1.35;
-  margin: 0 0 2.5rem;
-  max-width: 940px;
-}
-
-.offline-note {
-  color: #c4b5fd;
-  font-weight: 600;
 }
 
 .mobile-nav-toggle {
@@ -848,32 +413,6 @@ dd {
   .landing-hero {
     min-height: 620px;
   }
-
-  .project-grid,
-  .split-section,
-  .project-facts,
-  .decision-list {
-    grid-template-columns: 1fr;
-  }
-
-  .course-path {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .course-step,
-  .course-step:first-child,
-  .course-step:last-child {
-    min-height: 70px;
-    border-radius: 0;
-  }
-
-  .decision-list li {
-    min-height: auto;
-  }
-
-  .decision-list li::before {
-    margin-bottom: 1.5rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -887,51 +426,6 @@ dd {
 
   .site-navigation ul {
     grid-template-columns: 1fr;
-  }
-
-  .project-visual-compact {
-    min-height: 260px;
-  }
-
-  .technical-sequence {
-    grid-template-columns: 1fr;
-  }
-
-  .technical-sequence li {
-    min-height: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .technical-sequence li:last-child {
-    border-bottom: 0;
-  }
-
-  .gesture-matrix dl {
-    grid-template-columns: 1fr;
-  }
-
-  .gesture-matrix dl > div {
-    border-right: 0;
-  }
-
-  .course-path {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
   }
 }
 
@@ -966,28 +460,12 @@ dd {
   min-height: min(680px, 76vh);
 }
 
-.landing-hero h1,
-.project-detail-header h1 {
+.landing-hero h1 {
   font-size: clamp(2.75rem, 6vw, 4.5rem) !important;
   line-height: 1.04;
 }
 
-.split-section h2,
-.project-facts h2,
-.project-detail-section h2,
-.project-outcome h2 {
-  font-size: clamp(2rem, 4vw, 3rem) !important;
-  line-height: 1.08;
-}
-
-.decision-list li::before,
-.technical-sequence li::before {
-  color: var(--faint);
-}
-
 .hero-copy,
-.project-detail-header > p,
-.project-constraints li,
 dd {
   color: var(--text-2) !important;
 }
@@ -996,7 +474,7 @@ dd {
   min-height: 44px;
   padding: 0.72rem 1.2rem;
   border-radius: 0;
-  transition: color 120ms cubic-bezier(.2, 0, .4, 1), background-color 120ms cubic-bezier(.2, 0, .4, 1), border-color 120ms cubic-bezier(.2, 0, .4, 1);
+  transition: color 120ms var(--ease), background-color 120ms var(--ease), border-color 120ms var(--ease);
 }
 
 /* The primary button is amber: the one thing to do now. */
@@ -1022,264 +500,6 @@ dd {
   background: var(--surface);
 }
 
-.inline-link {
-  color: var(--text) !important;
-  text-decoration-color: var(--line-strong);
-  text-decoration-line: underline;
-}
-
-.inline-link:hover {
-  color: var(--accent-hover) !important;
-  text-decoration-color: var(--accent-hover);
-}
-
-.section-block {
-  padding: 6rem 0 2rem;
-}
-
-.project-grid {
-  gap: 1.5rem;
-}
-
-.project-card {
-  min-height: 0;
-  border: 0;
-  border-top: 1px solid var(--line-strong);
-  border-radius: 0;
-  background: transparent;
-  transition: color 120ms cubic-bezier(.2, 0, .4, 1), background-color 120ms cubic-bezier(.2, 0, .4, 1), border-color 120ms cubic-bezier(.2, 0, .4, 1);
-}
-
-.project-card:hover,
-.project-card:focus-within {
-  border-color: var(--accent-hover);
-  background: var(--surface);
-  transform: none;
-}
-
-.project-card-link {
-  display: grid;
-  min-height: 100%;
-  padding: 1.25rem;
-  grid-template-rows: auto auto 1fr auto auto;
-}
-
-.project-card h3 {
-  margin: 1.25rem 0 0.65rem;
-  font-size: 1.25rem;
-}
-
-.project-card .stack {
-  margin-top: 1.25rem;
-  color: var(--text-2);
-}
-
-.card-action {
-  padding-top: 1.25rem;
-  color: var(--text);
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
-}
-
-.project-detail-header {
-  margin-bottom: 4rem;
-}
-
-.architecture-figure,
-.gesture-matrix,
-.course-syllabus {
-  border-color: var(--line);
-  border-radius: 0;
-  background: var(--matte);
-}
-
-.architecture-figure > figcaption,
-.course-syllabus > figcaption {
-  padding: 1rem 1.25rem;
-  color: var(--muted);
-  border-color: var(--line);
-  background: var(--matte);
-}
-
-.architecture-figure > figcaption span,
-.course-syllabus > figcaption span {
-  display: block;
-  margin-bottom: 0.15rem;
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-.architecture-scroll {
-  position: relative;
-  scrollbar-color: var(--line-strong) var(--matte);
-}
-
-.architecture-scroll svg {
-  background: var(--matte);
-}
-
-/* The runtime-data-flow diagram uses a wider viewBox than the others, so its
-   minimum render width scales with it to keep glyph size identical. Because it
-   then exceeds the content column at every width, its scroll hint is not
-   confined to the narrow breakpoint. */
-.architecture-figure-wide {
-  --diagram-min-width: 1270px;
-}
-
-.architecture-figure-wide > figcaption::after {
-  display: block;
-  margin-top: 0.6rem;
-  color: var(--muted);
-  content: "Scroll diagram →";
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.75rem;
-}
-
-.diagram-lane rect {
-  fill: #120f0b;
-  stroke: #3b342a;
-}
-
-.diagram-lane text {
-  fill: var(--faint);
-  font-size: 13.5px;
-}
-
-.diagram-node rect {
-  fill: #1c1813;
-  stroke: #706556;
-  stroke-width: 1.3;
-}
-
-.diagram-node-accent rect {
-  fill: #1c1813;
-  stroke: var(--text-2);
-  stroke-width: 1.5;
-}
-
-.diagram-node-title {
-  fill: var(--text);
-  font-size: 15.5px;
-  font-weight: 650;
-}
-
-.diagram-node-detail {
-  fill: #b9afa2;
-  font-size: 13.5px;
-}
-
-.diagram-arrow line,
-.diagram-arrow .diagram-connector {
-  stroke: #c08a4e;
-  stroke-width: 1.5;
-}
-
-.diagram-arrow path {
-  fill: #c08a4e;
-}
-
-.diagram-arrow text {
-  fill: #d0c4b5;
-  stroke: var(--matte);
-  stroke-linejoin: round;
-  stroke-width: 5px;
-  paint-order: stroke fill;
-  font-size: 14px;
-}
-
-.diagram-arrow-dashed line,
-.diagram-arrow-dashed .diagram-connector {
-  stroke-dasharray: 6 5;
-}
-
-.project-visual-compact {
-  min-height: 0;
-}
-
-.course-syllabus {
-  overflow: hidden;
-  margin: 0;
-  border: 1px solid var(--line);
-}
-
-.course-syllabus > figcaption {
-  border-bottom: 1px solid var(--line);
-}
-
-.course-syllabus ol {
-  display: grid;
-  margin: 0;
-  padding: 0;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  list-style: none;
-}
-
-.course-syllabus li {
-  display: grid;
-  min-height: 112px;
-  padding: 1rem;
-  align-content: space-between;
-  color: var(--text);
-  border-right: 1px solid var(--line);
-}
-
-.course-syllabus li:last-child {
-  border-right: 0;
-}
-
-.course-syllabus small {
-  color: var(--faint);
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  letter-spacing: 0.1em;
-}
-
-.technical-sequence li {
-  min-height: 0;
-}
-
-.technical-sequence code {
-  color: var(--accent-hover);
-  border-color: var(--line-strong);
-  border-radius: var(--radius-field);
-  background: var(--surface-raised);
-}
-
-.gesture-matrix {
-  background: transparent;
-}
-
-.decision-list {
-  gap: 1.5rem;
-}
-
-.decision-list li {
-  min-height: 0;
-  padding: 1.25rem 0;
-  color: var(--text-2);
-  border: 0;
-  border-top: 1px solid var(--line-strong);
-  border-radius: 0;
-  background: transparent;
-}
-
-.decision-list li::before {
-  margin-bottom: 1rem;
-}
-
-.project-detail-section,
-.project-facts {
-  padding: 6rem 0 2rem;
-}
-
-.project-outcome {
-  padding: 6rem 0 2rem;
-}
-
-.offline-note {
-  color: var(--faint);
-}
-
 .site-sidebar {
   color: var(--text);
   background: var(--background) !important;
@@ -1289,7 +509,7 @@ dd {
   min-height: 44px;
   padding: 0.45rem 0;
   color: var(--muted) !important;
-  transition: color 120ms cubic-bezier(.2, 0, .4, 1), background-color 120ms cubic-bezier(.2, 0, .4, 1), border-color 120ms cubic-bezier(.2, 0, .4, 1) !important;
+  transition: color 120ms var(--ease), background-color 120ms var(--ease), border-color 120ms var(--ease) !important;
 }
 
 .site-navigation a:hover,
@@ -1372,43 +592,10 @@ dd {
     width: min(100% - 2rem, var(--content-width));
     padding: 4rem 0 !important;
   }
-
-  .section-block,
-  .project-detail-section,
-  .project-facts,
-  .project-outcome {
-    padding: 4.5rem 0 1.5rem;
-  }
-
-  .architecture-figure > figcaption::after {
-    display: block;
-    margin-top: 0.6rem;
-    color: var(--muted);
-    content: "Scroll diagram →";
-    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 0.75rem;
-  }
-
-  .course-syllabus ol {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .course-syllabus li {
-    min-height: 88px;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .course-syllabus li:nth-child(2n) {
-    border-right: 0;
-  }
 }
 
-@media (max-width: 480px) {
-  .project-grid {
-    gap: 2rem;
-  }
-}
-
+/* Reduced motion: nothing moves or fades. The second selector outweighs the one !important
+   transition written with a class (.site-navigation a), which "*" alone did not. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -1416,7 +603,9 @@ dd {
 
   *,
   *::before,
-  *::after {
+  *::after,
+  .site-navigation a {
+    scroll-behavior: auto !important;
     transition: none !important;
     animation: none !important;
   }
@@ -1441,85 +630,11 @@ dd {
   }
 }
 
-/* Project media: card covers and gameplay loops */
-
-/* The media is a sibling of the link (a loop has a pause button, and a button
-   cannot sit inside a link). It comes after the link in the markup, so Tab
-   reaches the card before its pause button, and is drawn on top (order: -1).
-   The link's ::before stretches over the whole card, media included, so the
-   card stays one click target, and it carries the link's focus ring: the ring
-   goes round what a click would open, the whole card. */
-.project-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.project-card-media,
-.project-card-visual {
-  order: -1;
-}
-
-.project-card-link {
-  min-height: 0;
-  flex: 1;
-}
-
-.project-card-link::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-}
-
-.project-card-link:focus-visible {
-  outline: none;
-}
-
-.project-card-link:focus-visible::before {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-.project-card-media {
-  overflow: hidden;
-  flex: none;
-  aspect-ratio: 16 / 10;
-  background: var(--gallery);
-}
-
-.project-card-media img,
-.project-card-media .loop-video {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 240ms cubic-bezier(.2, 0, .4, 1), filter 240ms cubic-bezier(.2, 0, .4, 1);
-  filter: saturate(0.9) brightness(0.92);
-}
-
-.project-card:hover .project-card-media img,
-.project-card:hover .project-card-media .loop-video,
-.project-card:focus-within .project-card-media img,
-.project-card:focus-within .project-card-media .loop-video {
-  transform: scale(1.025);
-  filter: none;
-}
-
-.card-action > span {
-  display: inline-block;
-  transition: transform 160ms cubic-bezier(.2, 0, .4, 1);
-}
-
-.project-card:hover .card-action > span,
-.project-card:focus-within .card-action > span {
-  transform: translateX(3px);
-}
-
 /* One arrival on the landing page: the headline unmasks, the rest follows. */
 
 @media (prefers-reduced-motion: no-preference) {
   .landing-hero > * {
-    animation: hero-arrive 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: hero-arrive 560ms var(--ease-arrive) both;
   }
 
   .landing-hero > h1 {
@@ -1548,10 +663,6 @@ dd {
   from {
     transform: translateY(10px);
   }
-}
-
-.hero-copy .inline-link {
-  font-weight: inherit;
 }
 
 /* Photo series: open any frame in a full-screen viewer. */
@@ -1596,7 +707,7 @@ html[data-lightbox-open] {
 .photo-lightbox[open] {
   display: grid;
   place-items: center;
-  animation: lightbox-in 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  animation: lightbox-in 220ms var(--ease-arrive);
 }
 
 .photo-lightbox figure {
@@ -1634,7 +745,7 @@ html[data-lightbox-open] {
   font-size: 2rem;
   line-height: 1;
   cursor: pointer;
-  transition: color 120ms cubic-bezier(.2, 0, .4, 1);
+  transition: color 120ms var(--ease);
 }
 
 .photo-lightbox button:hover,
@@ -2016,11 +1127,6 @@ html[data-lightbox-open] {
 .loop {
   position: relative;
   display: block;
-}
-
-/* Where the frame around it has its own ratio, the loop fills that frame. */
-.project-card-media .loop {
-  height: 100%;
 }
 
 .loop-poster {
@@ -2488,10 +1594,6 @@ html[data-lightbox-open] {
   fill: none;
   stroke: var(--text);
   stroke-width: 1.5;
-}
-
-.c-hit {
-  fill: transparent;
 }
 
 /* ---- Stacked bar ---- */

@@ -68,3 +68,6 @@ tmp/
 .idea
 .vscode
 .DS_Store
+
+# Liberation Sans for scripts/build-resume-pdf.mjs (font files are not committed)
+scripts/resume-pdf/fonts/

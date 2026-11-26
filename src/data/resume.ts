@@ -1,6 +1,6 @@
 // The resume page's own words (src/pages/resume.tsx). Roles, teaching, education and skills come from
 // experience.ts; titles and stacks of the projects from projects.ts.
-// The PDF (static/nathan-rihet-resume.pdf) is a separate file: keep it in sync by hand, then run
+// The PDF (static/nathan-rihet-resume.pdf) is built from these words: npm run resume-pdf, then
 // npm run resume-text (the engineering filter reads its words).
 
 import { education, mainSkillGroups, roles, skillLine, spokenLanguages, teaching } from "./experience"

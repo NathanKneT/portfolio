@@ -5,30 +5,32 @@ import Picture from "../picture"
 import SectionHead from "../section-head"
 import { images } from "../../data/images.generated"
 import type { ResponsiveImage } from "../../data/images.generated"
+import photoAlts from "../../data/photo-alts.json"
 import * as home from "./home.module.css"
 import * as styles from "./photo-band.module.css"
 
 type Photo = { to: string; label: string; image: ResponsiveImage; alt: string }
 
-// One photograph per series, from static/previews (npm run images), each at its own ratio.
+// One photograph per series, from static/previews (npm run images), each at its own ratio, with the
+// owner's description of the original (src/data/photo-alts.json, keyed by series folder and file).
 const photos: Photo[] = [
   {
     to: "/night/",
     label: "Night",
     image: images.previewNight,
-    alt: "Canal lined with neon signs reflecting on the water at night, photographed by Nathan Rihet",
+    alt: photoAlts["night/18-_HF01673.jpg"],
   },
   {
     to: "/portrait/",
     label: "Portrait",
     image: images.previewPortrait,
-    alt: "Portrait in red and blue light, photographed by Nathan Rihet",
+    alt: photoAlts["portrait/04-_GL04811-min.jpg"],
   },
   {
     to: "/urban/",
     label: "Urban",
     image: images.previewUrban,
-    alt: "Montreal skyline reflected in a puddle at sunset, photographed by Nathan Rihet",
+    alt: photoAlts["urban/05-_GL03683.jpg"],
   },
 ]
 

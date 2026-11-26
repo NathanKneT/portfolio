@@ -1,5 +1,4 @@
 import "./global.css";
-import "@fortawesome/fontawesome-free/css/all.css";
 import type { ShouldUpdateScrollArgs } from "gatsby"
 
 // How the browser got to this document: "navigate" (typed, a link from another site), "reload" or

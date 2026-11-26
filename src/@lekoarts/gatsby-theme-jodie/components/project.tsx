@@ -5,8 +5,10 @@ import { GatsbyImage, type IGatsbyImageData } from "gatsby-plugin-image"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import Seo from "./seo"
 import PhotoLightbox from "../../../components/photo-lightbox"
-import PageHeader from "../../../components/page/page-header"
+// The case study primitives before the page header: the order of the CSS modules every page agrees
+// on (see src/pages/engineering.tsx).
 import { InLink } from "../../../components/case-study/primitives"
+import PageHeader from "../../../components/page/page-header"
 import {
   SERIES_PHOTO_SIZES,
   placementStyle,
@@ -31,9 +33,12 @@ type ProjectData = {
     shortTitle: string
     category: string
     cover: {
+      fields: { alt: string }
       childImageSharp: {
         resize: {
           src: string
+          width: number
+          height: number
         }
       }
     }
@@ -41,6 +46,7 @@ type ProjectData = {
   images: {
     nodes: Array<{
       name: string
+      fields: { alt: string }
       childImageSharp: {
         gatsbyImageData: IGatsbyImageData
       }
@@ -63,7 +69,8 @@ const Project: React.FC<React.PropsWithChildren<PageProps<ProjectData>>> = ({
     .map((image, index) => ({
       name: image.name,
       image: image.childImageSharp.gatsbyImageData,
-      alt: `${project.shortTitle} photography by Nathan Rihet — image ${index + 1}`,
+      // The owner's description of the photograph (src/data/photo-alts.json, checked in gatsby-node.js).
+      alt: image.fields.alt,
     }))
   const { placements, style } = twoColumns(gallery.map((photo) => ratioOf(photo.image)))
 
@@ -91,7 +98,8 @@ const Project: React.FC<React.PropsWithChildren<PageProps<ProjectData>>> = ({
                 <button
                   type="button"
                   className="photo-open"
-                  aria-label={`Open image ${index + 1} of ${gallery.length}`}
+                  // A button hides its image from assistive technology: its name carries the description.
+                  aria-label={`Open image ${index + 1} of ${gallery.length}: ${photo.alt}`}
                   onClick={() => setOpenIndex(index)}
                 >
                   <Image
@@ -124,7 +132,9 @@ export const Head: HeadFC<ProjectData> = ({
     description={`${project.shortTitle} photography by Nathan Rihet, photographer and engineer based in Osaka. ${project.excerpt}`}
     pathname={location.pathname}
     image={project.cover.childImageSharp.resize.src}
-    imageAlt={`${project.shortTitle} photography series by Nathan Rihet`}
+    imageWidth={project.cover.childImageSharp.resize.width}
+    imageHeight={project.cover.childImageSharp.resize.height}
+    imageAlt={project.cover.fields.alt}
     schemaType="ImageGallery"
     breadcrumbs={[
       { name: "Home", pathname: "/" },

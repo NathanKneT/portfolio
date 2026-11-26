@@ -91,7 +91,8 @@ const ProjectCaseStudy = ({ project, lead, figures, resultFigure }: ProjectCaseS
 
   return (
     <Layout>
-      <main className={`portfolio-page ${styles.page}`}>
+      {/* The theme's layout already is the page's <main>: a second one here made two main landmarks. */}
+      <div className={`portfolio-page ${styles.page}`}>
         <header className={styles.header}>
           <Link className={styles.back} to={engineeringPath}>
             <span aria-hidden="true">←</span>
@@ -183,7 +184,7 @@ const ProjectCaseStudy = ({ project, lead, figures, resultFigure }: ProjectCaseS
             <InLink href="/contact/">Discuss a project</InLink>
           </div>
         </nav>
-      </main>
+      </div>
     </Layout>
   )
 }
