@@ -1,5 +1,5 @@
-/* The engineering page (boards Engineering and EngineeringPhone): the current role and the course,
-   the earlier work, the latest side project in full, then one row per side project. The frame, the
+/* The engineering page (boards Engineering and EngineeringPhone): every role and the teaching post,
+   newest first, then the latest side project in full and one row per side project. The frame, the
    header and the sections are in ../page/page.module.css. */
 
 /* While a filtered address waits for the page's script (FILTER_PENDING_SCRIPT), the results stay
@@ -8,7 +8,7 @@
   visibility: hidden;
 }
 
-/* A title that takes the focus from the script (the filter's name, "Professional work") when the
+/* A title that takes the focus from the script (the filter's name, "Experience") when the
    link that had it leaves the page: the next Tab goes on from there. No ring, as for any place a
    script puts the focus: it is not a control. Over the global [tabindex]:focus-visible ring. */
 .results :global(h2[tabindex="-1"]:focus) {
@@ -17,28 +17,30 @@
 
 /* ---- Labels ---- */
 
-/* "Active · 2026", "2026 · Active", the dates of the current role. */
+/* "Active · 2026", "2026 · Active": dates are read, so sentence case at full contrast (owner,
+   2026-11-26), not small spaced capitals. */
 .label {
   display: flex;
   margin: 0;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 10px;
-  color: var(--faint);
-  font-size: var(--fs-micro);
+  gap: 4px 10px;
+  color: var(--text-2);
+  font-size: var(--fs-small);
   font-variant-numeric: tabular-nums;
-  font-weight: var(--weight-label);
-  line-height: var(--lh-micro);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
+  line-height: var(--lh-small);
 }
 
-/* Amber means now (design-phase.md §2). */
+/* "Current role": amber means now (design-phase.md §2). */
 .now {
-  display: inline-flex;
+  display: flex;
+  margin: 0 0 6px;
   align-items: center;
   gap: 8px;
   color: var(--accent);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  line-height: var(--lh-caption);
 }
 
 .nowSquare {
@@ -48,132 +50,6 @@
   background: var(--accent);
 }
 
-.miniLabel {
-  margin: 0;
-  color: var(--faint);
-  font-size: var(--fs-micro);
-  font-weight: var(--weight-label);
-  line-height: var(--lh-micro);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-}
-
-/* ---- Professional work: numbered blocks ---- */
-
-.entries {
-  margin-top: 0;
-}
-
-.entry {
-  display: grid;
-  grid-template-columns: 56px minmax(0, 1fr);
-  gap: 24px;
-  padding: 36px 0 44px;
-  border-top: 1px solid var(--line-strong);
-}
-
-.index {
-  color: var(--muted);
-  font-size: var(--fs-caption);
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  line-height: var(--lh-caption);
-}
-
-.entryBody {
-  min-width: 0;
-}
-
-.blockTitle {
-  margin: 10px 0 0;
-  color: var(--text);
-  font-size: var(--fs-h3-block);
-  font-weight: var(--weight-heading);
-  line-height: var(--lh-h3-block);
-  letter-spacing: var(--ls-heading);
-  overflow-wrap: break-word;
-}
-
-.blockSummary {
-  max-width: 680px;
-  margin: 8px 0 0;
-  color: var(--text-2);
-  font-size: var(--fs-lede);
-  line-height: var(--lh-lede);
-  text-wrap: pretty;
-}
-
-/* The current role's four topics, two by two on a wide screen. */
-.highlights {
-  display: grid;
-  margin: 28px 0 0;
-  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
-  gap: 24px 40px;
-}
-
-.highlights > div {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
-
-/* Over the global dt / dd (global.css colours every dd with !important). */
-.highlights dt,
-.facts dt {
-  margin: 0;
-  color: var(--faint);
-  font-size: var(--fs-micro);
-  font-weight: var(--weight-label);
-  line-height: var(--lh-micro);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
-}
-
-.highlights dd {
-  margin: 0;
-  color: var(--text-2) !important;
-  font-size: var(--fs-body);
-  line-height: 1.625rem;
-  text-wrap: pretty;
-}
-
-.stackBlock {
-  display: flex;
-  margin-top: 28px;
-  padding-top: 14px;
-  flex-direction: column;
-  gap: 8px;
-  border-top: 1px solid var(--line);
-}
-
-.stackList {
-  display: flex;
-  margin: 0;
-  padding: 0;
-  flex-wrap: wrap;
-  gap: 4px 18px;
-  list-style: none;
-}
-
-.stackList li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-2);
-  font-size: var(--fs-small);
-  line-height: var(--lh-small);
-}
-
-.stackList li::before {
-  width: 4px;
-  height: 4px;
-  flex: none;
-  background: var(--line-strong);
-  content: "";
-}
-
 .links {
   display: flex;
   margin-top: 8px;
@@ -181,63 +57,105 @@
   gap: 0 24px;
 }
 
-/* The course: text on the left, its photograph on the right (7 / 5). */
-.split {
-  display: grid;
-  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-  gap: 40px;
-  align-items: start;
+/* ---- Experience: one row per role, newest first ---- */
+
+/* The rows follow their own width: who and when on the left, what on the right; one column when
+   narrow. */
+.roles {
+  container-type: inline-size;
 }
 
-.splitText {
+.role {
+  display: grid;
+  padding: 28px 0 30px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.roleHead,
+.roleBody {
   min-width: 0;
 }
 
-.facts {
-  display: flex;
-  margin: 20px 0 0;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.facts > div {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.facts dd {
+.roleName {
   margin: 0;
-  color: var(--text-2) !important;
-  font-size: 0.9375rem;
+  color: var(--text);
+  font-size: var(--fs-h3);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+  overflow-wrap: break-word;
+}
+
+.roleTitle {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
   line-height: 1.5rem;
+}
+
+/* "Sep 2025 – present · Osaka, Japan", and the freelance note: a line each. */
+.when {
+  margin: 6px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-small);
+}
+
+.when + .when {
+  margin-top: 2px;
+}
+
+/* Square markers, as on the resume. */
+.bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bullets li {
+  position: relative;
+  max-width: 680px;
+  padding-left: 20px;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: 1.625rem;
   text-wrap: pretty;
 }
 
-/* 16:10, framed as on the home card (design-phase.md §7: object-position 62% 30%). */
-.splitPicture {
-  display: block;
-  min-width: 0;
-  overflow: hidden;
-  aspect-ratio: 16 / 10;
-  border: 1px solid var(--line);
-  background: var(--matte);
+.bullets li + li {
+  margin-top: 6px;
 }
 
-.splitPicture img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 62% 30%;
-  transition: transform 500ms var(--ease);
+.bullets li::before {
+  position: absolute;
+  top: 11px;
+  left: 2px;
+  width: 5px;
+  height: 5px;
+  background: var(--line-strong);
+  content: "";
 }
 
-.splitPicture:hover img {
-  transform: scale(1.03);
+.roleBody .roleStack {
+  margin-top: 12px;
 }
 
-/* ---- Rows: earlier work and side projects ---- */
+.roleBody .links {
+  margin-top: 6px;
+}
+
+@container (min-width: 720px) {
+  .role {
+    padding: 32px 0 34px;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    gap: 16px 48px;
+  }
+}
+
+/* ---- Rows: side projects ---- */
 
 /* The rows follow their own width, not the window's. A list ends its section: the rule of what
    follows (the next section, the call to action) closes it, no second rule of its own. */
@@ -339,6 +257,7 @@
 }
 
 .rowStack,
+.roleStack,
 .spotlightStack {
   margin: 0;
   color: var(--muted);
@@ -361,7 +280,7 @@
   }
 }
 
-/* A list where no row has a picture (earlier work): no column for one, at any width. */
+/* A list where no row has a picture: no column for one, at any width. */
 .rows[data-bare] .thumb {
   display: none;
 }
@@ -433,6 +352,25 @@
 }
 
 /* ---- The latest side project ---- */
+
+.blockTitle {
+  margin: 10px 0 0;
+  color: var(--text);
+  font-size: var(--fs-h3-block);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h3-block);
+  letter-spacing: var(--ls-heading);
+  overflow-wrap: break-word;
+}
+
+.blockSummary {
+  max-width: 680px;
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  text-wrap: pretty;
+}
 
 .spotlight {
   min-width: 0;
@@ -570,20 +508,14 @@
   text-wrap: pretty;
 }
 
-/* ---- Between a phone and the sidebar: the course and the latest project stack ---- */
+/* ---- Between a phone and the sidebar: the latest project stacks ---- */
 
 @media (max-width: 1023px) {
-  .split,
   .spotlightHead {
     display: flex;
     flex-direction: column;
     align-items: stretch;
     gap: 20px;
-  }
-
-  .splitPicture {
-    width: 100%;
-    max-width: 560px;
   }
 
   .spotlightText {
@@ -594,19 +526,8 @@
 /* ---- Phone (EngineeringPhone) ---- */
 
 @media (max-width: 719px) {
-  .entry {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 24px 0 28px;
-  }
-
-  .highlights {
-    margin-top: 20px;
-    gap: 16px 40px;
-  }
-
-  .stackBlock {
-    margin-top: 20px;
+  .role {
+    padding: 22px 0 24px;
   }
 
   .spotlightBody {
@@ -633,16 +554,6 @@
 
   .filterBar > :global(.button) {
     flex: 1 1 100%;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .splitPicture img {
-    transition: none;
-  }
-
-  .splitPicture:hover img {
-    transform: none;
   }
 }
 

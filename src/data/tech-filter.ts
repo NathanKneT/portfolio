@@ -1,40 +1,105 @@
 // The engineering page filtered by one technology: /engineering/?tech=FastAPI. The home page's stack
 // ledger links each technology here (techFilterPath in projects.ts).
 //
-// An entry of the page uses a technology when its own stack names it, or when the skills list
-// (experience.ts) says the technology was used where the entry was done. Either way the entry shows
-// it: a technology the stack does not name is added to the end of that entry's stack line, so no
-// entry is ever on the page without its reason. What the page cannot show (an earlier role without a
-// page) is said in words, never hidden.
+// An entry of the page uses a technology when its own stack names it, when the stack of its case study
+// does, or when the skills list (experience.ts) says the technology was used where the entry was done.
+// Either way the entry shows it: a technology the stack does not name is added to the end of that
+// entry's stack line, so no entry is ever on the page without its reason. What the page cannot show
+// is said in words, never hidden.
 
-import { currentRole, findSkill, roles, skillDisplayName, skillGroups, teaching, techKey } from "./experience"
-import type { ContextId, Role } from "./experience"
-import { earlierWork, latestSideProject, projects } from "./projects"
-import type { Project } from "./projects"
+import { careerOrder, findSkill, getRole, roles, skillDisplayName, skillGroups, teaching, techKey } from "./experience"
+import type { CareerEntryId, ContextId, Role, RoleId } from "./experience"
+import { getProject, latestSideProject, projects } from "./projects"
+import type { Project, ProjectSlug } from "./projects"
 import { resumeText } from "./resume"
 import { resumePdfText } from "./resume-pdf.generated"
 
-// What the engineering page shows, in its order.
+// A role or the teaching post, as the engineering page's Experience lists it.
+export type ExperienceEntry = {
+  id: CareerEntryId
+  // The company or the school.
+  name: string
+  title: string
+  period: string
+  location: string
+  // What the dates alone do not say (freelance: alongside Capgemini).
+  note?: string
+  current: boolean
+  // One or two of its resume bullets, word for word.
+  bullets: string[]
+  stack: string[]
+  // Its case studies.
+  projects: ProjectSlug[]
+}
+
+// The resume bullets each role shows there, by topic: the home page's choice (careerHighlights), and
+// Rokken's first two.
+const SHOWN_TOPICS: Record<RoleId, string[]> = {
+  rokken: ["Application", "GPU scheduler"],
+  freelance: ["Client work", "DocsRetriever"],
+  capgemini: ["Generative AI", "Retrieval and delivery"],
+  cawita: ["Applications", "Delivery"],
+}
+
+const experienceEntry = (id: CareerEntryId): ExperienceEntry => {
+  if (id === "uca-teaching") {
+    return {
+      id,
+      name: teaching.institution,
+      title: teaching.title,
+      period: teaching.period,
+      location: teaching.location,
+      current: false,
+      bullets: teaching.bullets,
+      stack: teaching.stack,
+      projects: [teaching.project],
+    }
+  }
+  const role = getRole(id)
+  return {
+    id,
+    name: role.company,
+    title: role.title,
+    period: role.period,
+    location: role.location,
+    note: role.note,
+    current: !role.end,
+    bullets: role.highlights
+      .filter((highlight) => SHOWN_TOPICS[id].includes(highlight.topic))
+      .map((highlight) => highlight.text),
+    stack: role.stack,
+    projects: role.projects ?? [],
+  }
+}
+
+// What the engineering page shows, in its order: every role and the teaching post, newest first
+// (careerOrder, as on the home page), then the side projects.
 export const engineeringSections = () => {
   const latest = latestSideProject()
-  const earlier = earlierWork()
   return {
-    role: currentRole(),
-    work: projects.filter((project) => project.track === "work" && !earlier.includes(project)),
-    earlier,
+    experience: careerOrder.map(experienceEntry),
     latest,
     side: projects.filter((project) => project.track === "side" && project.slug !== latest.slug),
   }
 }
 
-// One entry of the page, as the filter sees it: where it was done, its own stack, and its words.
-type FilterEntry = { id: string; contexts: ContextId[]; stack: string[]; text: string[] }
+// One entry of the page, as the filter sees it: where it was done, its own stack, the stacks of its
+// case studies, and its words.
+type FilterEntry = { id: string; contexts: ContextId[]; stack: string[]; linked: string[]; text: string[] }
+
+const roleEntry = (entry: ExperienceEntry): FilterEntry => ({
+  id: entry.id,
+  contexts: [entry.id, ...entry.projects],
+  stack: entry.stack,
+  linked: entry.projects.flatMap((slug) => getProject(slug).stack),
+  text: [entry.name, entry.title, entry.note ?? "", ...entry.bullets],
+})
 
 const projectEntry = (project: Project): FilterEntry => ({
   id: project.slug,
-  // The course is the teaching post's: what the teaching used, the course used.
-  contexts: project.slug === teaching.project ? [project.slug, teaching.id] : [project.slug],
+  contexts: [project.slug],
   stack: project.stack,
+  linked: [],
   text: [
     project.title,
     project.summary,
@@ -46,16 +111,8 @@ const projectEntry = (project: Project): FilterEntry => ({
 })
 
 const entries = (): FilterEntry[] => {
-  const { role, work, earlier, latest, side } = engineeringSections()
-  return [
-    {
-      id: role.id,
-      contexts: [role.id],
-      stack: role.stack,
-      text: [role.company, role.title, ...role.highlights.flatMap((highlight) => [highlight.topic, highlight.text])],
-    },
-    ...[...work, ...earlier, latest, ...side].map(projectEntry),
-  ]
+  const { experience, latest, side } = engineeringSections()
+  return [...experience.map(roleEntry), ...[latest, ...side].map(projectEntry)]
 }
 
 const ENTRIES = entries()
@@ -83,7 +140,7 @@ const KNOWN: string[] = (() => {
     names.push(name)
   }
   skillGroups.forEach((group) => group.skills.forEach((skill) => add(skill.name)))
-  ENTRIES.forEach((entry) => entry.stack.forEach(add))
+  ENTRIES.forEach((entry) => [...entry.stack, ...entry.linked].forEach(add))
   return names
 })()
 
@@ -271,22 +328,17 @@ export const techFilter = (query: string): TechFilter => {
   const key = techKey(resolved)
   const skill = findSkill(resolved)
   const usedHere = (entry: FilterEntry) => skill?.usedIn.some((context) => entry.contexts.includes(context)) ?? false
-  const inStack = (entry: FilterEntry) => entry.stack.some((name) => namesTech(name, key))
+  const names = (list: string[]) => list.some((name) => namesTech(name, key))
+  const inStack = (entry: FilterEntry) => names(entry.stack)
 
-  const matching = ENTRIES.filter((entry) => inStack(entry) || usedHere(entry))
+  const matching = ENTRIES.filter((entry) => inStack(entry) || names(entry.linked) || usedHere(entry))
   const matches = new Set(matching.map((entry) => entry.id))
   const added = new Set(matching.filter((entry) => !inStack(entry)).map((entry) => entry.id))
 
-  // An earlier role is on the page only through its case studies (freelance: DocsRetriever). When
-  // none of them uses the technology, the role is named in words.
+  // A role the page has no entry for is named in words (none today: Experience lists every role).
   const usedIn = new Set(skill?.usedIn ?? [])
   const elsewhere: Elsewhere[] = roles
-    .filter(
-      (role) =>
-        usedIn.has(role.id) &&
-        role.id !== currentRole().id &&
-        !(role.projects ?? []).some((slug) => matches.has(slug)),
-    )
+    .filter((role) => usedIn.has(role.id) && !matches.has(role.id))
     .map((role) => ({ kind: "role" as const, role }))
   if (usedIn.has("portfolio")) elsewhere.push({ kind: "site" })
 

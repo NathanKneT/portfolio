@@ -19,6 +19,7 @@ import { images } from "../data/images.generated"
 import { rowThumbnails } from "../data/project-pictures"
 import {
   engineeringPath,
+  getProject,
   hasCaseStudy,
   isOfflineProject,
   projectLink,
@@ -26,7 +27,7 @@ import {
   projects,
   statusLabel,
 } from "../data/projects"
-import type { Project } from "../data/projects"
+import type { Project, ProjectSlug } from "../data/projects"
 import {
   FILTER_PENDING_ATTR,
   FILTER_PENDING_SCRIPT,
@@ -36,26 +37,18 @@ import {
   readTechParam,
   techFilter,
 } from "../data/tech-filter"
-import type { TechFilter } from "../data/tech-filter"
-import { techKey } from "../data/experience"
+import type { ExperienceEntry, TechFilter } from "../data/tech-filter"
+import { teaching, techKey } from "../data/experience"
 import * as page from "../components/page/page.module.css"
 import * as styles from "../components/engineering/engineering.module.css"
 
 // Before paint in the browser; on the server, where a layout effect only warns, the plain one.
 const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect
 
-const { role, work, earlier, latest, side } = engineeringSections()
+const { experience, latest, side } = engineeringSections()
 
 // Widths of the pictures in the layout, for <img sizes>. Content: 1 120 px at most; the viewport less
 // the 220 px sidebar and 2 × 24 px from 1 024 px, less 2 × 24 px from 801 px, less 2 × 16 px below.
-// The course photograph: the 5 of a 7 / 5 grid beside the 56 px index from 1 024 px, then at most
-// 560 px under the text.
-const COURSE_SIZES = [
-  "(min-width: 1388px) 417px",
-  "(min-width: 1024px) calc((100vw - 388px) * 0.4167)",
-  "(min-width: 592px) 560px",
-  "calc(100vw - 32px)",
-].join(", ")
 // The latest side project's loop: the 7 of a 7 / 5 grid from 1 024 px, the whole column below.
 const LATEST_SIZES = [
   "(min-width: 1388px) 630px",
@@ -112,91 +105,44 @@ const label = (project: Project) => [statusLabel[project.status], project.year].
 const rowLabelParts = (project: Project) => [project.year, statusLabel[project.status]].filter(Boolean) as string[]
 const rowLabel = (project: Project) => rowLabelParts(project).join(" · ")
 
-const CurrentRole = () => (
-  <article className={styles.entry} id={role.id}>
-    <div className={styles.index} aria-hidden="true">
-      01
-    </div>
-    <div className={styles.entryBody}>
-      <p className={styles.label}>
-        <span className={styles.now}>
+// The links of a role: its case studies, named as on the resume.
+const caseStudyName = (slug: ProjectSlug) =>
+  slug === teaching.project ? "Course case study" : `${getProject(slug).title} case study`
+
+// One role of Experience: who and when on the left, two lines from the resume, the stack and the case
+// study on the right. The dates and the place are a line of their own, as read (no capitals).
+const Role = ({ entry }: { entry: ExperienceEntry }) => (
+  <article className={styles.role} id={entry.id}>
+    <div className={styles.roleHead}>
+      {entry.current && (
+        <p className={styles.now}>
           <span className={styles.nowSquare} aria-hidden="true" />
           Current role
-        </span>
-        <span>
-          {role.period} · {role.location}
-        </span>
+        </p>
+      )}
+      <h3 className={styles.roleName}>{entry.name}</h3>
+      <p className={styles.roleTitle}>{entry.title}</p>
+      <p className={styles.when}>
+        <DotList items={[entry.period, entry.location].map((part) => ({ key: part, content: part }))} />
       </p>
-      <h3 className={styles.blockTitle}>{role.company}</h3>
-      <p className={styles.blockSummary}>{role.title}</p>
-      <dl className={styles.highlights}>
-        {role.highlights.map((highlight) => (
-          <div key={highlight.topic}>
-            <dt>{highlight.topic}</dt>
-            <dd>{highlight.text}</dd>
-          </div>
+      {entry.note && <p className={styles.when}>{entry.note}</p>}
+    </div>
+    <div className={styles.roleBody}>
+      <ul className={styles.bullets}>
+        {entry.bullets.map((bullet) => (
+          <li key={bullet}>{bullet}</li>
         ))}
-      </dl>
-      <div className={styles.stackBlock}>
-        <p className={styles.miniLabel}>Stack</p>
-        <ul className={styles.stackList}>
-          {useStack(role.id, role.stack).map((name) => (
-            <li key={name}>
-              <Hit name={name} />
-            </li>
+      </ul>
+      <Stack id={entry.id} names={entry.stack} className={styles.roleStack} />
+      {entry.projects.length > 0 && (
+        <div className={styles.links}>
+          {entry.projects.map((slug) => (
+            <InLink href={projectPath(getProject(slug))} key={slug}>
+              {caseStudyName(slug)}
+            </InLink>
           ))}
-        </ul>
-      </div>
-      <div className={styles.links}>
-        <InLink href="/resume/">Full experience in the resume</InLink>
-      </div>
-    </div>
-  </article>
-)
-
-const WorkProject = ({ project, index }: { project: Project; index: number }) => (
-  <article className={styles.entry} id={project.slug}>
-    <div className={styles.index} aria-hidden="true">
-      {String(index).padStart(2, "0")}
-    </div>
-    <div className={styles.entryBody}>
-      <div className={styles.split}>
-        <div className={styles.splitText}>
-          <p className={styles.label}>{label(project)}</p>
-          <h3 className={styles.blockTitle}>{project.title}</h3>
-          <p className={styles.blockSummary}>{project.summary}</p>
-          <dl className={styles.facts}>
-            {project.role && (
-              <div>
-                <dt>Contribution</dt>
-                <dd>{project.role}</dd>
-              </div>
-            )}
-            <div>
-              <dt>Stack</dt>
-              <dd>
-                <DotList items={stackItems(useStack(project.slug, project.stack))} />
-              </dd>
-            </div>
-            {project.result && (
-              <div>
-                <dt>Result</dt>
-                <dd>{project.result}</dd>
-              </div>
-            )}
-          </dl>
-          <div className={styles.links}>
-            {hasCaseStudy(project) && <InLink href={projectPath(project)}>View case study</InLink>}
-            {project.sourceUrl && <ExtLink href={project.sourceUrl}>Source repository</ExtLink>}
-          </div>
         </div>
-        {/* Same destination as "View case study": out of the tab order and hidden from screen readers. */}
-        {project.slug === "conversational-agents-course" && (
-          <Link className={styles.splitPicture} to={projectLink(project)} tabIndex={-1} aria-hidden="true">
-            <Picture image={images.caseCourseTeaching} alt="" sizes={COURSE_SIZES} />
-          </Link>
-        )}
-      </div>
+      )}
     </div>
   </article>
 )
@@ -276,7 +222,7 @@ const ProjectRow = ({ project, index }: { project: Project; index: number }) => 
 }
 
 // A list of rows, revealed as one: nothing is hidden at rest (charts/use-reveal.ts). A list where no
-// row has a picture has no column for one (earlier work: DocsRetriever).
+// row has a picture has no column for one.
 const Rows = ({ projects: list }: { projects: Project[] }) => {
   const reveal = useReveal<HTMLUListElement>(0.2)
   const bare = list.every((project) => !rowThumbnails[project.slug])
@@ -330,18 +276,20 @@ const useTechFilter = (search: string) => {
     const before = focusBefore.current
     focusBefore.current = null
     if (!before || (before !== document.body && before.isConnected)) return
-    document.getElementById(filter ? "filter-heading" : "work-heading")?.focus({ preventScroll: true })
+    document.getElementById(filter ? "filter-heading" : "experience-heading")?.focus({ preventScroll: true })
   }, [filter])
 
   return { filter, announcement }
 }
 
+// The projects are a choice: said where they start.
+const SELECTED = "A selection of my side projects, not the full list."
+
 const EngineeringPage = ({ location }: PageProps) => {
   const { filter, announcement } = useTechFilter(location?.search ?? "")
   const shows = (id: string) => !filter || filter.matches.has(id)
 
-  const showWork = shows(role.id) || work.some((project) => shows(project.slug))
-  const shownEarlier = earlier.filter((project) => shows(project.slug))
+  const shownExperience = experience.filter((entry) => shows(entry.id))
   const showLatest = shows(latest.slug)
   const shownSide = side.filter((project) => shows(project.slug))
 
@@ -365,24 +313,21 @@ const EngineeringPage = ({ location }: PageProps) => {
           <div className={styles.results}>
             {filter && <FilterBar filter={filter} />}
 
-            {showWork && (
-              <section className={page.section} aria-labelledby="work-heading">
+            {shownExperience.length > 0 && (
+              <section className={page.section} aria-labelledby="experience-heading">
                 {/* Takes the focus when "Show all work" leaves the page with the filter. */}
-                <SectionHead id="work-heading" eyebrow="Work and teaching" title="Professional work" focusable />
-                <div className={styles.entries}>
-                  {shows(role.id) && <CurrentRole />}
-                  {work.map(
-                    (project, index) =>
-                      shows(project.slug) && <WorkProject project={project} index={index + 2} key={project.slug} />,
-                  )}
+                <SectionHead
+                  id="experience-heading"
+                  eyebrow="Work and teaching"
+                  title="Experience"
+                  link={{ to: "/resume/", label: "Full resume" }}
+                  focusable
+                />
+                <div className={styles.roles}>
+                  {shownExperience.map((entry) => (
+                    <Role entry={entry} key={entry.id} />
+                  ))}
                 </div>
-              </section>
-            )}
-
-            {shownEarlier.length > 0 && (
-              <section className={page.section} aria-labelledby="earlier-heading">
-                <SectionHead id="earlier-heading" eyebrow="Freelance" title="Earlier work" />
-                <Rows projects={shownEarlier} />
               </section>
             )}
 
@@ -393,7 +338,9 @@ const EngineeringPage = ({ location }: PageProps) => {
                 className={`${page.section}${shownSide.length > 0 ? ` ${styles.continued}` : ""}`}
                 aria-labelledby="latest-heading"
               >
-                <SectionHead id="latest-heading" eyebrow="On the side" title="Latest side project" />
+                <SectionHead id="latest-heading" eyebrow="On the side" title="Latest side project">
+                  <p>{SELECTED}</p>
+                </SectionHead>
                 <Spotlight project={latest} />
               </section>
             )}
@@ -410,7 +357,9 @@ const EngineeringPage = ({ location }: PageProps) => {
             {/* Filtered without the latest one: the other side projects head their own section. */}
             {!showLatest && shownSide.length > 0 && (
               <section className={page.section} aria-labelledby="side-heading">
-                <SectionHead id="side-heading" eyebrow="On the side" title="Side projects" />
+                <SectionHead id="side-heading" eyebrow="On the side" title="Side projects">
+                  <p>{SELECTED}</p>
+                </SectionHead>
                 <Rows projects={shownSide} />
               </section>
             )}

@@ -98,7 +98,7 @@ const ProjectCaseStudy = ({ project, lead, figures, resultFigure }: ProjectCaseS
             <span aria-hidden="true">←</span>
             Engineering
           </Link>
-          <p className={styles.label}>{caseStudyLabel(project)}</p>
+          <p className={styles.headerLabel}>{caseStudyLabel(project)}</p>
           <h1 className={project.title.length > 16 ? `${styles.title} ${styles.titleLong}` : styles.title}>
             {project.title}
           </h1>

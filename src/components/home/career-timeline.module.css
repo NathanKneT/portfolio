@@ -637,8 +637,10 @@
   color: var(--accent-hover);
 }
 
+/* Title and place; under 720 px, the dates and the place (.whenNarrow): at full contrast, as the
+   dates beside them (owner, 2026-11-26). */
 .meta {
-  color: var(--muted);
+  color: var(--text-2);
   font-size: var(--fs-small);
   line-height: 1.25rem;
 }
@@ -826,7 +828,7 @@
   }
 
   .whenNarrow {
-    color: var(--muted);
+    color: var(--text-2);
   }
 
   .chevron {

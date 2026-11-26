@@ -40,6 +40,16 @@
   text-transform: uppercase;
 }
 
+/* "Side project · Active · 2026" over the title: the year is read, so sentence case at full
+   contrast (owner, 2026-11-26), not the small capitals of .label. */
+.headerLabel {
+  margin: 36px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-small);
+}
+
 .title {
   margin: 10px 0 0;
   color: var(--text);
@@ -415,7 +425,8 @@
     padding-bottom: 40px;
   }
 
-  .label {
+  .label,
+  .headerLabel {
     margin-top: 20px;
   }
 

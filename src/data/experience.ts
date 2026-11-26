@@ -47,7 +47,7 @@ export const roles: Role[] = [
     company: "Rokken",
     title: "Full Stack Engineer",
     start: "2025-09",
-    period: "Sep 2025 — Present",
+    period: "Sep 2025 – present",
     location: "Osaka, Japan",
     focus: [
       "Resumable video uploads",
@@ -92,7 +92,7 @@ export const roles: Role[] = [
     title: "Full Stack Developer",
     start: "2024-05",
     end: "2025-08",
-    period: "May 2024 — Aug 2025",
+    period: "May 2024 – Aug 2025",
     location: "Remote",
     note: "Alongside Capgemini until Mar 2025",
     highlights: [
@@ -114,7 +114,7 @@ export const roles: Role[] = [
     title: "Software Engineer",
     start: "2024-04",
     end: "2025-03",
-    period: "Apr 2024 — Mar 2025",
+    period: "Apr 2024 – Mar 2025",
     location: "Valbonne, France",
     highlights: [
       {
@@ -148,7 +148,7 @@ export const roles: Role[] = [
     title: "Full Stack Developer",
     start: "2022-09",
     end: "2023-08",
-    period: "Sep 2022 — Aug 2023",
+    period: "Sep 2022 – Aug 2023",
     location: "Antibes, France",
     highlights: [
       {
@@ -191,7 +191,7 @@ export const teaching = {
   title: "Academic Instructor — Conversational Agents",
   start: "2024-12",
   end: "2025-01",
-  period: "Dec 2024 — Jan 2025",
+  period: "Dec 2024 – Jan 2025",
   location: "Nice, France",
   bullets: [
     "Designed and delivered seven practical workshops to more than 20 Master’s students.",
