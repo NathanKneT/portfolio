@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import type { ProjectCover } from "../data/projects"
+import type { ResponsiveImage } from "../data/images.generated"
 
 type LoopVideoProps = {
   cover: ProjectCover & { loop: NonNullable<ProjectCover["loop"]> }
@@ -9,7 +10,13 @@ type LoopVideoProps = {
   eager?: boolean
   // Poster only, no video and no control: for thumbnails and for places a button cannot go.
   still?: boolean
+  // The poster's AVIF and WebP versions (an entry of images.generated.ts) and the width it takes in
+  // the layout, as for <img sizes>. Without them the poster is cover.image alone.
+  poster?: { image: ResponsiveImage; sizes: string }
 }
+
+const srcSet = (image: ResponsiveImage, extension: "avif" | "webp") =>
+  image.widths.map((width) => `${image.base}-${width}.${extension} ${width}w`).join(", ")
 
 /**
  * A silent loop, on the media budget of design-phase.md §14.
@@ -19,7 +26,7 @@ type LoopVideoProps = {
  * resumes it (WCAG 2.2.2); once paused by hand it stays paused. With reduced
  * motion requested it never starts by itself: poster and play button.
  */
-const LoopVideo = ({ cover, name, eager = false, still = false }: LoopVideoProps) => {
+const LoopVideo = ({ cover, name, eager = false, still = false, poster: responsive }: LoopVideoProps) => {
   const video = useRef<HTMLVideoElement>(null)
   // The viewer's own choice, once made, wins over the automatic play.
   const choice = useRef<"play" | "pause" | null>(null)
@@ -88,7 +95,7 @@ const LoopVideo = ({ cover, name, eager = false, still = false }: LoopVideoProps
     }
   }
 
-  const poster = (
+  const img = (
     <img
       className="loop-video loop-poster"
       src={cover.image}
@@ -100,6 +107,16 @@ const LoopVideo = ({ cover, name, eager = false, still = false }: LoopVideoProps
       // Lower case on purpose: React 18.2 does not know the camel-cased prop.
       {...(eager ? { fetchpriority: "high" } : {})}
     />
+  )
+  // .picture has no box of its own (global.css): the poster's layout is the same with or without it.
+  const poster = responsive ? (
+    <picture className="picture">
+      <source type="image/avif" srcSet={srcSet(responsive.image, "avif")} sizes={responsive.sizes} />
+      <source type="image/webp" srcSet={srcSet(responsive.image, "webp")} sizes={responsive.sizes} />
+      {img}
+    </picture>
+  ) : (
+    img
   )
 
   if (still) return <span className="loop">{poster}</span>

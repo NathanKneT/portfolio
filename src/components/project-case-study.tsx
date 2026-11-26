@@ -1,99 +1,203 @@
 import React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
-import type { Project } from "../data/projects"
-import {
-  engineeringPath,
-  isOfflineProject,
-  statusLabel,
-} from "../data/projects"
-import ProjectVisual from "./project-visual"
+import type { CaseStudy, Project, ProjectSlug } from "../data/projects"
+import { caseStudyLabel, engineeringPath, nextCaseStudy, projectPath } from "../data/projects"
+import { images } from "../data/images.generated"
+import type { ResponsiveImage } from "../data/images.generated"
+import Picture from "./picture"
 import ResultStrip from "./result-strip"
+import { ExtLink, InLink } from "./case-study/primitives"
+import * as styles from "./case-study/case-study.module.css"
 
-// Section order: problem (with the role), constraints, decisions, result.
-const ProjectCaseStudy = ({ project }: { project: Project }) => (
-  <Layout>
-    <main className="portfolio-page project-detail-page">
-      <Link className="back-link" to={engineeringPath}>
-        ← Engineering
-      </Link>
+// The picture of each case in "Next case study" (144 px wide, 112 px on a phone). Without one the
+// card is its label and title only: DocsRetriever has no picture, NarrativeForge's capture is retired.
+const thumbnails: Partial<Record<ProjectSlug, ResponsiveImage>> = {
+  "cloudpunk-vrevival": images.caseCloudpunkPoster,
+  vrtrakill: images.caseVrtrakillShotgun,
+  duskonvita: images.caseDuskonvitaOrdon,
+  kororo: images.caseKororoPoster,
+  "rtht-3d": images.caseRthtPoster,
+  "conversational-agents-course": images.caseCourseTeaching,
+}
 
-      <header className="project-detail-header">
-        <div className="project-meta">
-          <span className={`status status-${project.status}`}>
-            {statusLabel[project.status]}
-          </span>
-          <span>{project.year}</span>
-        </div>
-        <h1>{project.title}</h1>
-        <p>{project.summary}</p>
-        <ResultStrip results={project.results ?? []} />
-      </header>
+export type CaseLead = {
+  // The picture or the loop, already sized: it is the page's LCP, so it loads first.
+  media: React.ReactNode
+  caption: string
+  // A square picture takes the narrow column (VRTRAKILL).
+  square?: boolean
+  // Shown at another ratio than its own, cropped (the course photograph, 16:10 on the approved board).
+  crop?: { ratio: string; position: string }
+}
 
-      <ProjectVisual project={project} />
+type ProjectCaseStudyProps = {
+  project: Project
+  lead?: CaseLead
+  // One figure per critical point, by the point's `figure` key (src/data/projects.ts).
+  figures: Record<string, React.ReactNode>
+  // Drawn under the result's text (DuskOnVita's six places).
+  resultFigure?: React.ReactNode
+}
 
-      <section className="project-facts" aria-label="Project overview">
+// A number keeps its unit on the same line: "90 or 120 Hz", "6.3 FPS" (a no-break space).
+const keepUnits = (text: string) =>
+  text.replace(/(\d) (FPS|ms|Hz|KB|MB|GB|s|states|million)(?=[\s.,;:)]|$)/g, "$1 $2")
+
+// The buttons under the result, the first one primary, then the text link to more.
+const actions = (study: CaseStudy, alone: boolean) =>
+  (study.actions.length > 0 || study.more) && (
+    <div className={alone ? `${styles.actions} ${styles.actionsAlone}` : styles.actions}>
+      {study.actions.map((action, index) => (
+        <a
+          key={action.href}
+          className={`${styles.button} ${index === 0 ? styles.primary : styles.secondary}`}
+          href={action.href}
+        >
+          {action.label}
+        </a>
+      ))}
+      {study.more && <ExtLink href={study.more.href}>{study.more.label}</ExtLink>}
+    </div>
+  )
+
+/**
+ * The case study template (design-phase.md §12.2, approved on the DuskOnVita board): back link,
+ * label, title, summary, links, key figures; the overview; two or three critical points, each one
+ * message and one figure; the result; the next case study. The copy is in src/data/projects.ts.
+ */
+const ProjectCaseStudy = ({ project, lead, figures, resultFigure }: ProjectCaseStudyProps) => {
+  const study = project.caseStudy
+  if (!study) throw new Error(`${project.slug} has no case study`)
+
+  const next = nextCaseStudy(project)
+  const thumbnail = thumbnails[next.slug]
+  const count = study.points.length
+  const roleIsLead = !study.problem
+
+  const facts = (
+    <div className={styles.facts}>
+      <div>
+        <p className={styles.eyebrow}>{roleIsLead ? "My part" : "Problem"}</p>
+        {study.problem && <p className={styles.question}>{study.problem}</p>}
+        <p className={roleIsLead ? styles.question : styles.role}>{study.role}</p>
+        {!lead && <p className={styles.stack}>{project.stack.join(" · ")}</p>}
+      </div>
+      {study.constraints && (
         <div>
-          <p className="eyebrow">Problem</p>
-          <h2>Project brief</h2>
-          <p>{project.problem}</p>
+          <h2 className={styles.eyebrow} id="constraints-title">
+            Constraints
+          </h2>
+          <ul className={styles.constraints} aria-labelledby="constraints-title">
+            {study.constraints.map((constraint) => (
+              <li key={constraint.title}>
+                <strong>{constraint.title}</strong>
+                <span>{constraint.text}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-        <div>
-          <p className="eyebrow">Contribution</p>
-          <h2>Role and scope</h2>
-          <p>{project.role}.</p>
-          <p className="project-stack">{project.stack.join(" · ")}</p>
-        </div>
-      </section>
+      )}
+    </div>
+  )
 
-      <section className="project-detail-section project-constraints" aria-labelledby="constraints-title">
-        <p className="eyebrow">Constraints</p>
-        <h2 id="constraints-title">Engineering constraints</h2>
-        <ul>
-          {(project.constraints ?? []).map((constraint) => (
-            <li key={constraint}>{constraint}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="project-detail-section" aria-labelledby="decisions-title">
-        <p className="eyebrow">Implementation</p>
-        <h2 id="decisions-title">Key technical decisions</h2>
-        <ol className="decision-list">
-          {(project.decisions ?? []).map((decision) => (
-            <li key={decision}>{decision}</li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="project-outcome" aria-labelledby="outcome-title">
-        <p className="eyebrow">Outcome</p>
-        <h2 id="outcome-title">Result</h2>
-        <p className="project-result">{project.result}</p>
-        <div className="button-row">
-          {project.sourceUrl && (
-            <a className="button button-primary" href={project.sourceUrl}>
-              View source
-            </a>
+  return (
+    <Layout>
+      <main className={`portfolio-page ${styles.page}`}>
+        <header className={styles.header}>
+          <Link className={styles.back} to={engineeringPath}>
+            <span aria-hidden="true">←</span>
+            Engineering
+          </Link>
+          <p className={styles.label}>{caseStudyLabel(project)}</p>
+          <h1 className={project.title.length > 16 ? `${styles.title} ${styles.titleLong}` : styles.title}>
+            {project.title}
+          </h1>
+          <p className={styles.summary}>{project.summary}</p>
+          {study.links.length > 0 && (
+            <div className={styles.links}>
+              {study.links.map((link) => (
+                <ExtLink key={link.href} href={link.href}>
+                  {link.label}
+                </ExtLink>
+              ))}
+            </div>
           )}
-          {project.demoUrl && !isOfflineProject(project) && (
-            <a className="button button-secondary" href={project.demoUrl}>
-              {project.demoLabel ?? "View demo"}
-            </a>
+          <ResultStrip results={project.results ?? []} label={`Key figures: ${project.title}`} />
+        </header>
+
+        <section className={styles.section} aria-label="Project overview">
+          {lead ? (
+            <div className={lead.square ? `${styles.overview} ${styles.overviewSquare}` : styles.overview}>
+              <figure className={styles.lead}>
+                <div
+                  className={lead.crop ? `${styles.frame} ${styles.frameCrop}` : styles.frame}
+                  style={
+                    lead.crop
+                      ? ({ "--crop-ratio": lead.crop.ratio, "--crop-position": lead.crop.position } as React.CSSProperties)
+                      : undefined
+                  }
+                >
+                  {lead.media}
+                </div>
+                <figcaption className={styles.caption}>{lead.caption}</figcaption>
+                <p className={styles.stack}>{project.stack.join(" · ")}</p>
+              </figure>
+              {facts}
+            </div>
+          ) : (
+            facts
           )}
-          {!project.sourceUrl && !project.demoUrl && (
-            <span className="offline-note">
-              Completed project · Public service no longer available
+        </section>
+
+        {study.points.map((point, index) => (
+          <section className={styles.section} aria-labelledby={`point-${index + 1}`} key={point.figure}>
+            <p className={styles.eyebrow}>{count > 1 ? `Critical point ${index + 1} of ${count}` : "Critical point"}</p>
+            <h2 className={styles.pointTitle} id={`point-${index + 1}`}>
+              {point.title}
+            </h2>
+            <p className={styles.pointBody}>{keepUnits(point.body)}</p>
+            <div className={styles.pointFigure}>{figures[point.figure]}</div>
+          </section>
+        ))}
+
+        {study.result ? (
+          <section className={styles.section} aria-labelledby="outcome-title">
+            <p className={styles.eyebrow}>Result</p>
+            <h2 className={styles.pointTitle} id="outcome-title">
+              {study.result.title}
+            </h2>
+            <p className={styles.pointBody}>{keepUnits(study.result.body)}</p>
+            {resultFigure && <div className={styles.pointFigure}>{resultFigure}</div>}
+            {actions(study, false)}
+          </section>
+        ) : (
+          // No result to state (the course, NarrativeForge): the buttons alone.
+          study.actions.length > 0 && <div className={styles.section}>{actions(study, true)}</div>
+        )}
+
+        <nav className={styles.next} aria-label="Case study navigation">
+          <Link className={styles.nextCard} to={projectPath(next)}>
+            {thumbnail && (
+              <span className={styles.nextThumb}>
+                <Picture image={thumbnail} alt="" sizes="(max-width: 719px) 112px, 144px" />
+              </span>
+            )}
+            <span className={styles.nextText}>
+              <span className={styles.nextLabel}>Next case study</span>
+              <span className={styles.nextTitle}>
+                {next.title} <span aria-hidden="true">→</span>
+              </span>
             </span>
-          )}
-        </div>
-        <nav className="text-links" aria-label="Case study navigation">
-          <Link to={engineeringPath}>All engineering work</Link>
-          <Link to="/contact/">Discuss a project</Link>
+          </Link>
+          <div className={styles.navLinks}>
+            <InLink href={engineeringPath}>All engineering work</InLink>
+            <InLink href="/contact/">Discuss a project</InLink>
+          </div>
         </nav>
-      </section>
-    </main>
-  </Layout>
-)
+      </main>
+    </Layout>
+  )
+}
 
 export default ProjectCaseStudy

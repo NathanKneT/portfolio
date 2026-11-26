@@ -1,0 +1,51 @@
+/* Home page layout (design-phase.md §4 and §11). Shared by the sections in src/components/home. */
+
+/* The page ends on the contact block: no extra room before the footer.
+   !important: an older rule pads every .portfolio-page with !important on a phone. */
+.page.page {
+  padding-bottom: 0 !important;
+}
+
+/* The proof strip under the hero draws its own rule: the hero's border would double it. */
+.hero:global(.landing-hero) {
+  border-bottom: 0;
+}
+
+.section {
+  padding: 88px 0 96px;
+  border-top: 1px solid var(--line);
+}
+
+/* ---- Section heads (SectionHead, styled for the home page) ---- */
+
+.head :global(.section-head) {
+  gap: 8px 32px;
+  margin-bottom: 0;
+}
+
+.head :global(.section-head) > :global(.text-link) {
+  min-height: 44px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+/* The arrow is drawn, not read: its alternative text is empty. */
+.head :global(.section-head) > :global(.text-link)::after {
+  margin-left: 6px;
+  content: "\2192";
+  content: "\2192" / "";
+}
+
+/* The career title is the largest on the page: 48 / 52 px (32 / 35 on a phone). */
+.headLarge :global(.section-head-title) {
+  font-size: clamp(2rem, 1.6479rem + 1.5023vw, 3rem);
+  line-height: clamp(2.1875rem, 1.8134rem + 1.5962vw, 3.25rem);
+  letter-spacing: var(--ls-h1-home);
+}
+
+@media (max-width: 719px) {
+  .section {
+    padding: 48px 0 56px;
+  }
+}

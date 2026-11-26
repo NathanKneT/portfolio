@@ -1,0 +1,40 @@
+/* "A · B · C" that never starts or ends a line with a dot (dot-list.tsx). Each dot is 1.25em wide
+   and sits on the side of the next item; the list reaches 1.25em past the box on that side, so the
+   dot at the edge of each line is clipped. */
+
+.box {
+  display: block;
+  overflow: hidden;
+  overflow: clip;
+}
+
+.listStart,
+.listEnd {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.listStart {
+  margin-left: -1.25em;
+}
+
+.listEnd {
+  justify-content: flex-end;
+  margin-right: -1.25em;
+}
+
+/* An item never breaks inside: the line breaks between items. */
+.item {
+  white-space: nowrap;
+}
+
+.listStart .item::before,
+.listEnd .item::after {
+  display: inline-block;
+  width: 1.25em;
+  color: var(--line-strong);
+  font-weight: 400;
+  text-align: center;
+  content: "\00b7";
+  content: "\00b7" / "";
+}

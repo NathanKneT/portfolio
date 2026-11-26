@@ -1,0 +1,150 @@
+/* DuskOnVita, critical point 1: the frame bar. Its budget line (33 ms) falls 1 ms after the start of
+   the "31" part, and StackedBar sets each value 8 px into its part: at 6.5 px a millisecond (the widest
+   plate) the "3" touched the line's halo. Every value sits 14 px in instead, the same for all five, so
+   the closest one clears the halo by about 4 px. CSS transform only: the reveal animates opacity. */
+
+.frameBar :global(.sbar-wide) > :global(text.c-text-on-hue) {
+  transform: translateX(6px);
+}
+
+/* DuskOnVita, critical point 2: two tracks, a comparator, two counters (board CaseStudy). */
+
+.verify {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px 20px;
+}
+
+.tracks {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 300px;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tracksLabel {
+  margin: 0;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.track {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+
+.trackName {
+  color: var(--text-2);
+  font-size: var(--fs-caption);
+  line-height: 18px;
+}
+
+.cells {
+  display: flex;
+  height: 14px;
+  gap: 3px;
+}
+
+.cells > span {
+  flex: 1;
+  background: var(--text-2);
+}
+
+.compare {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+}
+
+.compare > span:not(.compareBox) {
+  width: 36px;
+  height: 1px;
+  background: var(--line-strong);
+}
+
+.compareBox {
+  padding: 10px 14px;
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  font-size: var(--fs-caption);
+  font-weight: 650;
+  line-height: 18px;
+}
+
+.counters {
+  display: flex;
+  flex: none;
+  gap: 40px;
+}
+
+.counter {
+  display: flex;
+  margin: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.counterValue {
+  display: inline-grid;
+  color: var(--text);
+  font-size: 44px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  line-height: 48px;
+  letter-spacing: var(--ls-heading);
+}
+
+/* The ghost and the live value share one grid cell: the box is always as wide as the final value. */
+.counterGhost,
+.counterLive {
+  grid-area: 1 / 1;
+}
+
+.counterGhost {
+  visibility: hidden;
+}
+
+.counterLabel {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 18px;
+}
+
+.clock {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+@container chart (max-width: 640px) {
+  .verify {
+    gap: 20px 12px;
+  }
+
+  .track {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .compare > span:not(.compareBox) {
+    width: 20px;
+  }
+
+  .counters {
+    gap: 24px;
+  }
+
+  .counterValue {
+    font-size: 34px;
+    line-height: 38px;
+  }
+}

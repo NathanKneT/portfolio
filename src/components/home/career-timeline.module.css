@@ -1,0 +1,844 @@
+/* Career timeline and the list of roles under it (design-phase.md §5.2, §11; boards M05 to M08). */
+
+.reveal {
+  --bar: var(--text-2);
+  --bar-hover: var(--text);
+  /* Second lines on a light bar: 8.3:1 on --text-2 (10.8:1 on hover). Not a site token: only
+     these bars use it. */
+  --bar-ink-2: #3a3228;
+}
+
+/* At load, on screen (use-reveal.ts, atLoadScript): until the page's script plays the reveal, every
+   step waits at its start, as the reveal's first frame draws it. The script on the page sets this
+   only in a visible tab without reduced motion, and lifts it after 2.5 s at the latest. */
+:global(html[data-reveal-at-load="hold"]) .reveal [data-step="fade"] {
+  opacity: 0;
+}
+
+:global(html[data-reveal-at-load="hold"]) .reveal [data-step="rise"] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+:global(html[data-reveal-at-load="hold"]) .reveal [data-step="draw-x"] {
+  transform: scaleX(0);
+}
+
+:global(html[data-reveal-at-load="hold"]) .reveal [data-step="draw-y"] {
+  transform: scaleY(0);
+}
+
+/* ==== Wide: a horizontal chart, one month = one 54th (or so) of the width ==== */
+
+/* The whole chart, "Now" included, at any width of its column from 720 px of window: under
+   900 px of chart, the compact labels below. */
+.wideBox {
+  margin-top: 48px;
+}
+
+.wide {
+  container: career / inline-size;
+  position: relative;
+  height: 272px;
+}
+
+.axis {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.year {
+  position: absolute;
+  top: 0;
+  margin-left: 10px;
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: 1.375rem;
+}
+
+.yearFirst {
+  left: 0;
+  margin-left: 0;
+}
+
+.yearLine {
+  position: absolute;
+  top: 32px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.exchange {
+  position: absolute;
+  top: 52px;
+  display: flex;
+  height: 88px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  border-top: 1px dashed var(--line-strong);
+  border-bottom: 1px dashed var(--line-strong);
+  font-size: var(--fs-caption);
+  line-height: 1.125rem;
+  text-align: center;
+}
+
+.lane {
+  position: absolute;
+  left: 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.125rem;
+}
+
+.laneAlongside {
+  top: 166px;
+}
+
+.laneTeaching {
+  top: 227px;
+}
+
+.bar {
+  position: absolute;
+  display: block;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.barMain {
+  top: 52px;
+  height: 88px;
+}
+
+.barAlongside {
+  top: 150px;
+  height: 52px;
+}
+
+.barTeaching {
+  top: 212px;
+  height: 48px;
+}
+
+.barFill {
+  position: absolute;
+  inset: 0;
+  background: var(--bar);
+  transition: background-color 150ms var(--ease);
+}
+
+.barNow .barFill {
+  background: var(--accent);
+}
+
+.bar:hover .barFill {
+  background: var(--bar-hover);
+}
+
+.barNow:hover .barFill {
+  background: var(--accent-hover);
+}
+
+/* The open role: a rule under its bar. */
+.barMark {
+  position: absolute;
+  right: 0;
+  bottom: -6px;
+  left: 0;
+  display: none;
+  height: 2px;
+  background: var(--text);
+}
+
+.bar[aria-expanded="true"] .barMark {
+  display: block;
+}
+
+.barText {
+  position: relative;
+  display: flex;
+  height: 100%;
+  padding: 0 14px;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.barName,
+.barLine {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.barName {
+  color: var(--on-accent);
+  font-size: 1.1875rem;
+  font-weight: 650;
+  line-height: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.barAlongside .barName {
+  font-size: 1rem;
+  line-height: 1.3125rem;
+}
+
+.barLine {
+  color: var(--bar-ink-2);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1.125rem;
+}
+
+.barNow .barLine {
+  color: var(--on-accent);
+}
+
+/* A bar too short for its name: the name sits after it. */
+.barOutside {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  display: flex;
+  height: 100%;
+  margin-left: 12px;
+  align-items: center;
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+
+.barOutsideDate {
+  margin-left: 10px;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: 400;
+}
+
+.bar:hover .barOutsideName {
+  color: var(--accent-hover);
+}
+
+/* From now to the end of the axis: the current role goes on. */
+.openEnd {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  left: var(--now);
+  height: 88px;
+  border-top: 2px dashed var(--accent);
+  border-bottom: 2px dashed var(--accent);
+}
+
+.nowLine {
+  position: absolute;
+  top: 24px;
+  left: var(--now);
+  width: 2px;
+  height: 244px;
+  margin-left: -1px;
+  background: var(--accent);
+}
+
+.nowLabel {
+  position: absolute;
+  top: 0;
+  right: calc(100% - var(--now) + 8px);
+  color: var(--accent);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1.375rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Under 1 000 px of chart, the names keep inside their bars a little smaller. */
+@container career (max-width: 999px) {
+  .barText {
+    padding: 0 12px;
+  }
+
+  .barName {
+    font-size: 1.0625rem;
+    line-height: 1.375rem;
+  }
+
+  .barAlongside .barName {
+    font-size: 0.9375rem;
+  }
+
+  .barOutside {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .barOutsideDate {
+    margin-left: 0;
+    line-height: 1.125rem;
+  }
+}
+
+/* Compact, under 900 px of chart (720 to 1 183 px of window): a line too long for its bar wraps
+   instead of being cut, at the spaces and dashes only; freelance keeps its name and dates, as on a
+   phone (its title is in the list). The bars are 88 px tall: three or four lines fit. */
+@container career (max-width: 899px) {
+  .barText {
+    padding: 0 8px;
+  }
+
+  .barName,
+  .barLine {
+    overflow: visible;
+    white-space: normal;
+  }
+
+  .barName {
+    font-size: 1rem;
+    line-height: 1.25rem;
+  }
+
+  .barAlongside .barName {
+    font-size: 0.9375rem;
+  }
+
+  .barNameMore {
+    display: none;
+  }
+
+  .exchange {
+    padding: 0 4px;
+  }
+}
+
+/* The narrowest charts (720 to 760 px of window): the second lines at 12 px, so a 12-month bar
+   still keeps its dates on one line. */
+@container career (max-width: 719.98px) {
+  .barText {
+    padding: 0 7px;
+  }
+
+  .barLine {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+}
+
+/* A year's label that would run into the Now label at this width of chart (data-fit, set by
+   yearFit() in career-timeline.tsx) gives way: the Now label names that year. */
+@container career (max-width: 699.98px) {
+  .year[data-fit="700"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 759.98px) {
+  .year[data-fit="760"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 819.98px) {
+  .year[data-fit="820"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 879.98px) {
+  .year[data-fit="880"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 939.98px) {
+  .year[data-fit="940"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 999.98px) {
+  .year[data-fit="1000"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 1059.98px) {
+  .year[data-fit="1060"] {
+    display: none;
+  }
+}
+
+@container career (max-width: 1119.98px) {
+  .year[data-fit="1120"] {
+    display: none;
+  }
+}
+
+/* ==== Phone: a vertical chart, 10 px a month, the newest at the top ==== */
+
+.tall {
+  position: relative;
+  display: none;
+  margin-top: 40px;
+}
+
+.vaxis {
+  position: absolute;
+  top: 0;
+  left: 48px;
+  width: 2px;
+  height: var(--scale-height);
+  background: var(--line-strong);
+}
+
+/* Bars and the axis grow upwards, from their start. */
+.vaxis[data-step],
+.vbar[data-step] {
+  transform-origin: center bottom;
+}
+
+.vtick {
+  position: absolute;
+  left: 40px;
+  width: 84px;
+  height: 1px;
+  background: var(--line);
+}
+
+.vyear {
+  position: absolute;
+  left: 0;
+  color: var(--text);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: 1.25rem;
+}
+
+.vbar {
+  position: absolute;
+  background: var(--bar);
+}
+
+.vbar.barNow {
+  background: var(--accent);
+}
+
+.vbarMain {
+  left: 64px;
+  width: 24px;
+}
+
+.vbarAlongside {
+  left: 92px;
+  width: 12px;
+}
+
+.vbarTeaching {
+  left: 108px;
+  width: 12px;
+}
+
+.vexchange {
+  position: absolute;
+  left: 64px;
+  width: 24px;
+  border-right: 1px dashed var(--line-strong);
+  border-left: 1px dashed var(--line-strong);
+}
+
+.vopenEnd {
+  position: absolute;
+  top: 0;
+  left: 64px;
+  width: 24px;
+  border-right: 2px dashed var(--accent);
+  border-left: 2px dashed var(--accent);
+}
+
+.vnowLine {
+  position: absolute;
+  right: 0;
+  left: 40px;
+  height: 2px;
+  background: var(--accent);
+}
+
+.vnowLabel {
+  position: absolute;
+  right: 0;
+  padding-left: 8px;
+  color: var(--accent);
+  background: var(--bg);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1.125rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Labels in a grid: each row starts where its label wants to be, and grows when a label
+   wraps on a narrow screen, so a label never covers the next one. */
+.vlabels {
+  position: relative;
+  display: grid;
+  padding-left: 136px;
+  align-items: start;
+}
+
+.vlabel {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  color: inherit;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.vlabelName {
+  display: block;
+  color: var(--text);
+  font-size: 1.0625rem;
+  font-weight: 650;
+  line-height: 1.375rem;
+  transition: color 150ms var(--ease);
+}
+
+.vlabel:hover .vlabelName {
+  color: var(--accent-hover);
+}
+
+.vlabelLine,
+.vlabelMuted {
+  display: block;
+  color: var(--text-2);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.125rem;
+}
+
+.vlabelMuted {
+  color: var(--muted);
+}
+
+.vexchangeLabel {
+  display: block;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.125rem;
+}
+
+@media (max-width: 719px) {
+  .wideBox {
+    display: none;
+  }
+
+  .tall {
+    display: block;
+  }
+}
+
+/* ==== The list of roles ==== */
+
+.roles {
+  container: roles / inline-size;
+  margin: 44px 0 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+/* The rule over each row is its own element: it draws with the row's bar, the text never hides. */
+.role {
+  position: relative;
+  border-top: 1px solid transparent;
+}
+
+.roleRule {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.roleButton {
+  display: grid;
+  width: 100%;
+  min-height: 68px;
+  margin: 0;
+  padding: 18px 0;
+  grid-template-columns: 190px 330px minmax(0, 1fr) 12px;
+  gap: 24px;
+  align-items: baseline;
+  color: inherit;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.period {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+  line-height: 1.375rem;
+}
+
+.who {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.name {
+  color: var(--text);
+  font-size: 1.25rem;
+  font-weight: 650;
+  line-height: 1.625rem;
+  letter-spacing: -0.01em;
+  transition: color 150ms var(--ease);
+}
+
+.roleButton:hover .name {
+  color: var(--accent-hover);
+}
+
+.meta {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  line-height: 1.25rem;
+}
+
+.metaNarrow,
+.whenNarrow,
+.proofNarrow {
+  display: none;
+}
+
+.proof,
+.proofNarrow {
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+}
+
+.proof {
+  display: inline-flex;
+}
+
+/* Amber means now: the current role's proof line. */
+.nowMark {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: var(--accent);
+}
+
+.chevron {
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: var(--muted);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+  transition: transform 150ms var(--ease);
+}
+
+.roleButton[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+.panel {
+  display: flex;
+  padding: 0 0 28px 214px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.panelText {
+  max-width: 680px;
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: 1.625rem;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stackLabel {
+  margin: 0;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.stackList {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  list-style: none;
+}
+
+.stackList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  line-height: 1.375rem;
+}
+
+.stackList li::before {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  background: var(--line-strong);
+  content: "";
+}
+
+.panelLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+.panelLinks a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* Medium: the proof line goes under the name. */
+@container roles (max-width: 899px) {
+  .roleButton {
+    grid-template-areas:
+      "period who chevron"
+      "period proof chevron";
+    grid-template-columns: 150px minmax(0, 1fr) 12px;
+    gap: 6px 24px;
+  }
+
+  .period {
+    grid-area: period;
+  }
+
+  .who {
+    grid-area: who;
+  }
+
+  .proof {
+    grid-area: proof;
+  }
+
+  .chevron {
+    grid-area: chevron;
+  }
+
+  .panel {
+    padding-left: 174px;
+  }
+}
+
+/* Narrow (phone): name, title, dates and place; the proof line opens with the panel. */
+@container roles (max-width: 559px) {
+  .roleButton {
+    display: flex;
+    min-height: 64px;
+    padding: 14px 0;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .period,
+  .meta,
+  .proof {
+    display: none;
+  }
+
+  .name {
+    font-size: 1.1875rem;
+    line-height: 1.5rem;
+  }
+
+  .metaNarrow,
+  .whenNarrow {
+    display: block;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.25rem;
+  }
+
+  .metaNarrow {
+    color: var(--text-2);
+  }
+
+  .whenNarrow {
+    color: var(--muted);
+  }
+
+  .chevron {
+    margin-top: 6px;
+  }
+
+  .panel {
+    padding: 0 0 20px;
+  }
+
+  .proofNarrow {
+    display: flex;
+    margin: 0;
+  }
+}

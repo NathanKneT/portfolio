@@ -1,0 +1,300 @@
+/* Stack ledger (design-phase.md §5.3, §6 StackLedger; board M09). */
+
+.controls {
+  display: flex;
+  margin-top: 32px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter {
+  display: inline-flex;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  align-items: center;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-small);
+  line-height: 1.25rem;
+  cursor: pointer;
+  transition: color 150ms var(--ease), border-color 150ms var(--ease);
+}
+
+.filter:hover {
+  color: var(--text);
+  border-color: var(--line-strong);
+}
+
+.filter[aria-pressed="true"] {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.key {
+  display: flex;
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.25rem;
+}
+
+.keyNow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.keySquare {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+}
+
+.toneNow {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tonePaid {
+  color: var(--text-2);
+}
+
+.toneSide {
+  color: var(--faint);
+}
+
+/* Three columns of families on a wide screen, two in between: the browser balances them. */
+.ledger {
+  margin-top: 36px;
+  columns: 3 300px;
+  column-gap: 40px;
+}
+
+.group {
+  margin-bottom: 36px;
+  break-inside: avoid;
+}
+
+.group:last-child {
+  margin-bottom: 0;
+}
+
+.groupTitle {
+  margin: 0;
+  padding-bottom: 10px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.groupToggle,
+.folded {
+  display: none;
+}
+
+/* Shown only when the keyboard reaches it, as a text link under the filters. */
+.skip:not(:focus) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip:focus {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  align-self: flex-start;
+  color: var(--text);
+  font-size: var(--fs-small);
+  font-weight: 600;
+}
+
+.rows {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  padding: 7px 0;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid var(--line);
+}
+
+/* 24 px as a target (C# included), 22 px tall in the row's rhythm. */
+.name {
+  display: inline-block;
+  min-width: 24px;
+  margin: -1px 0;
+  padding: 1px 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.375rem;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 150ms var(--ease), text-decoration-color 150ms var(--ease);
+}
+
+/* Used in paid work or teaching: bright and bold. */
+.namePaid {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.name:hover {
+  color: var(--accent-hover);
+  text-decoration-color: var(--accent-hover);
+}
+
+/* The places, flush right; a line breaks between two of them (dot-list.tsx). */
+.contexts {
+  min-width: 0;
+  flex: 1;
+  font-size: var(--fs-caption);
+  line-height: 1.25rem;
+}
+
+.contexts > span > span {
+  transition: color 150ms var(--ease);
+}
+
+/* ---- A filter on: the technologies used there, and that place in their list, bright and bold;
+   the rest in --faint, 5.7:1 at the least (never under 4.5:1: these are links still in use). ---- */
+
+.nameMatch {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.nameDim {
+  color: var(--faint);
+}
+
+.contextChosen {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Rokken stays amber: amber means now. */
+.contextChosen.toneNow {
+  color: var(--accent);
+}
+
+.contextDim {
+  color: var(--faint);
+}
+
+/* ---- Phone: an accordion, one family open ---- */
+@media (max-width: 719px) {
+  .controls {
+    margin-top: 24px;
+  }
+
+  .ledger {
+    margin-top: 24px;
+    columns: auto;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .group {
+    margin: 0;
+  }
+
+  .groupTitle {
+    padding: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+
+  .groupName {
+    display: none;
+  }
+
+  .groupToggle {
+    display: flex;
+    width: 100%;
+    min-height: 48px;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-2);
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--fs-micro);
+    font-weight: var(--weight-label);
+    line-height: var(--lh-micro);
+    letter-spacing: var(--ls-label);
+    text-align: left;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .group[data-open="false"] .rows {
+    display: none;
+  }
+
+  .group[data-open="false"] .folded {
+    display: block;
+    margin: 0;
+    padding: 0 0 14px;
+    color: var(--muted);
+    font-size: var(--fs-small);
+    line-height: 1.375rem;
+  }
+
+  .foldedMatch {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .foldedDim,
+  .foldedNone {
+    color: var(--faint);
+  }
+
+  .group[data-open="true"] .rows {
+    padding-bottom: 10px;
+    border-bottom: 0;
+  }
+}
+
+.chevron {
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: var(--muted);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+  transition: transform 150ms var(--ease);
+}
+
+.groupToggle[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}

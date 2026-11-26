@@ -1,0 +1,200 @@
+/* Featured work: three cards (design-phase.md §5.4, §6 ProjectCard; board M10). */
+
+.grid {
+  container: cards / inline-size;
+  display: grid;
+  margin-top: 44px;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 24px;
+}
+
+/* The title's link stretches over the whole card (::after); the media comes last in the
+   markup and first on screen. */
+.card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.media {
+  position: relative;
+  overflow: hidden;
+  order: -1;
+  aspect-ratio: 16 / 10;
+  background: var(--matte);
+  border: 1px solid var(--line);
+}
+
+.media :global(.loop),
+.media :global(.picture) {
+  height: 100%;
+}
+
+.media :global(.loop) {
+  display: block;
+}
+
+.media img,
+.media video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--position, 50% 50%);
+}
+
+.label {
+  margin: 18px 0 0;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 8px 0 0;
+  color: var(--text);
+  font-size: var(--fs-h3);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: inherit;
+}
+
+.link::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  content: "";
+}
+
+/* The ring goes round what a click opens: the whole card. */
+.link:focus-visible {
+  outline: none;
+}
+
+.link:focus-visible::after {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.summary {
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+}
+
+.figure {
+  display: flex;
+  margin: 16px 0 0;
+  padding-top: 14px;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--line);
+}
+
+.figureValue {
+  color: var(--text);
+  font-size: 1.375rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-heading);
+  line-height: 1.75rem;
+  letter-spacing: var(--ls-h3);
+}
+
+.figureLabel {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.1875rem;
+}
+
+.stack {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.25rem;
+}
+
+.action {
+  display: inline-flex;
+  min-height: 44px;
+  margin-top: auto;
+  padding-top: 6px;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  transition: color 150ms var(--ease);
+}
+
+.card:hover .action,
+.card:has(.link:focus-visible) .action {
+  color: var(--accent-hover);
+}
+
+/* Hover: the picture grows 3 % inside its frame, slowly. Not with reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .media img,
+  .media video {
+    transition: transform 500ms var(--ease);
+  }
+
+  .card:hover .media img,
+  .card:hover .media video {
+    transform: scale(1.03);
+  }
+}
+
+/* Two columns (624 to 947 px of grid): the third card would sit alone on its row. It takes the whole
+   row instead, its picture in the first column at the same size as the two above, its text in the
+   second. The rows are as tall as the text; the last one takes what the picture adds. */
+@container cards (min-width: 624px) and (max-width: 947.98px) {
+  .card:nth-child(3):last-child {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(6, auto) 1fr;
+    column-gap: 24px;
+  }
+
+  .card:nth-child(3):last-child > * {
+    grid-column: 2;
+  }
+
+  .card:nth-child(3):last-child > .media {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: start;
+  }
+
+  .card:nth-child(3):last-child > .label {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 719px) {
+  .grid {
+    margin-top: 28px;
+    gap: 40px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    line-height: 1.5625rem;
+  }
+}

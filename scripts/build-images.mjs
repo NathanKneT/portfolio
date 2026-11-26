@@ -29,6 +29,20 @@ const jobs = [
   // A screenshot of an interface: full colour resolution, so thin coloured text stays sharp.
   { id: "caseNarrativeEditor", source: "static/evidence/narrative-forge-editor.png", out: "evidence/narrative-forge-editor", widths: [480, 960, 1440], avif: { quality: 60, chromaSubsampling: "4:4:4" } },
   { id: "caseCourseTeaching", source: "static/evidence/conversational-agents-teaching.jpg", out: "evidence/conversational-agents-teaching", widths: [480, 960, 1440] },
+  // Case study pages (work package 3). Lead image of VRTRAKILL, then the pictures beside the figures.
+  { id: "caseVrtrakillShotgun", source: "static/evidence/vrtrakill-shotgun.jpg", out: "evidence/vrtrakill-shotgun", widths: [480, 960] },
+  // Kororo's own captures (itch page set of preview 0.3.0), one beside each critical point.
+  { id: "caseKororoDoorway", source: "static/evidence/kororo-doorway.jpg", out: "evidence/kororo-doorway", widths: [480, 960, 1280] },
+  { id: "caseKororoIce", source: "static/evidence/kororo-ice.jpg", out: "evidence/kororo-ice", widths: [480, 960, 1280] },
+  { id: "caseKororoCave", source: "static/evidence/kororo-cave.jpg", out: "evidence/kororo-cave", widths: [480, 960, 1280] },
+  // Cloudpunk VRevival's harness capture 36-wheel-grab, the headset window without its black band.
+  { id: "caseCloudpunkWheelGrab", source: "static/evidence/cloudpunk-36-wheel-grab.jpg", out: "evidence/cloudpunk-36-wheel-grab", widths: [480, 960, 1600] },
+  // Loop posters: the small widths are the "Next case study" thumbnails (144 px wide); the JPEG
+  // fallback is the poster the loop itself shows (rtht-3d-demo-960.jpg, vrtrakill-streamer-loop-960.jpg).
+  { id: "caseCloudpunkPoster", source: "static/evidence/cloudpunk-cockpit-loop-poster.jpg", out: "evidence/cloudpunk-cockpit-poster", widths: [320, 640] },
+  { id: "caseKororoPoster", source: "static/evidence/kororo-loop-poster.jpg", out: "evidence/kororo-loop-still", widths: [320, 680] },
+  { id: "caseRthtPoster", source: "static/evidence/rtht-3d-demo-poster.jpg", out: "evidence/rtht-3d-demo", widths: [320, 960] },
+  { id: "caseVrtrakillLoopPoster", source: "static/evidence/vrtrakill-streamer-loop-poster.jpg", out: "evidence/vrtrakill-streamer-loop", widths: [320, 960] },
 ]
 
 const AVIF = { quality: 52, effort: 6, chromaSubsampling: "4:2:0" }

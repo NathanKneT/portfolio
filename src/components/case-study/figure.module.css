@@ -1,0 +1,223 @@
+/* Parts shared by the case figures (src/components/case-study/). Every figure sits in the WP1 chart
+   shell (.chart, .chart-plate in global.css): `chart` is the container the queries below answer to,
+   so a figure follows its own column, not the window. */
+
+.figure {
+  /* Local token: no monospace face is defined globally. */
+  --case-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+/* WP1 charts take a CaptionRow as their caption, which ChartFigure wraps in a span: without its own
+   box, the text and the source link are items of the caption's flex row, as under the other figures. */
+.chartCaption :global(.chart-caption) > span {
+  display: contents;
+}
+
+/* ---- Small capitals over a part of a figure ---- */
+
+.label {
+  margin: 0 0 8px;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+/* ---- Flow: steps in a row joined by chevrons ---- */
+
+.flow {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+}
+
+/* The marked step: a 2 px border, padding one pixel less so it keeps its size. */
+.stepMarked {
+  padding: 13px 15px;
+  border: 2px solid var(--hue, var(--text));
+}
+
+.stepNumber {
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: var(--lh-micro);
+}
+
+.stepTitle {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 21px;
+  overflow-wrap: anywhere;
+}
+
+.stepDetail {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 19px;
+}
+
+.chevron {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.chevron svg {
+  display: block;
+  fill: none;
+  stroke: var(--muted);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+@container chart (max-width: 640px) {
+  .flow {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .step {
+    padding: 12px 14px;
+  }
+
+  .stepMarked {
+    padding: 11px 13px;
+  }
+
+  .chevron svg {
+    transform: rotate(90deg);
+  }
+}
+
+/* Five steps need about 180 px each before they sit in a row; so does a step with a long word in it. */
+@container chart (max-width: 960px) {
+  .flowWide {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .flowWide .step {
+    padding: 12px 14px;
+  }
+
+  .flowWide .stepMarked {
+    padding: 11px 13px;
+  }
+
+  .flowWide .chevron svg {
+    transform: rotate(90deg);
+  }
+}
+
+/* ---- Lines of a file, each with what it does ---- */
+
+.code {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.code li {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: 14px;
+  padding: 6px 0;
+  border-top: 1px solid var(--line);
+}
+
+.code code {
+  /* The theme gives `ol > li > code` a light background and padding: not here. */
+  padding: 0;
+  color: var(--text-2);
+  background: none;
+  font-family: var(--case-mono);
+  font-size: 13px;
+  line-height: 20px;
+  overflow-wrap: anywhere;
+}
+
+.code li > span {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+}
+
+.code .codeMarked code {
+  color: var(--text);
+  font-weight: 700;
+}
+
+@container chart (max-width: 520px) {
+  .code li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+    padding: 8px 0;
+  }
+}
+
+/* ---- A capture from the project, beside a drawing ---- */
+
+.shot {
+  min-width: 0;
+  flex: 1.2 1 420px;
+  margin: 0;
+}
+
+.shotFrame {
+  display: block;
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+.shotFrame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.shot figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: 18px;
+}
+
+.beside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 36px;
+}
+
+.besideMain {
+  min-width: 0;
+  flex: 1 1 380px;
+}
+
+@container chart (max-width: 640px) {
+  .beside {
+    gap: 20px;
+  }
+}
