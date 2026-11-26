@@ -657,9 +657,6 @@ export const featuredProjectSlugs: ProjectSlug[] = [
   "duskonvita",
 ]
 
-// Professional projects kept for history: one compact row each under "Earlier work" on the engineering page.
-export const earlierWorkSlugs: ProjectSlug[] = ["docs-retriever"]
-
 // One label per status, used on every page.
 export const statusLabel: Record<ProjectStatus, string> = {
   active: "Active",
@@ -718,8 +715,6 @@ export const projectLink = (project: Project) =>
 export const latestSideProject = () => getProject(latestSideProjectSlug)
 
 export const featuredProjects = () => featuredProjectSlugs.map(getProject)
-
-export const earlierWork = () => earlierWorkSlugs.map(getProject)
 
 export const isOfflineProject = (project: Project) =>
   project.status === "archived"

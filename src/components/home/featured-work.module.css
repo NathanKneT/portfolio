@@ -44,14 +44,12 @@
   object-position: var(--position, 50% 50%);
 }
 
+/* Same readable meta as the Engineering page: sentence case, 14 px, --text-2, normal spacing. */
 .label {
   margin: 18px 0 0;
-  color: var(--faint);
-  font-size: var(--fs-micro);
-  font-weight: var(--weight-label);
-  line-height: var(--lh-micro);
-  letter-spacing: var(--ls-label);
-  text-transform: uppercase;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  line-height: 1.4;
 }
 
 .title {

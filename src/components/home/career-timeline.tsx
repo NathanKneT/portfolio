@@ -100,7 +100,7 @@ const entryOf = (id: CareerEntryId, now: number): Entry => {
   }
 }
 
-// "Sep 2025 — Present · Osaka": the city alone, on the bar.
+// "Sep 2025 – present · Osaka": the city alone, on the bar.
 const city = (place: string) => place.split(",")[0]
 
 const pct = (value: number) => `${(value * 100).toFixed(3)}%`
