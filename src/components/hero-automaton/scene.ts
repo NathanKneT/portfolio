@@ -1,17 +1,25 @@
-// The 3D half of the hero: one InstancedMesh of boxes, one ShaderMaterial,
-// one draw call. Loaded lazily by index.tsx, never on the server.
+// The 3D half of the hero: one instanced draw of boxes, one ShaderMaterial.
+// Loaded lazily by index.tsx, never on the server.
 //
-// Timing model: the scene owns the clock. It asks the worker for the next
-// generation a little before it needs it, and each frame the shader blends
-// from the previous generation to the current one. No request, no simulation:
-// pausing the render loop pauses the worker too.
+// Timing model: the scene owns one clock, which only runs while the loop
+// runs (off screen or in a hidden tab, time stops). On load an intro plays: a
+// scan plane rises through the volume and prints the first generation while
+// the camera settles. Then the scene asks the worker for one generation at a
+// time, a little before it needs it, and the shader moves every cell from the
+// previous generation to the current one. No request, no simulation: pausing
+// the loop pauses the worker too.
+//
+// Each frame uploads nothing but a few uniforms. Per generation, one buffer of
+// 2 bytes a cell (previous and current state). Cell positions come from
+// gl_InstanceID; instances are ordered front layer first, so the depth test
+// rejects what is hidden before it is shaded.
 
 import {
-  BoxGeometry,
+  BufferAttribute,
   DynamicDrawUsage,
   InstancedBufferAttribute,
-  InstancedMesh,
-  Matrix4,
+  InstancedBufferGeometry,
+  Mesh,
   PerspectiveCamera,
   Scene,
   ShaderMaterial,
@@ -23,6 +31,8 @@ import type { WorkerRequest, WorkerResponse } from "./automaton.worker"
 import {
   DEFAULT_SETTINGS,
   GRIDS,
+  SHOCK_MAX_RADIUS,
+  SHOCK_SPEED,
   gridForViewport,
   type GridId,
   type GridSpec,
@@ -35,7 +45,7 @@ export type HeroSceneOptions = {
   /** Reduced motion: compute the fixed start state, draw it once, stop. */
   still: boolean
   settings?: Partial<Settings>
-  /** Called once, after the first frame is on the canvas. */
+  /** Called once, when the first frame is on the canvas. */
   onReady: () => void
   /** WebGL context lost: the caller shows the poster again. */
   onLost: () => void
@@ -49,12 +59,13 @@ export type HeroSceneStats = {
   alivePercent: number
   tick: number
   running: boolean
+  intro: boolean
 }
 
 export type HeroScene = {
   getSettings: () => Settings
   setSettings: (patch: Partial<Settings>) => void
-  /** Back to the fixed start state, with the current settings. */
+  /** Back to the fixed start state, with the current settings (and the intro). */
   restart: () => void
   stats: () => HeroSceneStats
   /** Renders the rest pose into the reference frame, for the poster. */
@@ -68,20 +79,39 @@ export type HeroScene = {
 
 // Geometry of the look (the rest is tunable in settings.ts).
 const FOV = 28
-const REST_YAW = (-18 * Math.PI) / 180
-const REST_PITCH = (12 * Math.PI) / 180
-const PARALLAX_YAW = (4 * Math.PI) / 180
-const PARALLAX_PITCH = (2.5 * Math.PI) / 180
-const FRAME_FILL = 0.9 // share of the reference frame the volume may fill
-const BLOCK = 0.86 // a block is 86 % of its cell
-const Z_SPACING = 1.15
+const DEG = Math.PI / 180
+const REST_YAW = -18 * DEG
+const REST_PITCH = 12 * DEG
+const PARALLAX_YAW = 4 * DEG
+const PARALLAX_PITCH = 2.5 * DEG
+const BLOCK = 0.8 // a block is 80 % of its cell: the gap draws the grid
+const Z_SPACING = 1.2
 const DPR_CAP_DESKTOP = 1.75
 const DPR_CAP_PHONE = 1.5
+// Whatever the screen, the canvas never has more pixels than this.
+const MAX_PIXELS_DESKTOP = 3.2e6
+const MAX_PIXELS_PHONE = 1.2e6
 const MIN_FPS = 50
-const REQUEST_AT = 0.6 // ask for the next generation at 60 % of a tick
-const SHOCK_SPEED = 1.2 // cells per tick, as in sim.ts
-const SHOCK_MAX_RADIUS = 14
+// Ask for the next generation late in a tick (a step takes the worker well
+// under a millisecond): a click or the cursor shows up one tick sooner.
+const REQUEST_AT = 0.8
 const MAX_SHOCKS = 3
+
+// The intro, as shares of its length: the scan, then the camera settles.
+const SCAN_FROM = 0.05
+const SCAN_TO = 0.74
+const SCAN_BAND = 0.14 // thickness of the printing front, in scan units (0-1)
+// Camera at the start of the intro, relative to the rest pose.
+const INTRO_DISTANCE = 1.16
+const INTRO_YAW = 7 * DEG
+const INTRO_PITCH = -5 * DEG
+// Direction of the scan through the cells (x, y, z weights): it rises layer by
+// layer, leaning a little to the right and from the front layer back.
+const SCAN_AXIS: Record<GridId, [number, number, number]> = {
+  desktop: [0.3, 1, 0.5],
+  phone: [0.12, 1, 0.5],
+  fallback: [0.3, 1, 0.5],
+}
 
 // Safelight palette, as display-space sRGB (the shader works in that space).
 const hex = (value: number) =>
@@ -92,14 +122,19 @@ const COLOR_LIGHT = hex(0xcfc8bc)
 const COLOR_AMBER = hex(0xce8b45)
 
 const VERTEX = /* glsl */ `
-attribute float aPrev;
-attribute float aCur;
+attribute vec2 aState; // previous and current generation, packed (settings.ts)
 
-uniform float uT;
-uniform float uCell;
+uniform vec3 uGrid;        // cells along x, y, z
+uniform float uCell;       // world size of a cell
+uniform float uZStep;      // world distance between two layers
+uniform float uSince;      // ms since the current generation took over
+uniform float uInterval;   // ms per generation
+uniform float uGrow;       // ms of a birth
+uniform float uStagger;    // ms, the largest per-cell delay
 uniform float uStates;
-uniform float uDepthSpan;
 uniform float uAmber;
+uniform vec4 uScan;        // x: front (0-1), y: band, z: lattice, w: glow. x < -2: no intro
+uniform vec3 uScanAxis;
 uniform vec4 uCursor;      // xyz: where the cursor ray meets the mid plane, w: radius
 uniform vec3 uCursorDir;   // unit direction of that ray
 uniform float uCursorGlow;
@@ -113,38 +148,96 @@ varying vec2 vFace;
 varying float vEnergy;
 varying float vAmber;
 varying float vDepth;
+varying float vPresence;
 
-// x: footprint, y: height, z: energy, for one cell state.
-vec3 shapeOf(float state) {
-  if (state < 0.5) return vec3(0.55, 0.0, 0.0);
-  if (state < 1.5) return vec3(1.0, 1.0, 1.0);
-  // Decaying: a plate that flattens (60 %, 35 %, 15 % with five states).
-  float d = (state - 1.0) / (uStates - 1.0);
-  return vec3(1.0, 0.4 * d * d - 1.3 * d + 0.9, mix(0.66, 0.2, d));
+uint hash(uint v) {
+  v = v * 747796405u + 2891336453u;
+  uint w = ((v >> ((v >> 28u) + 4u)) ^ v) * 277803737u;
+  return (w >> 22u) ^ w;
+}
+
+// A dead cell, from the moment it dies (0) to gone (1): it flattens to a
+// plate quickly, then sinks and fades into the page.
+// x: footprint, y: height, z: energy, w: presence.
+vec4 decayShape(float u) {
+  u = clamp(u, 0.0, 1.0);
+  float flatten = smoothstep(0.0, 0.3, u);
+  float height = mix(1.0, 0.34, flatten) - 0.26 * smoothstep(0.3, 1.0, u);
+  float energy = mix(1.0, 0.6, flatten);
+  float presence = 1.0 - smoothstep(0.42, 0.88, u);
+  float footprint = 1.0 - 0.45 * smoothstep(0.5, 0.95, u);
+  return vec4(footprint, height, energy, presence);
 }
 
 void main() {
-  float prevState = mod(aPrev, 16.0);
-  float curState = mod(aCur, 16.0);
-  float heat = mix(floor(aPrev / 16.0), floor(aCur / 16.0), uT) / 15.0;
-  vec3 shape = mix(shapeOf(prevState), shapeOf(curState), uT);
-  // Empty before and after: no geometry at all (every vertex on one point).
-  shape.x *= step(0.5, prevState + curState);
+  int X = int(uGrid.x);
+  int Y = int(uGrid.y);
+  int id = gl_InstanceID;
+  vec3 cell = vec3(float(id % X), float((id / X) % Y), float(id / (X * Y)));
+  // Layer 0 is the front one.
+  vec3 center = vec3(
+    (cell.x + 0.5 - 0.5 * uGrid.x) * uCell,
+    (cell.y + 0.5 - 0.5 * uGrid.y) * uCell,
+    (0.5 * (uGrid.z - 1.0) - cell.z) * uZStep);
+  float depth = cell.z / max(1.0, uGrid.z - 1.0);
 
-  vec3 center = instanceMatrix[3].xyz;
-  float depth = clamp(0.5 - center.z / uDepthSpan, 0.0, 1.0); // 0 front, 1 back
-  float cell = uCell * ${BLOCK.toFixed(2)} * mix(1.0, 0.9, depth);
-  vec3 size = cell * vec3(shape.x, shape.y, shape.x);
+  float prev = mod(aState.x, 16.0);
+  float cur = mod(aState.y, 16.0);
+  float delay = uStagger * float(hash(uint(id)) & 1023u) / 1023.0;
+  // Progress through the current tick, linear and not clamped at 1: a decay
+  // runs on at one speed across ticks, it never stops at a tick boundary.
+  float lin = clamp((uSince - delay) / uInterval, -1.0, 1.5);
+  float grow = clamp((uSince - delay) / uGrow, 0.0, 1.0);
+  float steps = max(1.0, uStates - 1.0);
+
+  vec4 shape;
+  if (prev < 0.5 && cur < 0.5) {
+    shape = vec4(0.0);
+  } else if (prev < 0.5 && cur < 1.5) {
+    // Birth: grows from its base.
+    float rise = 1.0 - pow(1.0 - grow, 3.0);
+    shape = vec4(mix(0.55, 1.0, smoothstep(0.0, 0.7, grow)), rise, 1.0, smoothstep(0.0, 0.2, grow));
+  } else if (prev > 0.5 && prev < 1.5 && cur > 0.5 && cur < 1.5) {
+    shape = vec4(1.0);
+  } else if (prev > 0.5 && (cur < 0.5 || cur > prev)) {
+    shape = decayShape((prev - 1.0 + lin) / steps);
+  } else {
+    shape = cur < 1.5 ? vec4(1.0) : decayShape((cur - 1.0) / steps);
+  }
+
+  // Amber: heat from the simulation (births, excited cells), linear across
+  // the tick, plus the immediate responses: cursor, shockwaves, intro front.
+  float heat = mix(floor(aState.x / 16.0), floor(aState.y / 16.0), clamp(uSince / uInterval, 0.0, 1.0)) / 15.0;
+  float glow = 0.0;
+
+  if (uScan.x > -2.0) {
+    float s = dot(cell + 0.5, uScanAxis);
+    float d = (uScan.x - s) / uScan.y; // > 0 once the front has passed
+    float front = exp(-2.5 * d * d);
+    if (cur > 0.5 || prev > 0.5) {
+      float printed = clamp(d, 0.0, 1.0);
+      shape.x *= mix(0.55, 1.0, smoothstep(0.0, 0.7, printed));
+      shape.y *= 1.0 - pow(1.0 - printed, 3.0);
+      shape.w *= smoothstep(0.0, 0.2, printed);
+      glow += front * uScan.w;
+    } else {
+      // Every empty cell the front crosses shows a point: the scan plane.
+      shape = vec4(0.2, 0.1, 1.0, front * uScan.z);
+      glow = 1.0;
+    }
+  }
+
+  float visible = step(0.003, shape.w) * step(0.001, shape.x);
+  float base = uCell * ${BLOCK.toFixed(2)} * mix(1.0, 0.9, depth) * visible;
+  vec3 size = base * vec3(shape.x, max(shape.y, 0.02), shape.x);
   vec3 local = position * size;
-  local.y += 0.5 * (size.y - cell); // grow from, and flatten onto, the base
+  local.y += 0.5 * (size.y - base); // stand on, and flatten onto, the cell's base
   vec4 world = vec4(center + local, 1.0);
 
-  // Amber: heat from the simulation (births, excited cells), plus two
-  // immediate, GPU-side responses: the cursor and the shockwave fronts.
   float beam = length(cross(center - uCursor.xyz, uCursorDir));
-  float glow = uCursorGlow * (1.0 - smoothstep(0.0, uCursor.w, beam));
+  glow += uCursorGlow * (1.0 - smoothstep(0.0, uCursor.w, beam));
   for (int i = 0; i < ${MAX_SHOCKS}; i++) {
-    float off = (distance(center, uShock[i].xyz) - uShock[i].w) / (1.6 * uCell);
+    float off = (distance(center, uShock[i].xyz) - uShock[i].w) / (1.7 * uCell);
     glow += uShockGlow[i] * exp(-off * off);
   }
   vAmber = clamp(heat * heat * (3.0 - 2.0 * heat) * uAmber + glow, 0.0, 1.0);
@@ -157,6 +250,7 @@ void main() {
   vFace = n.x > 0.5 ? size.zy : (n.y > 0.5 ? size.xz : size.xy);
   vEnergy = shape.z;
   vDepth = depth;
+  vPresence = shape.w;
   gl_Position = projectionMatrix * viewMatrix * world;
 }
 `
@@ -176,6 +270,7 @@ varying vec2 vFace;
 varying float vEnergy;
 varying float vAmber;
 varying float vDepth;
+varying float vPresence;
 
 const vec3 KEY = normalize(vec3(-0.22, 0.85, 0.48));  // above, left, in front
 const vec3 FILL = normalize(vec3(0.72, -0.25, 0.64)); // low, from the right
@@ -192,9 +287,9 @@ void main() {
   vec2 d2 = min(vUv, 1.0 - vUv) * vFace;
   float d = min(d2.x, d2.y);
   float aa = fwidth(d);
-  float width = max(0.04 * uCell, 0.9 * aa);
+  float width = max(0.035 * uCell, 0.9 * aa);
   float edge = 1.0 - smoothstep(width - aa, width + aa, d);
-  edge *= clamp(0.04 * uCell / max(width, 1e-5), 0.35, 1.0);
+  edge *= clamp(0.035 * uCell / max(width, 1e-5), 0.35, 1.0);
 
   float tone = 0.08 + 0.86 * key + 0.1 * fill + 0.2 * spec + 0.14 * edge;
   tone = clamp(tone * vEnergy, 0.0, 1.0);
@@ -204,11 +299,42 @@ void main() {
   vec3 amber = uAmberColor * (0.74 + 0.26 * clamp(tone / max(vEnergy, 0.2), 0.0, 1.0));
   color = mix(color, amber, vAmber * mix(0.55, 1.0, vEnergy));
 
-  // Atmospheric depth: the back layers sink into the page background.
-  color = mix(uBg, color, mix(1.0, uZFade, vDepth));
+  // Atmospheric depth: the back layers sink into the page background, and so
+  // does a cell that is fading out.
+  color = mix(uBg, color, mix(1.0, uZFade, vDepth) * vPresence);
   gl_FragColor = vec4(color, 1.0);
 }
 `
+
+/** The three faces of a unit box the camera can see: front (+z), top (+y) and
+    left (-x). The other three never face it at any pose the scene uses, so
+    they are not drawn. UVs follow BoxGeometry (the shader's edge line). */
+function visibleFaces(): InstancedBufferGeometry {
+  const faces: { normal: number[]; corners: number[][] }[] = [
+    { normal: [0, 0, 1], corners: [[-0.5, -0.5, 0.5], [0.5, -0.5, 0.5], [-0.5, 0.5, 0.5], [0.5, 0.5, 0.5]] },
+    { normal: [0, 1, 0], corners: [[-0.5, 0.5, 0.5], [0.5, 0.5, 0.5], [-0.5, 0.5, -0.5], [0.5, 0.5, -0.5]] },
+    { normal: [-1, 0, 0], corners: [[-0.5, -0.5, -0.5], [-0.5, -0.5, 0.5], [-0.5, 0.5, -0.5], [-0.5, 0.5, 0.5]] },
+  ]
+  const position: number[] = []
+  const normal: number[] = []
+  const uv: number[] = []
+  const index: number[] = []
+  faces.forEach((face, f) => {
+    face.corners.forEach((corner, c) => {
+      position.push(...corner)
+      normal.push(...face.normal)
+      uv.push(c & 1, c >> 1)
+    })
+    const o = f * 4
+    index.push(o, o + 1, o + 3, o, o + 3, o + 2)
+  })
+  const geometry = new InstancedBufferGeometry()
+  geometry.setAttribute("position", new BufferAttribute(new Float32Array(position), 3))
+  geometry.setAttribute("normal", new BufferAttribute(new Float32Array(normal), 3))
+  geometry.setAttribute("uv", new BufferAttribute(new Float32Array(uv), 2))
+  geometry.setIndex(index)
+  return geometry
+}
 
 /** Critically damped spring, integrated exactly: no overshoot at any frame rate. */
 class Spring {
@@ -223,14 +349,12 @@ class Spring {
     this.v = (this.v - this.omega * k) * e
     return this.x
   }
-  set(x: number): void {
-    this.x = x
-    this.v = 0
-  }
 }
 
-const easeInOutCubic = (t: number) =>
-  t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2
+const clamp01 = (t: number) => Math.min(1, Math.max(0, t))
+const smoothstep = (t: number) => t * t * (3 - 2 * t)
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3)
+const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2)
 
 type Volume = {
   spec: GridSpec
@@ -239,9 +363,8 @@ type Volume = {
   height: number
   depth: number
   distance: number
-  mesh: InstancedMesh
-  prev: InstancedBufferAttribute
-  cur: InstancedBufferAttribute
+  mesh: Mesh<InstancedBufferGeometry, ShaderMaterial>
+  state: InstancedBufferAttribute
 }
 
 export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): HeroScene {
@@ -257,19 +380,27 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   stage.appendChild(canvas)
 
   const scene = new Scene()
+  scene.matrixWorldAutoUpdate = false
   const camera = new PerspectiveCamera(FOV, 1.6, 1, 1000)
-  const geometry = new BoxGeometry(1, 1, 1)
+  const faces = visibleFaces()
   const shockUniform = Array.from({ length: MAX_SHOCKS }, () => new Vector4(0, 0, 0, -1000))
   const shockGlowUniform = new Array<number>(MAX_SHOCKS).fill(0)
+  const scan = new Vector4(-10, SCAN_BAND, 0, 0)
   const material = new ShaderMaterial({
     vertexShader: VERTEX,
     fragmentShader: FRAGMENT,
     uniforms: {
-      uT: { value: 1 },
+      uGrid: { value: new Vector3(1, 1, 1) },
       uCell: { value: 1 },
+      uZStep: { value: Z_SPACING },
+      uSince: { value: 0 },
+      uInterval: { value: 1000 / settings.tickRate },
+      uGrow: { value: settings.transitionMs },
+      uStagger: { value: 0 },
       uStates: { value: settings.states },
-      uDepthSpan: { value: 1 },
       uAmber: { value: settings.amber },
+      uScan: { value: scan },
+      uScanAxis: { value: new Vector3() },
       uZFade: { value: settings.zFade },
       uCursor: { value: new Vector4(0, 0, 0, 1) },
       uCursorDir: { value: new Vector3(0, 0, 1) },
@@ -309,10 +440,13 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     return qualityFallback ? "fallback" : "desktop"
   }
 
-  function initWorker(): void {
+  /** `intro`: play the intro on the state this init brings back. */
+  let introOnNextState = !still && settings.intro
+  function initWorker(intro: boolean): void {
     generation++
     requested = true // the init answer is the pending response
     nextCells = null
+    introOnNextState = intro
     post({ type: "init", generation, grid: wantedGrid(), settings })
   }
 
@@ -321,7 +455,6 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     if (!volume) return
     scene.remove(volume.mesh)
     volume.mesh.geometry.dispose()
-    volume.mesh.dispose()
     volume = null
   }
 
@@ -334,38 +467,29 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     const h = spec.y * cell
     const d = spec.z * cell * Z_SPACING
 
-    // Each volume has its own geometry object: it carries the two
-    // per-instance state attributes.
-    const meshGeometry = geometry.clone()
-    const mesh = new InstancedMesh(meshGeometry, material, count)
-    const matrix = new Matrix4()
-    let i = 0
-    for (let z = 0; z < spec.z; z++)
-      for (let y = 0; y < spec.y; y++)
-        for (let x = 0; x < spec.x; x++) {
-          matrix.makeTranslation(
-            (x + 0.5) * cell - w / 2,
-            (y + 0.5) * cell - h / 2,
-            (z + 0.5) * cell * Z_SPACING - d / 2
-          )
-          mesh.setMatrixAt(i++, matrix)
-        }
-    mesh.instanceMatrix.needsUpdate = true
+    // Each volume has its own geometry object: it carries the state buffer.
+    const geometry = new InstancedBufferGeometry()
+    geometry.index = faces.index
+    for (const name of ["position", "normal", "uv"]) geometry.setAttribute(name, faces.getAttribute(name))
+    const state = new InstancedBufferAttribute(new Uint8Array(count * 2), 2)
+    state.setUsage(DynamicDrawUsage)
+    geometry.setAttribute("aState", state)
+    geometry.instanceCount = count
+    const mesh = new Mesh(geometry, material)
     mesh.frustumCulled = false
-
-    const prev = new InstancedBufferAttribute(new Uint8Array(count), 1)
-    const cur = new InstancedBufferAttribute(new Uint8Array(count), 1)
-    prev.setUsage(DynamicDrawUsage)
-    cur.setUsage(DynamicDrawUsage)
-    meshGeometry.setAttribute("aPrev", prev)
-    meshGeometry.setAttribute("aCur", cur)
+    mesh.matrixAutoUpdate = false
     scene.add(mesh)
 
-    material.uniforms.uCell.value = cell
-    material.uniforms.uDepthSpan.value = d - cell * Z_SPACING
+    const uniforms = material.uniforms
+    uniforms.uGrid.value.set(spec.x, spec.y, spec.z)
+    uniforms.uCell.value = cell
+    uniforms.uZStep.value = cell * Z_SPACING
+    const [ax, ay, az] = SCAN_AXIS[gridId]
+    const span = ax * spec.x + ay * spec.y + az * spec.z
+    uniforms.uScanAxis.value.set(ax / span, ay / span, az / span)
 
     // Camera distance: the closest one that keeps the whole volume inside
-    // FRAME_FILL of the reference frame, at the rest angles.
+    // frameFill of the reference frame, at the rest angles.
     const probe = new PerspectiveCamera(FOV, spec.frameAspect, 0.1, 10000)
     const corner = new Vector3()
     const overflow = (distance: number) => {
@@ -384,14 +508,14 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     let far = near * 40
     for (let step = 0; step < 40; step++) {
       const mid = (near + far) / 2
-      if (overflow(mid) > FRAME_FILL) near = mid
+      if (overflow(mid) > spec.frameFill) near = mid
       else far = mid
     }
     const radius = Math.hypot(w, h, d) / 2
     camera.near = Math.max(1, far - radius * 1.5)
-    camera.far = far + radius * 1.5
+    camera.far = far * INTRO_DISTANCE + radius * 1.5
 
-    return { spec, cell, width: w, height: h, depth: d, distance: far, mesh, prev, cur }
+    return { spec, cell, width: w, height: h, depth: d, distance: far, mesh, state }
   }
 
   function placeCamera(target: PerspectiveCamera, distance: number, yaw: number, pitch: number): void {
@@ -429,15 +553,18 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     if (disposed) return
     width = Math.max(1, stage.clientWidth)
     height = Math.max(1, stage.clientHeight)
+    rectDirty = true
     const phoneNow = gridForViewport(window.innerWidth) === "phone"
     if (phoneNow !== isPhone) {
       isPhone = phoneNow
       qualityFallback = false
       dprLimit = 9
-      if (settings.grid === "auto") initWorker()
+      if (settings.grid === "auto") initWorker(false)
     }
     const device = window.devicePixelRatio || 1
-    dpr = Math.max(Math.min(1, device), Math.min(device, isPhone ? DPR_CAP_PHONE : DPR_CAP_DESKTOP, dprLimit))
+    const pixelCap = Math.sqrt((isPhone ? MAX_PIXELS_PHONE : MAX_PIXELS_DESKTOP) / (width * height))
+    const wanted = Math.min(device, isPhone ? DPR_CAP_PHONE : DPR_CAP_DESKTOP, dprLimit, pixelCap)
+    dpr = Math.round(Math.max(Math.min(1, device, pixelCap), 0.75, wanted) * 100) / 100
     renderer.setPixelRatio(dpr)
     renderer.setSize(width, height, false)
     applyView()
@@ -448,7 +575,7 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   // ---- pointer ----------------------------------------------------------
   const yawSpring = new Spring(3.4)
   const pitchSpring = new Spring(3.4)
-  const pointer = { clientX: 0, clientY: 0, inside: false, energy: 0, lastX: 0, lastY: 0, lastTime: 0 }
+  const pointer = { clientX: 0, clientY: 0, inside: false, energy: 0, peak: 0, lastX: 0, lastY: 0, lastTime: 0 }
   const parallaxTarget = { x: 0, y: 0 }
   const hit = new Vector3()
   const rayNear = new Vector3()
@@ -456,14 +583,22 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   const rayDir = new Vector3(0, 0, 1)
   let cursorActive = false
   const queuedShocks: { x: number; y: number; z: number }[] = []
-  const shockVisuals: { start: number }[] = shockUniform.map(() => ({ start: -1e9 }))
+  const shockStart = shockUniform.map(() => -1e9)
   let shockSlot = 0
   let lastPointerType = "mouse"
+  // The canvas rectangle, read again only after a scroll or a resize.
+  let rect = { left: 0, top: 0, width: 0, height: 0 }
+  let rectDirty = true
+  const markRect = () => (rectDirty = true)
 
   /** Client coordinates → the view ray and its point on the volume's mid plane
       (z = 0). Analytic: a ray-plane intersection, no scene raycast. */
   function castToMidPlane(clientX: number, clientY: number): boolean {
-    const rect = canvas.getBoundingClientRect()
+    if (rectDirty) {
+      const r = canvas.getBoundingClientRect()
+      rect = { left: r.left, top: r.top, width: r.width, height: r.height }
+      rectDirty = false
+    }
     if (rect.width < 1 || rect.height < 1) return false
     const nx = ((clientX - rect.left) / rect.width) * 2 - 1
     const ny = 1 - ((clientY - rect.top) / rect.height) * 2
@@ -477,6 +612,7 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     return true
   }
 
+  /** World point on the mid plane → cell coordinates (layer 0 is the front). */
   const toCell = (world: Vector3, v: Volume) => ({
     x: (world.x + v.width / 2) / v.cell - 0.5,
     y: (world.y + v.height / 2) / v.cell - 0.5,
@@ -492,14 +628,15 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       const speed = (Math.hypot(event.clientX - pointer.lastX, event.clientY - pointer.lastY) / elapsed) * 1000
       const energy = Math.min(1, Math.sqrt(speed / 900))
       if (energy > pointer.energy) pointer.energy += (energy - pointer.energy) * 0.5
+      if (pointer.energy > pointer.peak) pointer.peak = pointer.energy
     }
     pointer.lastX = pointer.clientX = event.clientX
     pointer.lastY = pointer.clientY = event.clientY
     pointer.lastTime = now
     pointer.inside = true
-    const rect = section.getBoundingClientRect()
-    parallaxTarget.x = Math.max(-1, Math.min(1, ((event.clientX - rect.left) / rect.width) * 2 - 1))
-    parallaxTarget.y = Math.max(-1, Math.min(1, ((event.clientY - rect.top) / rect.height) * 2 - 1))
+    const r = section.getBoundingClientRect()
+    parallaxTarget.x = Math.max(-1, Math.min(1, ((event.clientX - r.left) / r.width) * 2 - 1))
+    parallaxTarget.y = Math.max(-1, Math.min(1, ((event.clientY - r.top) / r.height) * 2 - 1))
   }
 
   function onPointerLeave(): void {
@@ -516,8 +653,9 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     hit.y = Math.max(-v.height / 2, Math.min(v.height / 2, hit.y))
     queuedShocks.push(toCell(hit, v))
     shockUniform[shockSlot].set(hit.x, hit.y, 0, 0)
-    shockVisuals[shockSlot].start = performance.now()
+    shockStart[shockSlot] = clock
     shockSlot = (shockSlot + 1) % MAX_SHOCKS
+    kick()
   }
 
   const isControl = (target: EventTarget | null) =>
@@ -536,12 +674,15 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   }
 
   // ---- loop -------------------------------------------------------------
+  // `clock` (ms) only moves while the loop runs: every time below is on it.
+  let clock = 0
   let raf = 0
   let visible = true
   let last = 0
-  let tickStart = 0
-  let pausedAt = 0
   let ready = false
+  let introStart = -1 // clock time the intro started, -1 = no intro running
+  let liveFrom = 0 // clock time the first live tick starts
+  let tickStart = 0
   // fps is measured over windows of 1.5 s; a long gap voids the window.
   let windowStart = 0
   let windowFrames = 0
@@ -550,6 +691,7 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   let fps = 0
 
   const shouldRun = () => !disposed && !still && ready && visible && !document.hidden
+  const introLength = () => Math.max(0.5, settings.introSeconds) * 1000
 
   function render(): void {
     renderer.render(scene, camera)
@@ -561,9 +703,12 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     if (!v || requested || nextCells) return
     requested = true
     let cursor = null
-    if (cursorActive && pointer.energy > 0.03) {
-      // Ray direction in cell units (the z layers are spaced wider).
-      const dz = rayDir.z / Z_SPACING
+    const strength = Math.max(pointer.energy, pointer.peak)
+    pointer.peak = 0
+    if (cursorActive && strength > 0.03) {
+      // Ray direction in cell units: the layers are spaced wider, and layer 0
+      // is the front one (world +z).
+      const dz = -rayDir.z / Z_SPACING
       const length = Math.hypot(rayDir.x, rayDir.y, dz) || 1
       cursor = {
         ...toCell(hit, v),
@@ -571,7 +716,7 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
         dy: rayDir.y / length,
         dz: dz / length,
         radius: settings.cursorRadius,
-        strength: pointer.energy * settings.cursorStrength,
+        strength: strength * settings.cursorStrength,
       }
     }
     const recycle = spare
@@ -582,29 +727,61 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     )
   }
 
+  /** The current generation becomes the previous one, `cells` the current. */
   function swapGeneration(v: Volume, cells: Uint8Array): void {
-    const prevArray = v.prev.array as Uint8Array
-    const curArray = v.cur.array as Uint8Array
-    prevArray.set(curArray)
-    curArray.set(cells)
-    v.prev.needsUpdate = true
-    v.cur.needsUpdate = true
+    const pair = v.state.array as Uint8Array
+    for (let i = 0, j = 0; i < cells.length; i++, j += 2) {
+      pair[j] = pair[j + 1]
+      pair[j + 1] = cells[i]
+    }
+    v.state.needsUpdate = true
     spare = cells.buffer as ArrayBuffer
+  }
+
+  /** Intro progress → scan uniform and camera offsets (0 = start, 1 = rest). */
+  function applyIntro(elapsed: number): number {
+    const p = clamp01(elapsed / introLength())
+    const s = clamp01((p - SCAN_FROM) / (SCAN_TO - SCAN_FROM))
+    // A steady scan, eased only at both ends.
+    const eased = 0.4 * s + 0.6 * smoothstep(s)
+    scan.x = -SCAN_BAND + eased * (1 + 2 * SCAN_BAND)
+    const fade = 1 - smoothstep(clamp01((s - 0.86) / 0.14))
+    scan.z = 0.75 * fade
+    scan.w = 0.9 * Math.min(1, settings.amber) * fade
+    if (p >= 1) scan.x = -10
+    return easeInOutCubic(p) * 0.35 + easeOutCubic(p) * 0.65
+  }
+
+  function placeLiveCamera(v: Volume, settle: number, dt: number): void {
+    const yaw = yawSpring.step(parallaxTarget.x * PARALLAX_YAW * settings.parallax, dt)
+    const pitch = pitchSpring.step(parallaxTarget.y * PARALLAX_PITCH * settings.parallax, dt)
+    const away = 1 - settle
+    placeCamera(
+      camera,
+      v.distance * (1 + (INTRO_DISTANCE - 1) * away),
+      REST_YAW + INTRO_YAW * away + yaw,
+      REST_PITCH + INTRO_PITCH * away + pitch
+    )
+    camera.updateMatrixWorld()
   }
 
   function frame(now: number): void {
     raf = 0
     const v = volume
     if (!shouldRun() || !v) return
-    const rawDt = (now - last) / 1000
-    const dt = Math.min(0.05, Math.max(0, rawDt))
+    const rawDt = now - last
+    const dtMs = Math.min(50, Math.max(0, rawDt))
     last = now
+    clock += dtMs
+    const dt = dtMs / 1000
 
-    // Camera parallax: small, critically damped, never a rotation "around".
-    const yaw = yawSpring.step(parallaxTarget.x * PARALLAX_YAW * settings.parallax, dt)
-    const pitch = pitchSpring.step(parallaxTarget.y * PARALLAX_PITCH * settings.parallax, dt)
-    placeCamera(camera, v.distance, REST_YAW + yaw, REST_PITCH + pitch)
-    camera.updateMatrixWorld()
+    // Intro: the scan prints the first generation, the camera settles.
+    let settle = 1
+    if (introStart >= 0) {
+      settle = applyIntro(clock - introStart)
+      if (clock - introStart >= introLength()) introStart = -1
+    }
+    placeLiveCamera(v, settle, dt)
 
     // Cursor: where it meets the mid plane, and how much energy it carries.
     pointer.energy *= Math.exp(-dt / 0.3)
@@ -621,32 +798,36 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       ? Math.min(0.85, pointer.energy * settings.cursorStrength) * Math.min(1, settings.amber)
       : 0
 
-    // Simulation clock.
-    const interval = 1000 / Math.max(1, settings.tickRate)
-    let t = (now - tickStart) / interval
-    if (t >= REQUEST_AT) requestStep()
-    if (t >= 1 && nextCells) {
-      swapGeneration(v, nextCells)
-      nextCells = null
-      tickStart = t < 2 ? tickStart + interval : now
-      t = (now - tickStart) / interval
+    // Simulation clock: live once the scan has printed the first generation.
+    const interval = 1000 / Math.max(0.5, settings.tickRate)
+    if (clock >= liveFrom) {
+      let since = clock - tickStart
+      if (since >= REQUEST_AT * interval) requestStep()
+      if (since >= interval && nextCells) {
+        swapGeneration(v, nextCells)
+        nextCells = null
+        tickStart = since < 2 * interval ? tickStart + interval : clock
+        since = clock - tickStart
+      }
+      material.uniforms.uSince.value = since
     }
-    material.uniforms.uT.value = easeInOutCubic(Math.min(1, Math.max(0, t)))
+    material.uniforms.uInterval.value = interval
+    material.uniforms.uStagger.value = settings.stagger * interval
 
     // Shockwave fronts, continuous on the GPU (the worker's are per tick).
-    const speed = SHOCK_SPEED * settings.tickRate * v.cell // world units per second
+    const speed = SHOCK_SPEED * (interval > 0 ? 1000 / interval : 0) * v.cell // world units per second
     const maxRadius = SHOCK_MAX_RADIUS * v.cell
     for (let i = 0; i < MAX_SHOCKS; i++) {
-      const radius = ((now - shockVisuals[i].start) / 1000) * speed
+      const radius = ((clock - shockStart[i]) / 1000) * speed
       const life = radius / maxRadius
       shockUniform[i].w = radius
-      shockGlowUniform[i] = life < 1 ? 0.85 * Math.pow(1 - life, 0.7) * Math.min(1, settings.amber) : 0
+      shockGlowUniform[i] = life < 1 ? Math.pow(1 - life, 0.7) * Math.min(1, settings.amber) : 0
     }
 
     render()
 
     // Adaptive quality: first the resolution, then the grid.
-    if (rawDt > 0.2) {
+    if (rawDt > 200) {
       windowStart = now
       windowFrames = 0
     } else {
@@ -672,16 +853,13 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       resize()
     } else if (settings.grid === "auto" && !isPhone && !qualityFallback) {
       qualityFallback = true
-      initWorker()
+      initWorker(false)
     }
   }
 
   function kick(): void {
     if (raf || !shouldRun()) return
     const now = performance.now()
-    // Resume where the tick was, not where the wall clock is.
-    if (pausedAt) tickStart += now - pausedAt
-    pausedAt = 0
     last = now
     windowStart = now
     windowFrames = 0
@@ -691,7 +869,6 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   function pause(): void {
     if (raf) cancelAnimationFrame(raf)
     raf = 0
-    if (!pausedAt) pausedAt = performance.now()
   }
 
   const sync = () => (shouldRun() ? kick() : pause())
@@ -704,27 +881,37 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
     tick = message.tick
     const cells = new Uint8Array(message.cells)
 
-    if (!volume || volume.spec.id !== message.grid) {
+    if (message.init || !volume || volume.spec.id !== message.grid) {
       // First state of a grid: both generations are the same, nothing moves.
-      volume = buildVolume(message.grid)
-      ;(volume.prev.array as Uint8Array).set(cells)
-      ;(volume.cur.array as Uint8Array).set(cells)
-      volume.prev.needsUpdate = true
-      volume.cur.needsUpdate = true
+      const v = (volume = buildVolume(message.grid))
+      const pair = v.state.array as Uint8Array
+      for (let i = 0; i < cells.length; i++) pair[2 * i] = pair[2 * i + 1] = cells[i]
+      v.state.needsUpdate = true
       spare = message.cells
-      material.uniforms.uT.value = 1
-      placeCamera(camera, volume.distance, REST_YAW + yawSpring.x, REST_PITCH + pitchSpring.x)
-      camera.updateMatrixWorld()
+      const intro = introOnNextState
+      introOnNextState = false
+      introStart = intro ? clock : -1
+      liveFrom = clock + (intro ? SCAN_TO * introLength() : 0)
+      tickStart = liveFrom
+      material.uniforms.uSince.value = 0
+      if (intro) applyIntro(0)
+      else scan.x = -10
+      placeLiveCamera(v, intro ? 0 : 1, 0)
       applyView()
-      render()
-      tickStart = performance.now() - REQUEST_AT * (1000 / Math.max(1, settings.tickRate))
-      pausedAt = 0
       skipWindows = 2
-      if (!ready) {
-        ready = true
-        options.onReady()
+      const show = () => {
+        if (disposed || volume !== v) return
+        render()
+        if (!ready) {
+          ready = true
+          options.onReady()
+        }
+        sync()
       }
-      sync()
+      // Compile the shaders off the main thread where the browser can
+      // (KHR_parallel_shader_compile) before the first frame needs them.
+      if (!ready) renderer.compileAsync(scene, camera).then(show, show)
+      else show()
     } else {
       nextCells = cells
     }
@@ -742,6 +929,7 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   )
   intersection.observe(stage)
   document.addEventListener("visibilitychange", sync)
+  window.addEventListener("scroll", markRect, { passive: true })
 
   if (!still) {
     section.addEventListener("pointermove", onPointerMove, { passive: true })
@@ -759,7 +947,7 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
   canvas.addEventListener("webglcontextlost", onContextLost)
 
   resize()
-  initWorker()
+  initWorker(introOnNextState)
 
   return {
     getSettings: () => ({ ...settings }),
@@ -769,9 +957,10 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       material.uniforms.uStates.value = Math.max(2, settings.states)
       material.uniforms.uAmber.value = settings.amber
       material.uniforms.uZFade.value = settings.zFade
+      material.uniforms.uGrow.value = Math.max(50, settings.transitionMs)
       if (gridChanged) {
         qualityFallback = false
-        initWorker()
+        initWorker(false)
       } else if (still) {
         // A still has no next tick to pick the change up: recompute it.
         restart()
@@ -784,10 +973,11 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       fps: Math.round(fps),
       dpr,
       grid: volume ? volume.spec.id : wantedGrid(),
-      cells: volume ? volume.mesh.count : 0,
-      alivePercent: volume ? (100 * alive) / volume.mesh.count : 0,
+      cells: volume ? volume.mesh.geometry.instanceCount : 0,
+      alivePercent: volume ? (100 * alive) / volume.mesh.geometry.instanceCount : 0,
       tick,
       running: raf !== 0,
+      intro: introStart >= 0,
     }),
     capture(captureWidth, quality = 0.86) {
       if (!volume) return ""
@@ -800,11 +990,14 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       camera.updateProjectionMatrix()
       placeCamera(camera, volume.distance, REST_YAW, REST_PITCH)
       camera.updateMatrixWorld()
-      const t = material.uniforms.uT.value
-      material.uniforms.uT.value = 1
+      const since = material.uniforms.uSince.value
+      const scanFront = scan.x
+      material.uniforms.uSince.value = 1e6
+      scan.x = -10
       render()
       const url = canvas.toDataURL("image/webp", quality)
-      material.uniforms.uT.value = t
+      material.uniforms.uSince.value = since
+      scan.x = scanFront
       resize()
       return url
     },
@@ -817,12 +1010,14 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       // not just the time to queue it.
       const gl = renderer.getContext()
       const pixel = new Uint8Array(4)
+      const since = material.uniforms.uSince.value
       const started = performance.now()
       for (let i = 0; i < frames; i++) {
-        material.uniforms.uT.value = (i % 10) / 10
+        material.uniforms.uSince.value = (i % 10) * 40
         render()
         gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel)
       }
+      material.uniforms.uSince.value = since
       return (performance.now() - started) / frames
     },
     dispose() {
@@ -832,23 +1027,22 @@ export function createHeroScene(stage: HTMLElement, options: HeroSceneOptions): 
       resizeObserver.disconnect()
       intersection.disconnect()
       document.removeEventListener("visibilitychange", sync)
+      window.removeEventListener("scroll", markRect)
       section.removeEventListener("pointermove", onPointerMove)
       section.removeEventListener("pointerleave", onPointerLeave)
       section.removeEventListener("pointerdown", onPointerDown)
       section.removeEventListener("click", onClick)
       canvas.removeEventListener("webglcontextlost", onContextLost)
       dropVolume()
-      geometry.dispose()
+      faces.dispose()
       material.dispose()
       renderer.dispose()
       canvas.remove()
     },
   }
 
-  /** Re-runs the fixed start state on the current grid (restart, stills). */
+  /** Re-runs the fixed start state on the current grid, intro included. */
   function restart(): void {
-    // Without a volume, the next state rebuilds and redraws from scratch.
-    dropVolume()
-    initWorker()
+    initWorker(!still && settings.intro)
   }
 }

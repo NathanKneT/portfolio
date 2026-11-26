@@ -1,25 +1,13 @@
 import React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
-import type { CaseStudy, Project, ProjectSlug } from "../data/projects"
+import type { CaseStudy, Project } from "../data/projects"
 import { caseStudyLabel, engineeringPath, nextCaseStudy, projectPath } from "../data/projects"
-import { images } from "../data/images.generated"
-import type { ResponsiveImage } from "../data/images.generated"
+import { caseThumbnails as thumbnails } from "../data/project-pictures"
 import Picture from "./picture"
 import ResultStrip from "./result-strip"
 import { ExtLink, InLink } from "./case-study/primitives"
 import * as styles from "./case-study/case-study.module.css"
-
-// The picture of each case in "Next case study" (144 px wide, 112 px on a phone). Without one the
-// card is its label and title only: DocsRetriever has no picture, NarrativeForge's capture is retired.
-const thumbnails: Partial<Record<ProjectSlug, ResponsiveImage>> = {
-  "cloudpunk-vrevival": images.caseCloudpunkPoster,
-  vrtrakill: images.caseVrtrakillShotgun,
-  duskonvita: images.caseDuskonvitaOrdon,
-  kororo: images.caseKororoPoster,
-  "rtht-3d": images.caseRthtPoster,
-  "conversational-agents-course": images.caseCourseTeaching,
-}
 
 export type CaseLead = {
   // The picture or the loop, already sized: it is the page's LCP, so it loads first.

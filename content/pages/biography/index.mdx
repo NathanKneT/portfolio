@@ -4,21 +4,19 @@ slug: "/biography"
 cover: "./_DSC9902.jpg"
 ---
 
-import SkillList from "../../../src/components/skill-list"
+import { Link } from "gatsby"
+import { AboutIntro, AboutSection, AboutStack } from "../../../src/components/about/about"
+import ContactBlock from "../../../src/components/home/contact-block"
 
-<img
-  src="/pdp.jpg"
-  alt="Portrait of Nathan Rihet"
-  className="profile-picture"
-/>
+{/* Approved copy: docs/portfolio-audit/copy-review.md §11. Change it there first. */}
 
-<p className="eyebrow">Nathan Rihet · Osaka, Japan</p>
-
-# Full Stack Engineer and Photographer
+<AboutIntro eyebrow="Nathan Rihet · Osaka, Japan" title="Full Stack Engineer and Photographer">
 
 I’m Nathan, a Full Stack Engineer and photographer based in Osaka.
 
-## From France to Osaka, through Canada
+</AboutIntro>
+
+<AboutSection id="journey" title="From France to Osaka, through Canada">
 
 I studied at Université Côte d’Azur in France and finished a Master’s in
 Applied Artificial Intelligence there in 2024. My first full-stack job was at
@@ -34,13 +32,13 @@ and taught a workshop series on conversational agents for Master’s students at
 Université Côte d’Azur.
 
 Since September 2025 I work at **Rokken** in Osaka, on the web application
-around its video-analysis pipelines. The [engineering page](/engineering/)
-shows how that work is built, and the [resume](/resume/) has the dates and the
+around its video-analysis pipelines. The <Link to="/engineering/">engineering page</Link>
+shows how that work is built, and the <Link to="/resume/">resume</Link> has the dates and the
 details of each role.
 
-## Why I build what I build
+</AboutSection>
 
-{/* OWNER REVIEW: the two paragraphs below are a draft of your motivation, written from the projects on this site. Rewrite them in your own words or delete them. */}
+<AboutSection id="why" title="Why I build what I build">
 
 I like the place where a web product meets heavy work behind it, such as GPU
 pipelines and long-running jobs. That is my job at Rokken, and it is also why
@@ -50,24 +48,22 @@ Outside work I take games apart to see how they run. So far that gave two VR
 mods for games that never had VR, and a port of a GameCube game to the PS Vita.
 On each of them I test on the real device and keep a record of what changed.
 
-## Photography
+</AboutSection>
+
+<AboutSection id="photography" title="Photography">
 
 My photography covers portraits, cities and live events across France, Canada
-and Japan. The [photography archive](/photography/) holds the series.
+and Japan. The <Link to="/photography/">photography archive</Link> holds the series.
 
-## Stack
+</AboutSection>
+
+<AboutSection id="stack" title="Stack">
 
 The technologies I have worked with, grouped by area. Each
-[project page](/engineering/) lists its own stack.
+<Link to="/engineering/">project page</Link> lists its own stack.
 
-<SkillList />
+<AboutStack />
 
-## Let’s connect
+</AboutSection>
 
-Get in touch to discuss software, independent games or photography.
-
-<div className="button-row">
-  <a className="button button-primary" href="/contact/">Start a conversation</a>
-  <a className="button button-secondary" href="/engineering/">View engineering work</a>
-  <a className="button button-secondary" href="/photography/">View photography</a>
-</div>
+<ContactBlock />

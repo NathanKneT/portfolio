@@ -1,265 +1,435 @@
-import React from "react"
+import React, { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Link } from "gatsby"
+import type { PageProps } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
+import { ExtLink, InLink } from "../components/case-study/primitives"
+import FilterBar, { countSentence, elsewhereSentence, suggestionSentence } from "../components/engineering/filter-bar"
+import ContactBlock from "../components/home/contact-block"
+import DotList from "../components/home/dot-list"
 import LoopVideo from "../components/loop-video"
-import ProjectVisual from "../components/project-visual"
-import { currentRole } from "../data/experience"
+import PageHeader from "../components/page/page-header"
+import Picture from "../components/picture"
+import SectionHead from "../components/section-head"
+import { step, useReveal } from "../components/charts/use-reveal"
+import { images } from "../data/images.generated"
+import { rowThumbnails } from "../data/project-pictures"
 import {
-  earlierWork,
   engineeringPath,
   hasCaseStudy,
   isOfflineProject,
-  latestSideProject,
   projectLink,
   projectPath,
   projects,
   statusLabel,
 } from "../data/projects"
 import type { Project } from "../data/projects"
+import {
+  FILTER_PENDING_ATTR,
+  FILTER_PENDING_SCRIPT,
+  engineeringSections,
+  entryCount,
+  namesTech,
+  readTechParam,
+  techFilter,
+} from "../data/tech-filter"
+import type { TechFilter } from "../data/tech-filter"
+import { techKey } from "../data/experience"
+import * as page from "../components/page/page.module.css"
+import * as styles from "../components/engineering/engineering.module.css"
 
-// The current job has no public case study: its facts come from src/data/experience.ts, as on the resume.
-const role = currentRole()
+// Before paint in the browser; on the server, where a layout effect only warns, the plain one.
+const useBeforePaint = typeof window === "undefined" ? useEffect : useLayoutEffect
 
+const { role, work, earlier, latest, side } = engineeringSections()
+
+// Widths of the pictures in the layout, for <img sizes>. Content: 1 120 px at most; the viewport less
+// the 220 px sidebar and 2 × 24 px from 1 024 px, less 2 × 24 px from 801 px, less 2 × 16 px below.
+// The course photograph: the 5 of a 7 / 5 grid beside the 56 px index from 1 024 px, then at most
+// 560 px under the text.
+const COURSE_SIZES = [
+  "(min-width: 1388px) 417px",
+  "(min-width: 1024px) calc((100vw - 388px) * 0.4167)",
+  "(min-width: 592px) 560px",
+  "calc(100vw - 32px)",
+].join(", ")
+// The latest side project's loop: the 7 of a 7 / 5 grid from 1 024 px, the whole column below.
+const LATEST_SIZES = [
+  "(min-width: 1388px) 630px",
+  "(min-width: 1024px) calc((100vw - 308px) * 0.5833)",
+  "(min-width: 801px) calc(100vw - 48px)",
+  "calc(100vw - 32px)",
+].join(", ")
+// A row's thumbnail: 168 px, 96 px in a narrow column.
+const THUMB_SIZES = "(max-width: 599px) 96px, 168px"
+
+// A project's links: the case study, then the repository, then the download or the demo.
 const ProjectLinks = ({ project }: { project: Project }) => (
-  <div className="text-links">
-    {hasCaseStudy(project) && (
-      <Link className="case-study-link" to={projectPath(project)}>
-        View case study
-      </Link>
-    )}
-    {project.sourceUrl && <a href={project.sourceUrl}>Source repository</a>}
+  <div className={styles.links}>
+    {hasCaseStudy(project) && <InLink href={projectPath(project)}>View case study</InLink>}
+    {project.sourceUrl && <ExtLink href={project.sourceUrl}>Source repository</ExtLink>}
     {project.demoUrl && !isOfflineProject(project) && (
-      <a href={project.demoUrl}>{project.demoLabel ?? "View demo"}</a>
+      <ExtLink href={project.demoUrl}>{project.demoLabel ?? "View demo"}</ExtLink>
     )}
   </div>
 )
 
+// The filter, for the entries: the technology is bright in each stack that names it ("Unity" also
+// marks "Unity (IL2CPP)"), and added at the end of a stack that does not name it although the entry
+// uses it (experience.ts: AWS at Rokken). Every entry shown shows why it is there.
+const Highlight = createContext<TechFilter | null>(null)
+// Typed as a plain component: the installed @types/react gives Provider a ReactNode return type.
+const HighlightProvider = Highlight.Provider as unknown as (props: {
+  value: TechFilter | null
+  children: React.ReactNode
+}) => React.ReactElement
+
+const Hit = ({ name }: { name: string }) => {
+  const filter = useContext(Highlight)
+  return filter && namesTech(name, techKey(filter.name)) ? <mark className={styles.hit}>{name}</mark> : <>{name}</>
+}
+
+// An entry's stack as the page shows it: the filter's technology added when the entry uses it unnamed.
+const useStack = (id: string, stack: string[]) => {
+  const filter = useContext(Highlight)
+  return filter?.added.has(id) ? [...stack, filter.name] : stack
+}
+
+const stackItems = (names: string[]) => names.map((name) => ({ key: name, content: <Hit name={name} /> }))
+
+// "TypeScript · Next.js · …": a line never starts or ends with a dot (dot-list.tsx).
+const Stack = ({ id, names, className }: { id: string; names: string[]; className: string }) => (
+  <p className={className}>
+    <DotList items={stackItems(useStack(id, names))} />
+  </p>
+)
+
+// "Active · 2026" over a title; "2026 · Active" beside a row (the boards' two orders).
+const label = (project: Project) => [statusLabel[project.status], project.year].filter(Boolean).join(" · ")
+const rowLabelParts = (project: Project) => [project.year, statusLabel[project.status]].filter(Boolean) as string[]
+const rowLabel = (project: Project) => rowLabelParts(project).join(" · ")
+
 const CurrentRole = () => (
-  <article className="case-study" id={role.id}>
-    <div className="case-study-index" aria-hidden="true">
+  <article className={styles.entry} id={role.id}>
+    <div className={styles.index} aria-hidden="true">
       01
     </div>
-    <div className="case-study-content">
-      <div className="project-meta">
-        <span className="status status-active">Current role</span>
+    <div className={styles.entryBody}>
+      <p className={styles.label}>
+        <span className={styles.now}>
+          <span className={styles.nowSquare} aria-hidden="true" />
+          Current role
+        </span>
         <span>
           {role.period} · {role.location}
         </span>
-      </div>
-      <h3>{role.company}</h3>
-      <p className="case-summary">{role.title}</p>
-      <dl>
+      </p>
+      <h3 className={styles.blockTitle}>{role.company}</h3>
+      <p className={styles.blockSummary}>{role.title}</p>
+      <dl className={styles.highlights}>
         {role.highlights.map((highlight) => (
           <div key={highlight.topic}>
             <dt>{highlight.topic}</dt>
             <dd>{highlight.text}</dd>
           </div>
         ))}
-        <div>
-          <dt>Stack</dt>
-          <dd>{role.stack.join(" · ")}</dd>
-        </div>
       </dl>
-      <div className="text-links">
-        <Link className="case-study-link" to="/resume/">
-          Full experience in the resume
-        </Link>
+      <div className={styles.stackBlock}>
+        <p className={styles.miniLabel}>Stack</p>
+        <ul className={styles.stackList}>
+          {useStack(role.id, role.stack).map((name) => (
+            <li key={name}>
+              <Hit name={name} />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className={styles.links}>
+        <InLink href="/resume/">Full experience in the resume</InLink>
       </div>
     </div>
   </article>
 )
 
-const CaseStudy = ({ project, index }: { project: Project; index: number }) => (
-  <article className="case-study" id={project.slug}>
-    <div className="case-study-index" aria-hidden="true">
+const WorkProject = ({ project, index }: { project: Project; index: number }) => (
+  <article className={styles.entry} id={project.slug}>
+    <div className={styles.index} aria-hidden="true">
       {String(index).padStart(2, "0")}
     </div>
-    <div className="case-study-content">
-      <div className="project-meta">
-        <span className={`status status-${project.status}`}>
-          {statusLabel[project.status]}
-        </span>
-        <span>{project.year}</span>
-      </div>
-      <h3>{project.title}</h3>
-      <p className="case-summary">{project.summary}</p>
-      {/* Same destination as "View case study"; kept out of the tab order to avoid a duplicate stop. */}
-      <Link
-        className="case-study-visual-link"
-        to={projectLink(project)}
-        tabIndex={-1}
-        aria-hidden="true"
-      >
-        <ProjectVisual project={project} compact />
-      </Link>
-      <dl>
-        {project.role && (
-          <div>
-            <dt>Contribution</dt>
-            <dd>{project.role}</dd>
+    <div className={styles.entryBody}>
+      <div className={styles.split}>
+        <div className={styles.splitText}>
+          <p className={styles.label}>{label(project)}</p>
+          <h3 className={styles.blockTitle}>{project.title}</h3>
+          <p className={styles.blockSummary}>{project.summary}</p>
+          <dl className={styles.facts}>
+            {project.role && (
+              <div>
+                <dt>Contribution</dt>
+                <dd>{project.role}</dd>
+              </div>
+            )}
+            <div>
+              <dt>Stack</dt>
+              <dd>
+                <DotList items={stackItems(useStack(project.slug, project.stack))} />
+              </dd>
+            </div>
+            {project.result && (
+              <div>
+                <dt>Result</dt>
+                <dd>{project.result}</dd>
+              </div>
+            )}
+          </dl>
+          <div className={styles.links}>
+            {hasCaseStudy(project) && <InLink href={projectPath(project)}>View case study</InLink>}
+            {project.sourceUrl && <ExtLink href={project.sourceUrl}>Source repository</ExtLink>}
           </div>
-        )}
-        <div>
-          <dt>Stack</dt>
-          <dd>{project.stack.join(" · ")}</dd>
         </div>
-        {project.result && (
-          <div>
-            <dt>Result</dt>
-            <dd>{project.result}</dd>
-          </div>
+        {/* Same destination as "View case study": out of the tab order and hidden from screen readers. */}
+        {project.slug === "conversational-agents-course" && (
+          <Link className={styles.splitPicture} to={projectLink(project)} tabIndex={-1} aria-hidden="true">
+            <Picture image={images.caseCourseTeaching} alt="" sizes={COURSE_SIZES} />
+          </Link>
         )}
-      </dl>
-      <ProjectLinks project={project} />
+      </div>
     </div>
   </article>
 )
 
-// The latest side project, shown in full: its loop, the spotlight paragraphs and its stack.
+// The latest side project in full: its loop, the spotlight paragraphs, its stack and links.
 const Spotlight = ({ project }: { project: Project }) => (
-  <article className="spotlight" id={project.slug}>
-    <div className="project-meta">
-      <span className={`status status-${project.status}`}>
-        {statusLabel[project.status]}
-      </span>
-      <span>{project.year}</span>
+  <article className={styles.spotlight} id={project.slug}>
+    <div className={styles.spotlightHead}>
+      {project.cover && (
+        <figure className={styles.spotlightFigure}>
+          <div className={styles.frame}>
+            {project.cover.loop ? (
+              <LoopVideo
+                cover={{ ...project.cover, loop: project.cover.loop }}
+                name={project.title}
+                poster={{ image: images.caseCloudpunkPoster, sizes: LATEST_SIZES }}
+              />
+            ) : (
+              <img
+                src={project.cover.image}
+                alt={project.cover.alt}
+                width={project.cover.width}
+                height={project.cover.height}
+                loading="lazy"
+                decoding="async"
+              />
+            )}
+          </div>
+          {project.cover.caption && <figcaption className={styles.caption}>{project.cover.caption}</figcaption>}
+        </figure>
+      )}
+      <div className={styles.spotlightText}>
+        <p className={styles.label}>{label(project)}</p>
+        <h3 className={styles.blockTitle}>{project.title}</h3>
+        <p className={styles.blockSummary}>{project.summary}</p>
+      </div>
     </div>
-    <h3>{project.title}</h3>
-    <p className="case-summary">{project.summary}</p>
-    {project.cover && (
-      <figure className="project-evidence">
-        {project.cover.loop ? (
-          <LoopVideo cover={{ ...project.cover, loop: project.cover.loop }} name={project.title} />
-        ) : (
-          <img
-            src={project.cover.image}
-            alt={project.cover.alt}
-            width={project.cover.width}
-            height={project.cover.height}
-            loading="lazy"
-            decoding="async"
-          />
-        )}
-        {project.cover.caption && <figcaption>{project.cover.caption}</figcaption>}
-      </figure>
-    )}
-    {(project.spotlight ?? []).map((paragraph) => (
-      <p className="spotlight-text" key={paragraph}>
-        {paragraph}
-      </p>
-    ))}
-    <p className="project-stack">{project.stack.join(" · ")}</p>
+    <div className={styles.spotlightBody}>
+      {(project.spotlight ?? []).map((paragraph) => (
+        <p key={paragraph}>{paragraph}</p>
+      ))}
+    </div>
+    <Stack id={project.slug} names={project.stack} className={styles.spotlightStack} />
     <ProjectLinks project={project} />
   </article>
 )
 
-const ProjectRow = ({ project }: { project: Project }) => (
-  <li className="project-row" id={project.slug}>
-    <div className="project-row-meta">
-      <span>{project.year}</span>
-      <span className={`status status-${project.status}`}>
-        {statusLabel[project.status]}
-      </span>
-    </div>
-    <div>
-      <h3>
-        {hasCaseStudy(project) ? (
-          <Link to={projectPath(project)}>{project.title}</Link>
-        ) : (
-          project.title
-        )}
-      </h3>
-      <p className="project-row-summary">{project.summary}</p>
-      <p className="project-row-stack">{project.stack.join(" · ")}</p>
-      <ProjectLinks project={project} />
-    </div>
-  </li>
-)
+// The rows rise in turn when the reader scrolls to them, as the home page's cards (board M10).
+const ROW_STAGGER = 90
+const ROW_RISE = 450
 
-const EngineeringPage = () => {
-  const latest = latestSideProject()
-  const earlier = earlierWork()
-  const work = projects.filter(
-    (project) => project.track === "work" && !earlier.includes(project),
+const ProjectRow = ({ project, index }: { project: Project; index: number }) => {
+  const thumbnail = rowThumbnails[project.slug]
+  return (
+    <li className={styles.row} id={project.slug} data-step="rise" style={step(ROW_STAGGER * index, ROW_RISE)}>
+      {/* The thumbnail repeats the title's link: shown, not read. Without one, its slot keeps the row in
+          line with the other rows of its list; a list with no picture at all has no slot (data-bare). */}
+      <div className={styles.thumb} aria-hidden="true" data-empty={thumbnail ? undefined : true}>
+        {thumbnail && <Picture image={thumbnail} alt="" sizes={THUMB_SIZES} />}
+      </div>
+      {/* Over the title in a narrow column; flush right beside it in a wide one, where it may wrap
+          and a line must not end on a dot. One of the two is shown (display: none for the other). */}
+      <p className={`${styles.label} ${styles.rowLabel}`}>{rowLabel(project)}</p>
+      <div className={`${styles.label} ${styles.rowMeta}`}>
+        <DotList align="end" items={rowLabelParts(project).map((part) => ({ key: part, content: part }))} />
+      </div>
+      <h3 className={styles.rowTitle}>
+        <Link to={projectLink(project)}>{project.title}</Link>
+      </h3>
+      <div className={styles.rowMain}>
+        <p className={styles.rowSummary}>{project.summary}</p>
+        <Stack id={project.slug} names={project.stack} className={styles.rowStack} />
+        <ProjectLinks project={project} />
+      </div>
+    </li>
   )
-  const side = projects.filter(
-    (project) => project.track === "side" && project.slug !== latest.slug,
+}
+
+// A list of rows, revealed as one: nothing is hidden at rest (charts/use-reveal.ts). A list where no
+// row has a picture has no column for one (earlier work: DocsRetriever).
+const Rows = ({ projects: list }: { projects: Project[] }) => {
+  const reveal = useReveal<HTMLUListElement>(0.2)
+  const bare = list.every((project) => !rowThumbnails[project.slug])
+  return (
+    <ul ref={reveal} className={styles.rows} data-bare={bare || undefined}>
+      {list.map((project, index) => (
+        <ProjectRow project={project} index={index} key={project.slug} />
+      ))}
+    </ul>
   )
+}
+
+// The address's fragment, as typed: null without a "#" ("?tech=C#" has one, empty).
+const fragmentOf = (href: string) => {
+  const at = href.indexOf("#")
+  return at < 0 ? null : href.slice(at + 1)
+}
+
+/**
+ * The technology in the address, read in the browser only: the server's page is always the full
+ * list, so hydration matches it, and the filter applies before the next paint. While a filtered page
+ * waits for its script, FILTER_PENDING_SCRIPT keeps the results hidden; this lifts it.
+ *
+ * A change of filter can take away the element that has the focus ("Show all work", a suggestion):
+ * the focus then goes to the head of what is shown, the filter's name or the first section's title,
+ * once the page has changed (the second effect), never to the page itself.
+ */
+const useTechFilter = (search: string) => {
+  const [filter, setFilter] = useState<TechFilter | null>(null)
+  const [announcement, setAnnouncement] = useState("")
+  const wasFiltered = useRef(false)
+  const mounted = useRef(false)
+  const focusBefore = useRef<Element | null>(null)
+
+  useBeforePaint(() => {
+    const query = readTechParam(search, fragmentOf(window.location.href), (id) => Boolean(document.getElementById(id)))
+    const next = query ? techFilter(query) : null
+    // A page opened with a filter keeps the focus where the browser puts it (the start of the page).
+    if (mounted.current && (next || wasFiltered.current)) focusBefore.current = document.activeElement
+    mounted.current = true
+    setFilter(next)
+    if (next) {
+      const sentences = [countSentence(next), elsewhereSentence(next), suggestionSentence(next)]
+      setAnnouncement(`Filtered by ${next.name}. ${sentences.filter(Boolean).join(" ")}`)
+    } else if (wasFiltered.current) setAnnouncement(`Showing all ${entryCount}.`)
+    wasFiltered.current = Boolean(next)
+    document.documentElement.removeAttribute(FILTER_PENDING_ATTR)
+  }, [search])
+
+  useBeforePaint(() => {
+    const before = focusBefore.current
+    focusBefore.current = null
+    if (!before || (before !== document.body && before.isConnected)) return
+    document.getElementById(filter ? "filter-heading" : "work-heading")?.focus({ preventScroll: true })
+  }, [filter])
+
+  return { filter, announcement }
+}
+
+const EngineeringPage = ({ location }: PageProps) => {
+  const { filter, announcement } = useTechFilter(location?.search ?? "")
+  const shows = (id: string) => !filter || filter.matches.has(id)
+
+  const showWork = shows(role.id) || work.some((project) => shows(project.slug))
+  const shownEarlier = earlier.filter((project) => shows(project.slug))
+  const showLatest = shows(latest.slug)
+  const shownSide = side.filter((project) => shows(project.slug))
 
   return (
     <Layout>
-      <main className="portfolio-page">
-        <header className="page-header">
-          <p className="eyebrow">Selected technical work</p>
-          <h1>Engineering</h1>
-          <p>
-            My work as a full-stack engineer first. Below it, what I build on my
-            own time: VR mods, a console port and games, each with its stack and
-            its code.
+      <div className={`portfolio-page ${page.page} ${page.flush}`}>
+        {/* Runs while the page is parsed: a filtered address keeps the list hidden until it is filtered. */}
+        <script dangerouslySetInnerHTML={{ __html: FILTER_PENDING_SCRIPT }} />
+        <PageHeader eyebrow="Selected technical work" title="Engineering">
+          <p className={page.lede}>
+            My work as a full-stack engineer first. Below it, what I build on my own time: VR mods, a
+            console port and games, each with its stack and its code.
           </p>
-        </header>
+        </PageHeader>
 
-        <section className="case-study-group" aria-labelledby="work-heading">
-          <div className="section-heading case-study-group-heading">
-            <p className="eyebrow">Work and teaching</p>
-            <h2 id="work-heading">Professional work</h2>
-          </div>
-          <div className="case-study-list">
-            <CurrentRole />
-            {work.map((project, index) => (
-              <CaseStudy project={project} index={index + 2} key={project.slug} />
-            ))}
-          </div>
-        </section>
+        <p className="visually-hidden" role="status">
+          {announcement}
+        </p>
 
-        <section className="case-study-group" aria-labelledby="earlier-heading">
-          <div className="section-heading case-study-group-heading">
-            <p className="eyebrow">Freelance</p>
-            <h2 id="earlier-heading">Earlier work</h2>
-          </div>
-          <ul className="project-rows">
-            {earlier.map((project) => (
-              <ProjectRow project={project} key={project.slug} />
-            ))}
-          </ul>
-        </section>
+        <HighlightProvider value={filter}>
+          <div className={styles.results}>
+            {filter && <FilterBar filter={filter} />}
 
-        <section className="case-study-group" aria-labelledby="latest-heading">
-          <div className="section-heading case-study-group-heading">
-            <p className="eyebrow">On the side</p>
-            <h2 id="latest-heading">Latest side project</h2>
-          </div>
-          <Spotlight project={latest} />
-        </section>
+            {showWork && (
+              <section className={page.section} aria-labelledby="work-heading">
+                {/* Takes the focus when "Show all work" leaves the page with the filter. */}
+                <SectionHead id="work-heading" eyebrow="Work and teaching" title="Professional work" focusable />
+                <div className={styles.entries}>
+                  {shows(role.id) && <CurrentRole />}
+                  {work.map(
+                    (project, index) =>
+                      shows(project.slug) && <WorkProject project={project} index={index + 2} key={project.slug} />,
+                  )}
+                </div>
+              </section>
+            )}
 
-        <section className="case-study-group" aria-labelledby="side-heading">
-          <div className="section-heading case-study-group-heading">
-            <p className="eyebrow">On the side</p>
-            <h2 id="side-heading">Side projects</h2>
-          </div>
-          <ul className="project-rows">
-            {side.map((project) => (
-              <ProjectRow project={project} key={project.slug} />
-            ))}
-          </ul>
-        </section>
+            {shownEarlier.length > 0 && (
+              <section className={page.section} aria-labelledby="earlier-heading">
+                <SectionHead id="earlier-heading" eyebrow="Freelance" title="Earlier work" />
+                <Rows projects={shownEarlier} />
+              </section>
+            )}
 
-        <section className="cta-section" aria-labelledby="engineering-contact-heading">
-          <p className="eyebrow">Collaboration</p>
-          <h2 id="engineering-contact-heading">
-            Have a technical project or an idea to compare?
-          </h2>
-          <div className="button-row">
-            <Link className="button button-primary" to="/contact/">
-              Contact me
-            </Link>
-            <Link className="button button-secondary" to="/resume/">
-              View resume
-            </Link>
+            {/* The side projects are a region of their own, on screen in the latest one's band (board
+                Engineering): one band, two sections for a screen reader. */}
+            {showLatest && (
+              <section
+                className={`${page.section}${shownSide.length > 0 ? ` ${styles.continued}` : ""}`}
+                aria-labelledby="latest-heading"
+              >
+                <SectionHead id="latest-heading" eyebrow="On the side" title="Latest side project" />
+                <Spotlight project={latest} />
+              </section>
+            )}
+
+            {showLatest && shownSide.length > 0 && (
+              <section className={styles.sideSection} aria-labelledby="side-heading">
+                <h2 id="side-heading" className={styles.sideTitle}>
+                  Side projects
+                </h2>
+                <Rows projects={shownSide} />
+              </section>
+            )}
+
+            {/* Filtered without the latest one: the other side projects head their own section. */}
+            {!showLatest && shownSide.length > 0 && (
+              <section className={page.section} aria-labelledby="side-heading">
+                <SectionHead id="side-heading" eyebrow="On the side" title="Side projects" />
+                <Rows projects={shownSide} />
+              </section>
+            )}
           </div>
-        </section>
-      </main>
+        </HighlightProvider>
+
+        <ContactBlock
+          eyebrow="Collaboration"
+          title="Have a technical project or an idea to compare?"
+          headingId="engineering-contact-heading"
+          actions={
+            <>
+              <Link className={`button button-primary ${page.button}`} to="/contact/">
+                Contact me
+              </Link>
+              <Link className={`button button-secondary ${page.button}`} to="/resume/">
+                View resume
+              </Link>
+            </>
+          }
+        />
+      </div>
     </Layout>
   )
 }

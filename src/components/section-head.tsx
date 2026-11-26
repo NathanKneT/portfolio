@@ -12,16 +12,18 @@ type SectionHeadProps = {
   as?: "h2" | "h3"
   // One or two sentences under the title.
   children?: React.ReactNode
+  // The title can take the focus from a script (tabindex -1), never from Tab.
+  focusable?: boolean
 }
 
 const isInternal = (to: string) => to.startsWith("/") && !to.startsWith("//")
 
 /** The head of a section: grey eyebrow, title, optional link on the right. */
-const SectionHead = ({ id, title, eyebrow, link, as: Heading = "h2", children }: SectionHeadProps) => (
+const SectionHead = ({ id, title, eyebrow, link, as: Heading = "h2", children, focusable }: SectionHeadProps) => (
   <div className="section-head">
     <div className="section-head-text">
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <Heading id={id} className="section-head-title">
+      <Heading id={id} className="section-head-title" tabIndex={focusable ? -1 : undefined}>
         {title}
       </Heading>
       {children && <div className="section-head-lede">{children}</div>}

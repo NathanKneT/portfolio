@@ -43,6 +43,9 @@ const jobs = [
   { id: "caseKororoPoster", source: "static/evidence/kororo-loop-poster.jpg", out: "evidence/kororo-loop-still", widths: [320, 680] },
   { id: "caseRthtPoster", source: "static/evidence/rtht-3d-demo-poster.jpg", out: "evidence/rtht-3d-demo", widths: [320, 960] },
   { id: "caseVrtrakillLoopPoster", source: "static/evidence/vrtrakill-streamer-loop-poster.jpg", out: "evidence/vrtrakill-streamer-loop", widths: [320, 960] },
+  // The About page's portrait, square as it is (static/pdp.jpg stays for the structured data):
+  // 320 px wide beside the title, 240 px on a phone.
+  { id: "aboutPortrait", source: "static/pdp.jpg", out: "about/portrait", widths: [240, 480, 640] },
 ]
 
 const AVIF = { quality: 52, effort: 6, chromaSubsampling: "4:2:0" }

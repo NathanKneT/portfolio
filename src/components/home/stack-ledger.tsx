@@ -3,9 +3,16 @@ import { Link } from "gatsby"
 import { step, useReveal } from "../charts/use-reveal"
 import SectionHead from "../section-head"
 import DotList from "./dot-list"
-import { contextLabel, roles, skillGroups, teaching } from "../../data/experience"
+import {
+  contextLabel,
+  inColumnOrder,
+  roles,
+  skillDisplayName as displayName,
+  skillGroups,
+  teaching,
+} from "../../data/experience"
 import type { ContextId, Skill, SkillGroup } from "../../data/experience"
-import { engineeringPath, getProject } from "../../data/projects"
+import { getProject, techFilterPath } from "../../data/projects"
 import type { ProjectSlug } from "../../data/projects"
 import * as home from "./home.module.css"
 import * as styles from "./stack-ledger.module.css"
@@ -54,32 +61,8 @@ const toneOf = (context: ContextId): Tone => {
 const SHORT_LABEL: Partial<Record<ContextId, string>> = { "uca-teaching": "UCA course", cawita: "Cawita" }
 const shortLabel = (context: ContextId) => SHORT_LABEL[context] ?? contextLabel(context)
 
-// A phrase starts with a capital here ("Integration and end-to-end testing"); a name keeps its own
-// spelling ("pytest").
-const displayName = (name: string) =>
-  name.includes(" ") && name.charAt(0) === name.charAt(0).toLowerCase()
-    ? name.charAt(0).toUpperCase() + name.slice(1)
-    : name
-
 // The order on screen: three balanced columns on a wide screen (boards Main and M09).
-const GROUP_ORDER = [
-  "Languages",
-  "Frontend",
-  "AI Applications",
-  "Backend & Data",
-  "Cloud & Delivery",
-  "Workflows & Testing",
-  "VR, Games & Consoles",
-]
-const groups: SkillGroup[] = GROUP_ORDER.map((area) => {
-  const group = skillGroups.find((candidate) => candidate.area === area)
-  if (!group) throw new Error(`Unknown skill group: ${area}`)
-  return group
-})
-// Any group added later still shows, at the end.
-skillGroups.forEach((group) => {
-  if (!GROUP_ORDER.includes(group.area)) groups.push(group)
-})
+const groups: SkillGroup[] = inColumnOrder(skillGroups)
 
 const total = groups.reduce((sum, group) => sum + group.skills.length, 0)
 
@@ -89,9 +72,9 @@ const matches = (skill: Skill, filter: Filter) =>
 const matchCount = (group: SkillGroup, filter: Filter) =>
   group.skills.filter((skill) => matches(skill, filter)).length
 
-// TODO(WP4): the engineering page reads ?tech= and lists the projects that use that technology.
-// Until it does, these links open the page unfiltered. Its canonical URL stays /engineering/.
-const techLink = (name: string) => `${engineeringPath}?tech=${encodeURIComponent(name)}`
+// The engineering page reads ?tech= and shows the work that uses that technology (src/data/tech-filter.ts).
+// Its canonical URL stays /engineering/.
+const techLink = techFilterPath
 
 const TONE_CLASS: Record<Tone, string> = {
   now: styles.toneNow,

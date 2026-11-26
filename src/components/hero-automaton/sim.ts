@@ -2,7 +2,7 @@
 // Pure typed-array code with no DOM, so it runs in the worker (and in Node,
 // for scripts/check-automaton.mjs).
 
-import { HEAT_BIRTH, HEAT_EXCITED, MAX_STATES } from "./settings"
+import { HEAT_BIRTH, HEAT_EXCITED, MAX_STATES, SHOCK_MAX_RADIUS, SHOCK_SPEED } from "./settings"
 
 export type SimParams = {
   survive: Uint8Array
@@ -40,13 +40,15 @@ export type CursorInput = {
 
 type Shock = { x: number; y: number; z: number; age: number }
 
-const SHOCK_SPEED = 1.2 // cells per tick
-const SHOCK_MAX_RADIUS = 14
-const SHOCK_FRONT = 0.8 // half thickness of the seeding shell, in cells
+const SHOCK_FRONT = 1 // half thickness of the seeding shell, in cells
+const SHOCK_SEED_CHANCE = 0.15
 const MAX_SHOCKS = 3
 const HEAT_DECAY = 4
-const WAKE_PROBABILITY = 0.1
+// Per tick: at about 3 ticks a second, a moving cursor wakes a few cells
+// along its beam on every step.
+const WAKE_PROBABILITY = 0.2
 const SEED_COUNT = 3
+const SEED_BANDS = 3
 // At the bottom of a breath the structure only holds on the strongest edges:
 // this far from the growth threshold towards the maximum edge strength.
 const TROUGH = 0.6
@@ -83,7 +85,9 @@ export class Automaton {
   private readonly offsets: Int32Array
   private readonly padX: number
   private readonly padXY: number
-  private readonly edgeColumns: Int32Array
+  /** Per vertical band of the grid, its strongest columns (seed sites). */
+  private readonly edgeColumns: Int32Array[]
+  private seedBand = 0
   private shocks: Shock[] = []
   private random: () => number
 
@@ -113,10 +117,18 @@ export class Automaton {
           if (dx || dy || dz) offsets.push(dx + dy * this.padX + dz * this.padXY)
     this.offsets = Int32Array.from(offsets)
 
-    // Columns sorted by edge strength: seeds land in the strongest sixth.
-    const order = Array.from({ length: grid.x * grid.y }, (_, i) => i)
-    order.sort((a, b) => field[b] - field[a])
-    this.edgeColumns = Int32Array.from(order.slice(0, Math.max(8, Math.floor(order.length / 6))))
+    // Seeds land in the strongest sixth of the columns, taken band by band
+    // (left, middle, right third): the growth starts all across the volume,
+    // not only around the single strongest feature of the photo.
+    this.edgeColumns = []
+    for (let band = 0; band < SEED_BANDS; band++) {
+      const from = Math.floor((band * grid.x) / SEED_BANDS)
+      const to = Math.floor(((band + 1) * grid.x) / SEED_BANDS)
+      const order: number[] = []
+      for (let y = 0; y < grid.y; y++) for (let x = from; x < to; x++) order.push(x + y * grid.x)
+      order.sort((a, b) => field[b] - field[a])
+      this.edgeColumns.push(Int32Array.from(order.slice(0, Math.max(4, Math.floor(order.length / 6)))))
+    }
   }
 
   /** Same start every time for a given seed: clears, seeds, runs `ticks`. */
@@ -125,6 +137,7 @@ export class Automaton {
     this.cells.fill(0)
     this.shocks = []
     this.tick = 0
+    this.seedBand = 0
     this.injectSeeds(SEED_COUNT * 3)
     for (let i = 0; i < ticks; i++) this.step(null)
   }
@@ -234,14 +247,16 @@ export class Automaton {
             const dx = x - shock.x, dy = y - shock.y, dz = z - shock.z
             const d = Math.sqrt(dx * dx + dy * dy + dz * dz)
             if (d > radius + SHOCK_FRONT) continue
-            // Inside the wave the rule is looser: birth with 3, 4 or 5.
-            if (n >= 3 && n <= 5) born = true
+            // Inside the wave the growth rule holds on every edge the breath
+            // can ever reach, whatever its phase. (Births with 3 neighbours,
+            // or off the edges, filled the whole sphere: a blob, not a growth.)
+            if (n === 4 && edge >= params.edgeThreshold) born = true
             // On the moving front, empty cells on an edge become seeds.
             if (
               shock.age * SHOCK_SPEED <= SHOCK_MAX_RADIUS + SHOCK_SPEED &&
               Math.abs(d - radius) < SHOCK_FRONT &&
               edge >= params.edgeThreshold &&
-              random() < 0.5
+              random() < SHOCK_SEED_CHANCE
             ) {
               born = true
               excited = true
@@ -276,9 +291,11 @@ export class Automaton {
 
   /** Seeds of 3 × 3 × 2 cells, dropped where the photo's edges are strongest. */
   private injectSeeds(count: number): void {
-    const { X, Y, Z, cells, edgeColumns, random } = this
+    const { X, Y, Z, cells, random } = this
     for (let s = 0; s < count; s++) {
-      const column = edgeColumns[Math.floor(random() * edgeColumns.length)]
+      const columns = this.edgeColumns[this.seedBand]
+      this.seedBand = (this.seedBand + 1) % SEED_BANDS
+      const column = columns[Math.floor(random() * columns.length)]
       const sx = Math.min(X - 3, Math.max(0, (column % X) - 1))
       const sy = Math.min(Y - 3, Math.max(0, Math.floor(column / X) - 1))
       const sz = Math.floor(random() * Math.max(1, Z - 1))

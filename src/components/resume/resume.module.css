@@ -1,0 +1,248 @@
+/* The resume (/resume/): a document an ATS can read, in the site's system. Each part has its title
+   on the left and its entries on the right (one column under the sidebar's width); dates and places
+   align right, in tabular figures. */
+
+/* The PDF button sits at the foot of the header, on the right. "header.header": over the page
+   frame's .header (page.module.css), whatever order the two files load in. */
+header.header {
+  padding-bottom: 56px;
+}
+
+.download {
+  white-space: nowrap;
+}
+
+/* ---- Parts ---- */
+
+.part {
+  display: grid;
+  padding: 48px 0 52px;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 16px 48px;
+  border-top: 1px solid var(--line);
+}
+
+.partTitle {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--fs-h3);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+  text-wrap: balance;
+}
+
+.partBody {
+  min-width: 0;
+  max-width: 760px;
+}
+
+.text {
+  max-width: 680px;
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-wrap: pretty;
+}
+
+.entryHead + .text {
+  margin-top: 8px;
+}
+
+/* ---- Entries: a role, a degree, a project ---- */
+
+.entry + .entry {
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.entryHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4px 32px;
+}
+
+.entryName {
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.entryName h3 {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.125rem;
+  font-weight: var(--weight-heading);
+  line-height: 1.625rem;
+  letter-spacing: -0.01em;
+}
+
+.entryTitle {
+  margin: 2px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: 1.5rem;
+}
+
+.entryNote {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+
+.entryWhen {
+  display: flex;
+  margin: 2px 0 0;
+  flex: none;
+  flex-direction: column;
+  align-items: flex-end;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-small);
+  text-align: right;
+}
+
+/* Square markers, as the stack lists of the engineering page; the text is plain list items. */
+.bullets {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.bullets li {
+  position: relative;
+  max-width: 680px;
+  padding-left: 20px;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: 1.625rem;
+  text-wrap: pretty;
+}
+
+.bullets li + li {
+  margin-top: 6px;
+}
+
+.bullets li::before {
+  position: absolute;
+  top: 11px;
+  left: 2px;
+  width: 5px;
+  height: 5px;
+  background: var(--line-strong);
+  content: "";
+}
+
+.stack {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+
+.links {
+  display: flex;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+.closing {
+  margin-top: 28px;
+}
+
+/* ---- Skills: the area, then the technologies in their canonical names ---- */
+
+.skills {
+  margin: 0;
+}
+
+.skills > div {
+  display: grid;
+  padding: 10px 0;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 4px 24px;
+  border-top: 1px solid var(--line);
+}
+
+.skills > div:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.skills dt {
+  padding-top: 4px;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+/* !important: an older rule colours every dd with !important (global.css). */
+.skills dd {
+  margin: 0;
+  color: var(--text-2) !important;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+}
+
+/* ---- Under the sidebar's width: titles over their entries ---- */
+
+@media (max-width: 1023px) {
+  .part {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 719px) {
+  header.header {
+    padding-bottom: 36px;
+  }
+
+  .part {
+    padding: 36px 0 40px;
+    gap: 16px;
+  }
+
+  .entryWhen {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .skills > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .skills dt {
+    padding-top: 0;
+  }
+}
+
+/* ---- Printed: dark text on white, no button ---- */
+
+@media print {
+  .page {
+    --text: #111;
+    --text-2: #222;
+    --muted: #444;
+    --faint: #555;
+    --eyebrow: #555;
+    --line: #ccc;
+    --line-strong: #999;
+  }
+
+  .download {
+    display: none !important;
+  }
+
+  .entry {
+    break-inside: avoid;
+  }
+}

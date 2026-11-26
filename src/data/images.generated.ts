@@ -11,7 +11,7 @@ export type ResponsiveImage = {
   fallback: string
 }
 
-export type ImageId = "previewNight" | "previewPortrait" | "previewUrban" | "caseDuskonvitaOrdon" | "caseNarrativeEditor" | "caseCourseTeaching" | "caseVrtrakillShotgun" | "caseKororoDoorway" | "caseKororoIce" | "caseKororoCave" | "caseCloudpunkWheelGrab" | "caseCloudpunkPoster" | "caseKororoPoster" | "caseRthtPoster" | "caseVrtrakillLoopPoster"
+export type ImageId = "previewNight" | "previewPortrait" | "previewUrban" | "caseDuskonvitaOrdon" | "caseNarrativeEditor" | "caseCourseTeaching" | "caseVrtrakillShotgun" | "caseKororoDoorway" | "caseKororoIce" | "caseKororoCave" | "caseCloudpunkWheelGrab" | "caseCloudpunkPoster" | "caseKororoPoster" | "caseRthtPoster" | "caseVrtrakillLoopPoster" | "aboutPortrait"
 
 export const images: Record<ImageId, ResponsiveImage> = {
   previewNight: { base: "/previews/night", width: 1440, height: 1080, widths: [480, 960, 1440], fallback: "/previews/night-960.jpg" },
@@ -29,4 +29,5 @@ export const images: Record<ImageId, ResponsiveImage> = {
   caseKororoPoster: { base: "/evidence/kororo-loop-still", width: 680, height: 382, widths: [320, 680], fallback: "/evidence/kororo-loop-still-680.jpg" },
   caseRthtPoster: { base: "/evidence/rtht-3d-demo", width: 960, height: 540, widths: [320, 960], fallback: "/evidence/rtht-3d-demo-960.jpg" },
   caseVrtrakillLoopPoster: { base: "/evidence/vrtrakill-streamer-loop", width: 960, height: 540, widths: [320, 960], fallback: "/evidence/vrtrakill-streamer-loop-960.jpg" },
+  aboutPortrait: { base: "/about/portrait", width: 640, height: 640, widths: [240, 480, 640], fallback: "/about/portrait-480.jpg" },
 }

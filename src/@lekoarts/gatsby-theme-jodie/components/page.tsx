@@ -1,9 +1,8 @@
-/** @jsx jsx */
-import { jsx } from "theme-ui"
 import * as React from "react"
 import type { HeadFC, PageProps } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import Seo from "./seo"
+import * as page from "../../../components/page/page.module.css"
 
 type PageData = {
   page: {
@@ -22,30 +21,16 @@ type PageData = {
   }
 }
 
+// An MDX page of content/pages (the About page, /biography/). Its components lay it out: the frame
+// here is the one every page of work package 4 shares (src/components/page/page.module.css).
 const Page: React.FC<React.PropsWithChildren<PageProps<PageData>>> = ({
-  data: { page },
+  data: { page: data },
   children,
 }) => (
-  <Layout color={page.color || undefined}>
-    <article
-      className="about-page"
-      sx={{
-        variant: page.custom ? `content.custom` : `content.page`,
-        color: `var(--text)`,
-        "h1, h2, h3": {
-          color: `var(--text)`,
-        },
-        p: {
-          color: `var(--muted)`,
-        },
-        strong: {
-          color: `var(--text)`,
-        },
-      }}
-      data-testid="page-content"
-    >
+  <Layout color={data.color || undefined}>
+    <div className={`portfolio-page ${page.page} ${page.flush}`} data-testid="page-content">
       {children}
-    </article>
+    </div>
   </Layout>
 )
 

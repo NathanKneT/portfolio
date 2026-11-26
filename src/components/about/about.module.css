@@ -1,0 +1,164 @@
+/* The About page (/biography/): no board of its own. It follows the system of the Engineering board:
+   the page header, sections between rules, a reading column of 680 px at 16 / 27 px. */
+
+/* ---- Head: the text, and the portrait on the right ---- */
+
+.intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  align-items: end;
+  gap: 40px 64px;
+}
+
+.introText {
+  min-width: 0;
+}
+
+.lede > p {
+  max-width: 720px;
+  margin: 20px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  text-wrap: pretty;
+}
+
+/* At its own square ratio: never cropped. */
+.portrait {
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ---- A part of the story: the title on the left, the text on the right ---- */
+
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 680px);
+  align-items: start;
+  gap: 20px 48px;
+}
+
+.title {
+  max-width: 420px;
+  margin: 0;
+  color: var(--text);
+  font-size: var(--fs-h2);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-heading);
+  text-wrap: balance;
+}
+
+.prose {
+  min-width: 0;
+}
+
+.prose > p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-wrap: pretty;
+}
+
+.prose > p + p {
+  margin-top: 16px;
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* Links in running text: underlined in a grey rule, lighter amber on hover. "p a": the theme styles
+   the MDX paragraphs' links (amber) with a class as specific as ".prose a", injected later. */
+.prose p a {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 150ms var(--ease), text-decoration-color 150ms var(--ease);
+}
+
+.prose p a:hover {
+  color: var(--accent-hover);
+  text-decoration-color: var(--accent-hover);
+}
+
+/* ---- The stack: each area and its technologies ---- */
+
+.stack {
+  margin-top: 28px;
+  columns: 2 260px;
+  column-gap: 40px;
+}
+
+.stackGroup {
+  margin-bottom: 24px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  break-inside: avoid;
+}
+
+.stackArea {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.stackNames {
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+}
+
+/* ---- Under the sidebar: one column ---- */
+
+@media (max-width: 1023px) {
+  .intro {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .portrait {
+    width: 240px;
+  }
+
+  .section {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .title {
+    max-width: none;
+  }
+}
+
+@media (max-width: 719px) {
+  .intro {
+    gap: 28px;
+  }
+
+  .lede > p {
+    margin-top: 16px;
+  }
+
+  .section {
+    gap: 16px;
+  }
+
+  .stack {
+    margin-top: 24px;
+  }
+}

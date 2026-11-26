@@ -13,16 +13,19 @@ const source = path.join(root, "content/projects/night/18-_HF01673.jpg")
 const target = path.join(root, "src/components/hero-automaton/field-data.ts")
 
 // Must match GRIDS in src/components/hero-automaton/settings.ts.
-// `position` is the sharp crop gravity used to fit the 4:3 photo to the grid.
+// `position` is the sharp crop gravity used to fit the photo (or `region`, a
+// crop of the 2000 × 1500 photo) to the grid.
 // `mirror` flips the photo left to right: on desktop the hero text covers the
 // left of the volume, so the busy side of the street (the buildings) has to
 // be on the right, where the volume is in the clear.
+// Both crops keep the buildings and leave the canal out: its reflections
+// gave the bottom of the volume edges that the growth never reached.
 const grids = [
-  { id: "desktop", x: 64, y: 36, position: "centre", mirror: true },
-  // Phone: only the top of the volume is in the clear, so the crop starts just
-  // above the signs and leaves most of the canal out (region of the 2000 × 1500 photo).
-  { id: "phone", x: 32, y: 52, position: "centre", mirror: false, region: { left: 0, top: 170, width: 720, height: 1170 } },
-  { id: "fallback", x: 48, y: 27, position: "centre", mirror: true },
+  { id: "desktop", x: 40, y: 22, position: "centre", mirror: true, region: { left: 125, top: 40, width: 1750, height: 962 } },
+  // Phone: a tall crop of the left side of the street, the sign tower and
+  // the next building, down to the lanterns.
+  { id: "phone", x: 14, y: 28, position: "centre", mirror: false, region: { left: 0, top: 60, width: 470, height: 940 } },
+  { id: "fallback", x: 32, y: 18, position: "centre", mirror: true, region: { left: 125, top: 40, width: 1750, height: 984 } },
 ]
 
 const SUPERSAMPLE = 6
@@ -76,7 +79,7 @@ async function edgeField({ x, y, position, mirror, region }) {
   for (let cy = 0; cy < y; cy++) {
     for (let cx = 0; cx < x; cx++) {
       const v = Math.min(1, cells[(y - 1 - cy) * x + cx] / top)
-      out[cy * x + cx] = Math.round(255 * Math.pow(v, 0.8))
+      out[cy * x + cx] = Math.round(255 * Math.pow(v, 0.55))
     }
   }
   return out
