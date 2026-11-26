@@ -230,14 +230,14 @@ export const proofPoints = [
     label: "full-stack development, starting at Cawita Technologies",
   },
   {
-    // roles: Capgemini, "Migrated backend services from Flask to FastAPI".
-    value: "p95 500 → 200 ms",
-    label: "after a Flask to FastAPI migration at Capgemini",
-  },
-  {
     // teaching: Université Côte d’Azur, Dec 2024 — Jan 2025.
     value: "7 workshops",
     label: "designed and taught to 20+ Master’s students",
+  },
+  {
+    // RTHT-3D repository README: 343K views on the public demo. Chosen by the owner (2026-11-20).
+    value: "343K views",
+    label: "on my real-time hand-tracking demo (RTHT-3D)",
   },
 ]
 

@@ -2,6 +2,7 @@ import React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
+import HeroAutomaton from "../components/hero-automaton"
 import LoopVideo from "../components/loop-video"
 import ProjectVisual from "../components/project-visual"
 import { currentRole, proofPoints } from "../data/experience"
@@ -19,17 +20,11 @@ const LandingPage = () => (
   <Layout>
     <main className="portfolio-page landing-page">
       <section className="landing-hero" aria-labelledby="landing-title">
-        <p className="eyebrow">
-          Nathan Rihet · Full Stack Engineer · Osaka, Japan
-        </p>
-        <h1 id="landing-title">
-          I build web applications around computer-vision pipelines and GPU
-          workloads.
-        </h1>
+        <HeroAutomaton />
+        <h1 id="landing-title">Nathan Rihet</h1>
         <p className="hero-copy">
-          Full Stack Engineer at Rokken in Osaka. Before that, Capgemini,
-          freelance work and Cawita Technologies. I work mostly with
-          TypeScript, Next.js, Python, FastAPI, PostgreSQL and Temporal.
+          Full Stack Engineer at Rokken, Osaka. Computer-vision products at
+          work; real-time 3D and VR on the side.
         </p>
         <ul className="proof-strip" aria-label="Key facts">
           {proofPoints.map((point) => (

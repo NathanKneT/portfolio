@@ -2118,22 +2118,16 @@ dd {
   }
 }
 
+/* The hero never starts hidden: the H1 is the LCP element and must paint even if animations don't run. */
 @keyframes hero-arrive {
   from {
-    opacity: 0;
     transform: translateY(8px);
   }
 }
 
 @keyframes hero-unmask {
   from {
-    opacity: 0;
-    clip-path: inset(0 0 100% 0);
-    transform: translateY(14px);
-  }
-
-  to {
-    clip-path: inset(0 0 -0.2em 0);
+    transform: translateY(10px);
   }
 }
 
@@ -2447,4 +2441,147 @@ dd {
 .resume-role-note {
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+/* Hero automaton: a voxel volume behind the hero text.
+   .hero-automaton is the hero box (the veil is measured against the text);
+   .hero-automaton-stage is the drawing area, which may bleed past it.
+   The poster and the canvas share one rule: the camera's reference frame is
+   fitted into the stage and anchored, right-centre here, top-centre on a
+   phone. scene.ts (applyView) does the same with a view offset. */
+
+.landing-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.landing-hero > :not(.hero-automaton) {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-automaton {
+  --hero-dim: 0.94;
+  --hero-bleed: 0px;
+  /* Width of the text column on desktop; the veil ends just past it. */
+  --hero-text: max(62%, 560px);
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  animation: none !important;
+}
+
+.hero-automaton-stage {
+  position: absolute;
+  inset: -3rem calc(-1 * var(--hero-bleed)) 0 0;
+  touch-action: pan-y;
+}
+
+.hero-automaton-poster img,
+.hero-automaton-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-automaton-poster img {
+  object-fit: contain;
+  object-position: right center;
+}
+
+.hero-automaton-canvas {
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+}
+
+.hero-automaton.is-live .hero-automaton-canvas {
+  opacity: 1;
+}
+
+/* Once the canvas has faded in, the poster under it is dropped. */
+.hero-automaton.is-live .hero-automaton-poster {
+  visibility: hidden;
+  transition: visibility 0s 450ms;
+}
+
+/* The veil: page colour over the volume wherever text sits, so every hero
+   text keeps at least 4.5:1. Opaque at the left edge, clear past the text. */
+.hero-automaton::after {
+  content: "";
+  position: absolute;
+  inset: -3rem 0 0;
+  background: linear-gradient(
+    90deg,
+    rgb(14 12 10) 0%,
+    rgb(14 12 10) 38%,
+    rgb(14 12 10 / var(--hero-dim)) 44%,
+    rgb(14 12 10 / var(--hero-dim)) calc(var(--hero-text) + 1%),
+    rgb(14 12 10 / 0) calc(var(--hero-text) + 18%)
+  );
+}
+
+@media (min-width: 801px) {
+  /* The text keeps the left of the hero; the volume owns the right. */
+  .landing-hero > :not(.hero-automaton) {
+    max-width: max(62%, 560px);
+  }
+
+  .hero-automaton {
+    /* Up to the right edge of the viewport, minus room for a scrollbar. */
+    --hero-bleed: max(0px, (100vw - 100% - 2.5rem) / 2);
+  }
+
+  .hero-automaton-stage {
+    left: 30%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-automaton {
+    --hero-bleed: max(0px, (100vw - var(--sidebar-width) - 100% - 2.5rem) / 2);
+  }
+}
+
+@media (max-width: 800px) {
+  /* Phone: the volume fills the top of the hero and fades behind the text.
+     Sizes follow the width, not the viewport height, so the address bar
+     sliding away never moves or resizes anything. */
+  .landing-hero {
+    padding-top: 58vw;
+  }
+
+  .hero-automaton-stage {
+    inset: -1.5rem 0 0;
+  }
+
+  .hero-automaton-poster img {
+    object-position: center top;
+  }
+
+  .hero-automaton::after {
+    inset: -1.5rem 0 0;
+    background: linear-gradient(
+      180deg,
+      rgb(14 12 10 / 0) 0,
+      rgb(14 12 10 / 0) 42vw,
+      rgb(14 12 10 / var(--hero-dim)) 64vw,
+      rgb(14 12 10 / var(--hero-dim)) 150vw,
+      rgb(14 12 10) 172vw
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-automaton-canvas {
+    transition: none;
+  }
+}
+
+@media print {
+  .hero-automaton {
+    display: none;
+  }
 }
