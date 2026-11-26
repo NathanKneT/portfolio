@@ -15,6 +15,7 @@
     "start": "gatsby develop -H 0.0.0.0",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
+    "images": "node scripts/build-images.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -56,7 +56,7 @@ const config: GatsbyConfig = {
       resolve: `gatsby-plugin-sitemap`,
       options: {
         output: `/`,
-        excludes: [`/dev/`, `/404/`, `/404.html`, `/thank-you/`],
+        excludes: [`/dev/`, `/dev/**`, `/404/`, `/404.html`, `/thank-you/`],
         resolveSiteUrl: () => `https://nathanglhf.com`,
       },
     },

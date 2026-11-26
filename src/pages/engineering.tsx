@@ -130,9 +130,16 @@ const Spotlight = ({ project }: { project: Project }) => (
     {project.cover && (
       <figure className="project-evidence">
         {project.cover.loop ? (
-          <LoopVideo cover={{ ...project.cover, loop: project.cover.loop }} />
+          <LoopVideo cover={{ ...project.cover, loop: project.cover.loop }} name={project.title} />
         ) : (
-          <img src={project.cover.image} alt={project.cover.alt} loading="lazy" />
+          <img
+            src={project.cover.image}
+            alt={project.cover.alt}
+            width={project.cover.width}
+            height={project.cover.height}
+            loading="lazy"
+            decoding="async"
+          />
         )}
         {project.cover.caption && <figcaption>{project.cover.caption}</figcaption>}
       </figure>

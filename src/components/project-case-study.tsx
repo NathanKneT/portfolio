@@ -8,6 +8,7 @@ import {
   statusLabel,
 } from "../data/projects"
 import ProjectVisual from "./project-visual"
+import ResultStrip from "./result-strip"
 
 // Section order: problem (with the role), constraints, decisions, result.
 const ProjectCaseStudy = ({ project }: { project: Project }) => (
@@ -26,21 +27,7 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
         </div>
         <h1>{project.title}</h1>
         <p>{project.summary}</p>
-        {project.results && project.results.length > 0 && (
-          <dl className="result-strip" aria-label="Key figures">
-            {project.results.map((figure) => (
-              <div key={figure.label}>
-                <dt>{figure.label}</dt>
-                <dd>{figure.value}</dd>
-                {figure.sourceUrl && (
-                  <dd className="result-source">
-                    <a href={figure.sourceUrl}>Source</a>
-                  </dd>
-                )}
-              </div>
-            ))}
-          </dl>
-        )}
+        <ResultStrip results={project.results ?? []} />
       </header>
 
       <ProjectVisual project={project} />
