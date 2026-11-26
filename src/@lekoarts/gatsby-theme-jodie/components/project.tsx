@@ -114,7 +114,7 @@ export const Head: HeadFC<ProjectData> = ({
     schemaType="ImageGallery"
     breadcrumbs={[
       { name: "Home", pathname: "/" },
-      { name: "Photography", pathname: "/projects/" },
+      { name: "Photography", pathname: "/photography/" },
       { name: project.shortTitle, pathname: project.slug },
     ]}
   />

@@ -218,7 +218,7 @@ const RetrievalArchitecture = () => {
 
       <figure className="architecture-figure architecture-sequence">
         <figcaption>
-          <span>Verified search sequence</span>
+          <span>Search sequence</span>
           Vector retrieval followed by an in-memory generation session and SSE response
         </figcaption>
         <ol className="technical-sequence">
@@ -290,7 +290,7 @@ const PortArchitecture = () => {
       <div className="architecture-scroll" tabIndex={0} aria-label="Scrollable DuskOnVita port architecture diagram">
         <svg viewBox="0 0 1280 620" role="img" aria-labelledby="port-title port-description">
           <title id="port-title">DuskOnVita port architecture</title>
-          <desc id="port-description">The Twilight Princess decompilation is built natively by Dusklight, and Aurora provides the GameCube graphics API. DuskOnVita's GX worker thread turns the GX command stream into draws for a native GXM renderer, which draws on the PS Vita's GPU. The Vita side also handles audio, input, memory and the settings page, and records each run for measurement. The game runs on the Vita's ARM CPU and reads the player's own disc image.</desc>
+          <desc id="port-description">The Twilight Princess decompilation is built natively by Dusklight, and Aurora provides the GameCube graphics API. DuskOnVita's GX worker thread turns the GX command stream into draws for a native GXM renderer, which draws on the PS Vita's GPU. The Vita side also handles audio, input, memory and the settings page, and records each run for measurement. The game runs on the three ARM Cortex-A9 cores the Vita gives an application and reads the player's own disc image.</desc>
           <ArrowMarker id={markerId} />
           <Lane x={20} y={30} width={400} height={560} title="GAME CODE · PINNED UPSTREAMS" />
           <Lane x={450} y={30} width={440} height={560} title="DUSKONVITA · VITA SIDE" />
@@ -305,7 +305,7 @@ const PortArchitecture = () => {
           <DiagramNode x={485} y={370} width={370} height={99} title="Audio · input · memory" details={["sound rendered in small steps", "SDL pad events · touch · gyro", "settings page · saves"]} />
           <DiagramNode x={485} y={495} width={370} height={82} title="Measurement" details={["runtime.jsonl for every run", "bench and run report scripts"]} />
 
-          <DiagramNode x={955} y={90} width={270} height={82} title="ARM Cortex-A9 · 4 cores" details={["game code, natively", "fixed 30 Hz game ticks"]} />
+          <DiagramNode x={955} y={90} width={270} height={82} title="ARM Cortex-A9 · 3 cores" details={["game code, natively · up to 444 MHz", "fixed 30 Hz game ticks"]} />
           <DiagramNode x={955} y={230} width={270} height={99} title="SGX543MP4+ GPU" details={["GXM draws", "drawn at 75% · 720x408", "scaled to 960x544"]} accent />
           <DiagramNode x={955} y={370} width={270} height={99} title="Player's disc image" details={[".iso · .ciso · .gcz", "read in place", "no game data shipped"]} />
 
@@ -327,8 +327,9 @@ const PortMeasurements = () => (
     <dl>
       <div><dt>Hyrule Field bridge</dt><dd>18.3 → 29.1 FPS · 5 to 11 Nov</dd></div>
       <div><dt>Castle Town, twilight</dt><dd>21.1 → 27.0 FPS · 5 to 11 Nov</dd></div>
-      <div><dt>Palace of Twilight</dt><dd>7 → 13 FPS · late sound buffers 29% → 0.2%</dd></div>
-      <div><dt>Snowpeak Ruins, room 9</dt><dd>9 → 19 FPS · one draw per row of squares</dd></div>
+      <div><dt>Palace of Twilight</dt><dd>7 → 13 FPS · one draw per row of identical squares</dd></div>
+      <div><dt>Snowpeak Ruins, room 9</dt><dd>9 → 19 FPS · one draw per row of identical squares</dd></div>
+      <div><dt>Palace of Twilight, sound</dt><dd>Late sound buffers 29% → 0.2% · sound rendered in small steps</dd></div>
       <div><dt>Hyrule Field, enemy areas</dt><dd>Still 14.5 FPS · 82% game speed · 26% late sound buffers</dd></div>
       <div><dt>Ordon village, widest view</dt><dd>Still 9.9 FPS · 66% game speed · the slowest place</dd></div>
     </dl>
@@ -394,6 +395,23 @@ const GameVisual = ({ project, compact }: { project: Project; compact: boolean }
   )
 }
 
+// The project's own gameplay loop with its caption (Cloudpunk VRevival).
+const LoopEvidence = ({ project, compact }: { project: Project; compact: boolean }) => {
+  const cover = project.cover
+  if (!cover) return null
+
+  return (
+    <figure className={`project-evidence${compact ? " project-evidence-compact" : ""}`}>
+      {cover.loop ? (
+        <LoopVideo cover={{ ...cover, loop: cover.loop }} eager={!compact} />
+      ) : (
+        <img src={cover.image} alt={cover.alt} loading={compact ? "lazy" : "eager"} />
+      )}
+      {cover.caption && <figcaption>{cover.caption}</figcaption>}
+    </figure>
+  )
+}
+
 const CompactVisual = ({ project }: { project: Project }) => {
   if (project.visual === "narrative") {
     return (
@@ -427,6 +445,10 @@ const CompactVisual = ({ project }: { project: Project }) => {
 
   if (project.visual === "vr") {
     return <CoverEvidence project={project} caption="Seen from the headset" compact />
+  }
+
+  if (project.visual === "vr-loop") {
+    return <LoopEvidence project={project} compact />
   }
 
   if (project.visual === "port") {
@@ -502,6 +524,14 @@ const ProjectVisual = ({ project, compact = false }: { project: Project; compact
       <section className="project-visual-suite" aria-label="VRTRAKILL headset view and runtime architecture">
         <CoverEvidence project={project} caption="The shotgun in the gun hand, the Feedbacker in the other · seen from the headset" compact={false} />
         <VrArchitecture />
+      </section>
+    )
+  }
+
+  if (project.visual === "vr-loop") {
+    return (
+      <section className="project-visual-suite" aria-label={`${project.title} seen from the headset`}>
+        <LoopEvidence project={project} compact={false} />
       </section>
     )
   }

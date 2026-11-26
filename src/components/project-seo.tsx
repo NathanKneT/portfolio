@@ -1,7 +1,7 @@
 import React from "react"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
 import type { Project } from "../data/projects"
-import { projectPath } from "../data/projects"
+import { engineeringPath, projectPath } from "../data/projects"
 
 type ProjectSEOProps = {
   project: Project
@@ -30,7 +30,7 @@ const ProjectSEO = ({
     imageHeight={imageHeight}
     breadcrumbs={[
       { name: "Home", pathname: "/" },
-      { name: "Engineering", pathname: "/dev-projects/" },
+      { name: "Engineering", pathname: engineeringPath },
       { name: project.title, pathname: projectPath(project) },
     ]}
     entity={{

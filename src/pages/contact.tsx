@@ -51,6 +51,11 @@ const ContactPage = () => {
               nathan.rihet06@gmail.com
             </a>
           </p>
+          <p>
+            Also on{" "}
+            <a href="https://www.linkedin.com/in/nathan-rihet/">LinkedIn</a>{" "}
+            and <a href="https://github.com/NathanKneT">GitHub</a>.
+          </p>
         </header>
 
         <form

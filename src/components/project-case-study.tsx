@@ -2,20 +2,18 @@ import React from "react"
 import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import type { Project } from "../data/projects"
-import { isOfflineProject } from "../data/projects"
+import {
+  engineeringPath,
+  isOfflineProject,
+  statusLabel,
+} from "../data/projects"
 import ProjectVisual from "./project-visual"
 
-const statusLabel = {
-  active: "Active",
-  completed: "Completed",
-  prototype: "Prototype",
-  archived: "Completed · Offline",
-}
-
+// Section order: problem (with the role), constraints, decisions, result.
 const ProjectCaseStudy = ({ project }: { project: Project }) => (
   <Layout>
     <main className="portfolio-page project-detail-page">
-      <Link className="back-link" to="/dev-projects/">
+      <Link className="back-link" to={engineeringPath}>
         ← Engineering
       </Link>
 
@@ -28,6 +26,21 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
         </div>
         <h1>{project.title}</h1>
         <p>{project.summary}</p>
+        {project.results && project.results.length > 0 && (
+          <dl className="result-strip" aria-label="Key figures">
+            {project.results.map((figure) => (
+              <div key={figure.label}>
+                <dt>{figure.label}</dt>
+                <dd>{figure.value}</dd>
+                {figure.sourceUrl && (
+                  <dd className="result-source">
+                    <a href={figure.sourceUrl}>Source</a>
+                  </dd>
+                )}
+              </div>
+            ))}
+          </dl>
+        )}
       </header>
 
       <ProjectVisual project={project} />
@@ -46,24 +59,24 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
         </div>
       </section>
 
-      <section className="project-detail-section" aria-labelledby="decisions-title">
-        <p className="eyebrow">Implementation</p>
-        <h2 id="decisions-title">Key technical decisions</h2>
-        <ol className="decision-list">
-          {project.decisions.map((decision) => (
-            <li key={decision}>{decision}</li>
-          ))}
-        </ol>
-      </section>
-
       <section className="project-detail-section project-constraints" aria-labelledby="constraints-title">
         <p className="eyebrow">Constraints</p>
         <h2 id="constraints-title">Engineering constraints</h2>
         <ul>
-          {project.constraints.map((constraint) => (
+          {(project.constraints ?? []).map((constraint) => (
             <li key={constraint}>{constraint}</li>
           ))}
         </ul>
+      </section>
+
+      <section className="project-detail-section" aria-labelledby="decisions-title">
+        <p className="eyebrow">Implementation</p>
+        <h2 id="decisions-title">Key technical decisions</h2>
+        <ol className="decision-list">
+          {(project.decisions ?? []).map((decision) => (
+            <li key={decision}>{decision}</li>
+          ))}
+        </ol>
       </section>
 
       <section className="project-outcome" aria-labelledby="outcome-title">
@@ -88,7 +101,7 @@ const ProjectCaseStudy = ({ project }: { project: Project }) => (
           )}
         </div>
         <nav className="text-links" aria-label="Case study navigation">
-          <Link to="/dev-projects/">All engineering work</Link>
+          <Link to={engineeringPath}>All engineering work</Link>
           <Link to="/contact/">Discuss a project</Link>
         </nav>
       </section>

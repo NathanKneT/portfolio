@@ -394,7 +394,7 @@ img {
   font-size: clamp(2rem, 5vw, 4.2rem);
 }
 
-/* Engineering page: games first, then software (src/pages/dev-projects.tsx) */
+/* Engineering page: games first, then software (src/pages/engineering.tsx) */
 .case-study-group + .case-study-group {
   margin-top: clamp(4rem, 8vw, 7rem);
 }
@@ -2273,4 +2273,178 @@ dd {
   from {
     opacity: 0;
   }
+}
+
+/* Engineering page: the current role, the latest side project in full, then one row per side project
+   (src/pages/engineering.tsx). */
+
+.current-role-text,
+.spotlight-text {
+  max-width: var(--measure);
+  color: var(--text-2);
+}
+
+.spotlight {
+  display: grid;
+  gap: 1.25rem;
+  padding: 2.5rem 0 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.spotlight h3 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.spotlight .case-summary,
+.spotlight .spotlight-text,
+.spotlight .text-links {
+  margin: 0;
+}
+
+.spotlight .project-evidence {
+  max-width: 820px;
+}
+
+.project-rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.project-row {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: clamp(1rem, 4vw, 4rem);
+  padding: 1.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.project-row-meta {
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  padding-top: 0.45rem;
+  color: var(--faint);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.project-row h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+}
+
+.project-row h3 a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.project-row h3 a:hover {
+  color: var(--accent-hover);
+}
+
+.project-row-summary {
+  max-width: var(--measure);
+  margin: 0 0 0.35rem;
+  color: var(--text-2);
+}
+
+.project-row-stack {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.project-row .text-links {
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 800px) {
+  .project-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .project-row-meta {
+    display: flex;
+    gap: 1rem;
+    padding-top: 0;
+  }
+}
+
+/* Content refresh (November 2026): fact strips on the home hero and under a case study's title.
+   Plain and static on purpose; the motion phase builds on them. */
+
+.proof-strip,
+.result-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.1rem 2rem;
+  padding: 1.1rem 0 0;
+  border-top: 1px solid var(--line);
+}
+
+.proof-strip {
+  max-width: 920px;
+  margin: 0 0 2rem;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.proof-strip strong {
+  display: block;
+  color: var(--text);
+  font-size: 1.05rem;
+}
+
+.result-strip {
+  margin: 2.5rem 0 0;
+}
+
+.result-strip > div {
+  display: grid;
+  gap: 0.3rem;
+  align-content: start;
+}
+
+.result-strip dt {
+  font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.result-strip dd:first-of-type {
+  order: -1;
+  color: var(--text);
+  font-size: clamp(1.35rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+}
+
+.result-source a {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 640px) {
+  .proof-strip,
+  .result-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .landing-hero > .proof-strip {
+    animation-delay: 240ms;
+  }
+}
+
+.resume-role-note {
+  color: var(--muted);
+  font-size: 0.95rem;
 }

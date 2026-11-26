@@ -21,9 +21,12 @@ const config: GatsbyConfig = {
     {
       resolve: `@lekoarts/gatsby-theme-jodie`,
       options: {
+        // The list of photography series (the theme's "projects" page). The series keep their own
+        // root-level paths (/night/, /portrait/...): those come from projectsPrefix, left at its default.
+        projectsUrl: `/photography`,
         navigation: [
-          { name: `Engineering`, slug: `/dev-projects` },
-          { name: `Photography`, slug: `/projects` },
+          { name: `Engineering`, slug: `/engineering` },
+          { name: `Photography`, slug: `/photography` },
           { name: `About`, slug: `/biography` },
           { name: `Resume`, slug: `/resume` },
           { name: `Contact`, slug: `/contact` },

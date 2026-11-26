@@ -68,7 +68,7 @@ export const Head: HeadFC<PhotographyProjectsProps> = ({ location }) => (
     schemaType="CollectionPage"
     breadcrumbs={[
       { name: "Home", pathname: "/" },
-      { name: "Photography", pathname: "/projects/" },
+      { name: "Photography", pathname: "/photography/" },
     ]}
   />
 )
