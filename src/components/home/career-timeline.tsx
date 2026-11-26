@@ -410,9 +410,12 @@ const WideChart = ({ scale, byId, open, onPick, panelId }: ChartProps) => {
               <span className={styles.barFill} data-step="draw-x" style={step(at, barTime(id))} />
               {/* The open role: a rule under its bar, drawn with it. */}
               <span className={styles.barMark} data-step="draw-x" style={step(at, barTime(id))} />
+              {/* The {" "} between the lines: they are flex items (a space there renders nothing), and
+                  without it the button's text runs "Cawita TechnologiesFull Stack Developer", which no
+                  longer matches its aria-label word for word (WCAG 2.5.3, label in name). */}
               {outside ? (
                 <span className={styles.barOutside} data-step="fade" style={step(at + LABEL_DELAY - 50, FADE)}>
-                  <span className={styles.barOutsideName}>{entry.barName}</span>
+                  <span className={styles.barOutsideName}>{entry.barName}</span>{" "}
                   <span className={styles.barOutsideDate}>{entry.period}</span>
                 </span>
               ) : (
@@ -426,8 +429,8 @@ const WideChart = ({ scale, byId, open, onPick, panelId }: ChartProps) => {
                         {entry.title}
                       </span>
                     )}
-                  </span>
-                  {entry.lane === "main" && <span className={styles.barLine}>{entry.title}</span>}
+                  </span>{" "}
+                  {entry.lane === "main" && <><span className={styles.barLine}>{entry.title}</span>{" "}</>}
                   <span className={styles.barLine}>
                     {entry.period}
                     {entry.current && `${DOT}${city(entry.place)}`}

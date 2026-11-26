@@ -1,6 +1,6 @@
 // Writes src/data/resume-pdf.generated.ts: the text of the PDF resume, so the engineering filter says a
 // name "is not on my resume" only when the PDF does not print it either (src/data/tech-filter.ts).
-// Run it after replacing static/nathan-rihet-resume.pdf:
+// Run it after rebuilding static/nathan-rihet-resume.pdf (npm run resume-pdf):
 //
 //   npm run resume-text
 //

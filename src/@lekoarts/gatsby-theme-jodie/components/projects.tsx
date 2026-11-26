@@ -19,6 +19,7 @@ type PhotographyProjectsProps = {
       shortTitle: string
       slug: string
       cover: {
+        fields: { alt: string }
         childImageSharp: {
           gatsbyImageData: IGatsbyImageData
         }
@@ -30,7 +31,8 @@ type PhotographyProjectsProps = {
 /**
  * The photography series (/photography/): one tile per series, its cover at its own ratio, never
  * cropped, then its name. Newest first, as the theme's query sorts them. The first cover is the
- * page's largest image: it loads at once.
+ * page's largest image: it loads at once. Each cover has the owner's description, so the link reads
+ * as the photograph, then the series' name (as the home page's photo band).
  */
 const Projects: React.FC<PageProps<PhotographyProjectsProps>> = ({
   data: { projects },
@@ -48,7 +50,7 @@ const Projects: React.FC<PageProps<PhotographyProjectsProps>> = ({
             <Link className={styles.tile} to={project.slug} data-testid={project.shortTitle}>
               <Image
                 image={withSizes(project.cover.childImageSharp.gatsbyImageData, SERIES_LIST_SIZES)}
-                alt=""
+                alt={project.cover.fields.alt}
                 loading={index === 0 ? "eager" : "lazy"}
               />
               <span className={styles.tileLabel}>{project.shortTitle}</span>

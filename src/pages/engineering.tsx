@@ -4,11 +4,14 @@ import type { PageProps } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
 import { ExtLink, InLink } from "../components/case-study/primitives"
-import FilterBar, { countSentence, elsewhereSentence, suggestionSentence } from "../components/engineering/filter-bar"
-import ContactBlock from "../components/home/contact-block"
-import DotList from "../components/home/dot-list"
-import LoopVideo from "../components/loop-video"
+// Gatsby puts every CSS module in one stylesheet, in the order the pages import them, so every page
+// imports them in one order: the case study primitives, the page header, the dot list, then the home
+// sections (here ContactBlock). Two pages disagreeing is the build's "Conflicting order" warning.
 import PageHeader from "../components/page/page-header"
+import FilterBar, { countSentence, elsewhereSentence, suggestionSentence } from "../components/engineering/filter-bar"
+import DotList from "../components/home/dot-list"
+import ContactBlock from "../components/home/contact-block"
+import LoopVideo from "../components/loop-video"
 import Picture from "../components/picture"
 import SectionHead from "../components/section-head"
 import { step, useReveal } from "../components/charts/use-reveal"

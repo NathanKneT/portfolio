@@ -1,6 +1,6 @@
 // Career data: roles, teaching, education and one skills list.
 // The resume page, the About page's stack, the engineering page's Rokken block and the home hero read from here.
-// The PDF (static/nathan-rihet-resume.pdf) is a separate file: keep it in sync by hand, then run
+// The PDF (static/nathan-rihet-resume.pdf) is built from this data: npm run resume-pdf, then
 // npm run resume-text.
 //
 // Facts only. A technology is listed with the contexts where it was really used: a role, the teaching

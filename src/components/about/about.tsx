@@ -1,10 +1,11 @@
 import React from "react"
+// The page's CSS module before the dot list's: the order every page agrees on (see engineering.tsx).
+import * as page from "../page/page.module.css"
 import DotList from "../home/dot-list"
 import Picture from "../picture"
 import { step, useReveal } from "../charts/use-reveal"
 import { inColumnOrder, mainSkillGroups, skillDisplayName } from "../../data/experience"
 import { images } from "../../data/images.generated"
-import * as page from "../page/page.module.css"
 import * as styles from "./about.module.css"
 
 // The portrait's width in the layout: 320 px beside the title from 1 024 px, then 240 px under it.

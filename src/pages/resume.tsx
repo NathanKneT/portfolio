@@ -17,8 +17,8 @@ import * as page from "../components/page/page.module.css"
 import * as styles from "../components/resume/resume.module.css"
 
 // The page's own words are in src/data/resume.ts; roles, teaching, education and skills in
-// src/data/experience.ts. The PDF (static/nathan-rihet-resume.pdf) is a separate file: keep it in sync
-// by hand, then run npm run resume-text.
+// src/data/experience.ts. The PDF (static/nathan-rihet-resume.pdf) is built from the same data: run
+// npm run resume-pdf, then npm run resume-text.
 
 // One part of the resume: its title on the left, the entries on the right (stacked on a phone).
 const Part = ({ id, title, children }: { id: string; title: string; children: React.ReactNode }) => (

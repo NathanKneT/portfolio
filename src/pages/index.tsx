@@ -3,12 +3,14 @@ import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
 import HeroAutomaton from "../components/hero-automaton"
+// First of the home sections: it brings the dot list's CSS module before home.module.css, the order
+// every page agrees on (see engineering.tsx).
+import StackLedger from "../components/home/stack-ledger"
 import CareerTimeline from "../components/home/career-timeline"
 import ContactBlock from "../components/home/contact-block"
 import FeaturedWork from "../components/home/featured-work"
 import PhotoBand from "../components/home/photo-band"
 import ProofStrip from "../components/home/proof-strip"
-import StackLedger from "../components/home/stack-ledger"
 import * as home from "../components/home/home.module.css"
 import { engineeringPath } from "../data/projects"
 

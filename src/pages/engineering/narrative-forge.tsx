@@ -18,5 +18,10 @@ export const Head = () => (
   <ProjectSEO
     project={project}
     description="NarrativeForge is a Next.js and React Flow prototype for writing, validating, testing and exporting branching interactive stories."
+    // No picture on this page: its social card, in the site card's layout, from the page's own words.
+    image="/og/narrative-forge.png"
+    imageAlt="NarrativeForge case study by Nathan Rihet"
+    imageWidth={1200}
+    imageHeight={630}
   />
 )
