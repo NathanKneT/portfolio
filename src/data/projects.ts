@@ -28,6 +28,9 @@ export type ProjectTrack = "work" | "side"
 
 export type ProjectCover = {
   image: string
+  // Intrinsic size of the image (and of its loop), in px: the layout never shifts while it loads.
+  width: number
+  height: number
   alt: string
   // Short caption under the picture where it is shown large (the latest side project).
   caption?: string
@@ -142,6 +145,8 @@ export const projects: Project[] = [
     visual: "course",
     cover: {
       image: "/evidence/conversational-agents-teaching.jpg",
+      width: 1280,
+      height: 1280,
       alt: "Nathan Rihet teaching a university class about generative AI integration with LangChain",
     },
     sourceUrl: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
@@ -209,6 +214,8 @@ export const projects: Project[] = [
     visual: "vr-loop",
     cover: {
       image: "/evidence/cloudpunk-cockpit-loop-poster.jpg",
+      width: 640,
+      height: 360,
       alt: "Cloudpunk VRevival: flying the HOVA from its cockpit, both hands on the wheel",
       caption: "Flying the HOVA, hands on the wheel · seen from the headset",
       loop: {
@@ -277,6 +284,8 @@ export const projects: Project[] = [
     visual: "vr",
     cover: {
       image: "/evidence/vrtrakill-shotgun.jpg",
+      width: 800,
+      height: 790,
       alt: "ULTRAKILL in VR: the shotgun in the gun hand and the Feedbacker in the other, seen from the headset",
     },
     sourceUrl: "https://github.com/NathanKneT/VRTRAKILL",
@@ -344,6 +353,8 @@ export const projects: Project[] = [
     visual: "port",
     cover: {
       image: "/evidence/duskonvita-livearea.png",
+      width: 840,
+      height: 500,
       alt: "DuskOnVita’s LiveArea background: a dusk sky over hills, drawn in code by the port’s own tool",
     },
     sourceUrl: "https://github.com/NathanKneT/DuskOnVita",
@@ -401,6 +412,8 @@ export const projects: Project[] = [
     visual: "game",
     cover: {
       image: "/evidence/kororo-loop-poster.jpg",
+      width: 680,
+      height: 382,
       alt: "Kororo gameplay: the player pulls a block from a wall, climbs it and returns the light to the lighthouse",
       loop: {
         webm: "/evidence/kororo-loop.webm",
@@ -456,6 +469,8 @@ export const projects: Project[] = [
     visual: "tracking",
     cover: {
       image: "/evidence/rtht-3d-cover.jpg",
+      width: 488,
+      height: 304,
       alt: "RTHT-3D hand-tracking interface controlling a Blender scene",
     },
     sourceUrl: "https://github.com/NathanKneT/RTHT-3D",
@@ -497,6 +512,8 @@ export const projects: Project[] = [
     visual: "narrative",
     cover: {
       image: "/evidence/narrative-forge-editor.png",
+      width: 2552,
+      height: 1256,
       alt: "NarrativeForge React Flow editor showing a branching story graph",
     },
     sourceUrl: "https://github.com/NathanKneT/NarrativeForge-nextjs",

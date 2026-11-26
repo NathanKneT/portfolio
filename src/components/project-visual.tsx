@@ -1,6 +1,20 @@
 import React from "react"
+import { images } from "../data/images.generated"
 import type { Project } from "../data/projects"
 import LoopVideo from "./loop-video"
+import Picture from "./picture"
+
+// Every <img> here has its width and height (no layout shift). The first image of a case study is
+// its LCP: loaded at once and first (fetchpriority), everything else lazily (design-phase.md §14).
+// A lead image fills the content column: 1 120 px at most, beside the 220 px sidebar from 1 024 px.
+const LEAD_SIZES = "(min-width: 1440px) 1120px, (min-width: 1024px) calc(100vw - 268px), calc(100vw - 2rem)"
+// A compact visual is the picture of a row on /engineering/: beside the row's date column from 1 024 px.
+const COMPACT_SIZES = "(min-width: 1440px) 982px, (min-width: 1024px) calc(100vw - 404px), calc(100vw - 2rem)"
+
+const imageLoading = (lead: boolean) =>
+  lead
+    ? ({ loading: "eager", decoding: "sync", fetchpriority: "high" } as const)
+    : ({ loading: "lazy", decoding: "async" } as const)
 
 type NodeProps = {
   x: number
@@ -342,7 +356,7 @@ const CoverEvidence = ({ project, caption, compact }: { project: Project; captio
 
   return (
     <figure className={`project-evidence${compact ? " project-evidence-compact" : ""}`}>
-      <img src={cover.image} alt={cover.alt} loading={compact ? "lazy" : "eager"} />
+      <img src={cover.image} alt={cover.alt} width={cover.width} height={cover.height} {...imageLoading(!compact)} />
       <figcaption>{caption}</figcaption>
     </figure>
   )
@@ -351,10 +365,11 @@ const CoverEvidence = ({ project, caption, compact }: { project: Project; captio
 const CourseVisual = ({ compact }: { compact: boolean }) => {
   const teachingPhoto = (
     <figure className={`project-evidence${compact ? " project-evidence-compact project-evidence-course" : " project-evidence-course"}`}>
-      <img
-        src="/evidence/conversational-agents-teaching.jpg"
+      <Picture
+        image={images.caseCourseTeaching}
         alt="Nathan Rihet teaching a university class about generative AI integration with LangChain"
-        loading={compact ? "lazy" : "eager"}
+        sizes={compact ? COMPACT_SIZES : LEAD_SIZES}
+        priority={!compact}
       />
       <figcaption>Teaching applied generative AI and LangChain</figcaption>
     </figure>
@@ -383,13 +398,15 @@ const CourseVisual = ({ compact }: { compact: boolean }) => {
   )
 }
 
+// Compact visuals are thumbnails, and the engineering page puts them inside a link,
+// where a pause button cannot go: they show the loop's poster only (still).
 const GameVisual = ({ project, compact }: { project: Project; compact: boolean }) => {
   const cover = project.cover
   if (!cover?.loop) return null
 
   return (
     <figure className={`project-evidence${compact ? " project-evidence-compact" : ""}`}>
-      <LoopVideo cover={{ ...cover, loop: cover.loop }} eager={!compact} />
+      <LoopVideo cover={{ ...cover, loop: cover.loop }} name={project.title} eager={!compact} still={compact} />
       <figcaption>Pull a block, climb it, return the light · gameplay from the preview</figcaption>
     </figure>
   )
@@ -403,9 +420,9 @@ const LoopEvidence = ({ project, compact }: { project: Project; compact: boolean
   return (
     <figure className={`project-evidence${compact ? " project-evidence-compact" : ""}`}>
       {cover.loop ? (
-        <LoopVideo cover={{ ...cover, loop: cover.loop }} eager={!compact} />
+        <LoopVideo cover={{ ...cover, loop: cover.loop }} name={project.title} eager={!compact} still={compact} />
       ) : (
-        <img src={cover.image} alt={cover.alt} loading={compact ? "lazy" : "eager"} />
+        <img src={cover.image} alt={cover.alt} width={cover.width} height={cover.height} {...imageLoading(!compact)} />
       )}
       {cover.caption && <figcaption>{cover.caption}</figcaption>}
     </figure>
@@ -416,7 +433,11 @@ const CompactVisual = ({ project }: { project: Project }) => {
   if (project.visual === "narrative") {
     return (
       <figure className="project-evidence project-evidence-compact">
-        <img src="/evidence/narrative-forge-editor.png" alt="NarrativeForge React Flow editor showing a complete branching story graph" loading="lazy" />
+        <Picture
+          image={images.caseNarrativeEditor}
+          alt="NarrativeForge React Flow editor showing a complete branching story graph"
+          sizes={COMPACT_SIZES}
+        />
         <figcaption>Working React Flow editor</figcaption>
       </figure>
     )
@@ -425,7 +446,13 @@ const CompactVisual = ({ project }: { project: Project }) => {
   if (project.visual === "tracking") {
     return (
       <figure className="project-evidence project-evidence-compact project-evidence-portrait">
-        <img src="/evidence/rtht-3d-preview.jpg" alt="RTHT-3D hand-tracking Blender demonstration" loading="lazy" />
+        <img
+          src="/evidence/rtht-3d-preview.jpg"
+          alt="RTHT-3D hand-tracking Blender demonstration"
+          width={1029}
+          height={849}
+          {...imageLoading(false)}
+        />
         <figcaption>Webcam-driven Blender interaction</figcaption>
       </figure>
     )
@@ -465,7 +492,12 @@ const ProjectVisual = ({ project, compact = false }: { project: Project; compact
     return (
       <section className="project-visual-suite" aria-label="NarrativeForge product and architecture evidence">
         <figure className="project-evidence">
-          <img src="/evidence/narrative-forge-editor.png" alt="NarrativeForge React Flow editor showing a complete branching story graph" loading="eager" />
+          <Picture
+            image={images.caseNarrativeEditor}
+            alt="NarrativeForge React Flow editor showing a complete branching story graph"
+            sizes={LEAD_SIZES}
+            priority
+          />
           <figcaption>React Flow editor · 10 nodes · 15 connections · multiple endings</figcaption>
         </figure>
         <NarrativeArchitecture />
@@ -511,7 +543,9 @@ const ProjectVisual = ({ project, compact = false }: { project: Project; compact
           <img
             src="/evidence/kororo-climb.jpg"
             alt="A later Kororo wall where pulled blocks form a staircase towards the light"
-            loading="lazy"
+            width={1280}
+            height={720}
+            {...imageLoading(false)}
           />
           <figcaption>Pulled blocks become the route · a later wall</figcaption>
         </figure>
@@ -540,10 +574,11 @@ const ProjectVisual = ({ project, compact = false }: { project: Project; compact
     return (
       <section className="project-visual-suite" aria-label="DuskOnVita on a PS Vita, port architecture and console measurements">
         <figure className="project-evidence">
-          <img
-            src="/evidence/duskonvita-ordon.jpg"
+          <Picture
+            image={images.caseDuskonvitaOrdon}
             alt="DuskOnVita running on a PS Vita 1000: Link in Ordon village"
-            loading="eager"
+            sizes={LEAD_SIZES}
+            priority
           />
           <figcaption>Running on a PS Vita 1000 · Ordon village</figcaption>
         </figure>

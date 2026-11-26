@@ -29,4 +29,15 @@ exports.createPages = ({ actions }) => {
     isPermanent: true,
     redirectInBrowser: true,
   })
+
+  // Component review page (work package 1): every shared component with real data.
+  // It exists under `gatsby develop` only. `gatsby build` never creates it, so it
+  // is in no production build and no sitemap. The file lives outside src/pages
+  // on purpose: Gatsby would otherwise publish it.
+  if (process.env.gatsby_executing_command === "develop") {
+    actions.createPage({
+      path: `/dev/components/`,
+      component: require.resolve(`./src/dev/component-review.tsx`),
+    })
+  }
 }
