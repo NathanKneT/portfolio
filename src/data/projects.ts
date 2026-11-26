@@ -46,6 +46,38 @@ export type ProjectResult = {
   sourceUrl?: string
 }
 
+export type CaseLink = { label: string; href: string }
+
+// One critical point of a case study (design-phase.md §12.2): the message of its figure as the title,
+// three or four short sentences, then one figure. `figure` names the figure the case page draws for it
+// (src/components/case-study/); nothing the figure says is repeated in the text.
+export type CriticalPoint = {
+  figure: string
+  title: string
+  body: string
+}
+
+// The case study page of a project (src/components/project-case-study.tsx). Copy approved in
+// docs/portfolio-audit/copy-review.md: change it there first.
+export type CaseStudy = {
+  // First part of the label over the title: "Side project" · status · year.
+  kind: string
+  // Under the summary: the repository, the download, the demo.
+  links: CaseLink[]
+  // The question the project answers, in one sentence. Without one, the overview opens on the role.
+  problem?: string
+  // What I did, in one or two sentences.
+  role: string
+  // Short constraints beside the problem (DuskOnVita only).
+  constraints?: { title: string; text: string }[]
+  // Two or three, one figure each.
+  points: CriticalPoint[]
+  result?: { title: string; body: string }
+  // Buttons under the result, the primary one first, then a text link.
+  actions: CaseLink[]
+  more?: CaseLink
+}
+
 export type Project = {
   slug: ProjectSlug
   title: string
@@ -53,15 +85,14 @@ export type Project = {
   summary: string
   stack: string[]
   status: ProjectStatus
-  // Case study fields: a project with them gets a page under /engineering/ (see src/pages/engineering/).
-  // Without them it is shown as a row that links to its repository.
-  problem?: string
+  // A project with a case study gets a page under /engineering/ (see src/pages/engineering/).
+  // Without one it is shown as a row that links to its repository.
+  caseStudy?: CaseStudy
+  // One line each on the engineering page.
   role?: string
   result?: string
   // Result strip: three figures at most (see ProjectResult).
   results?: ProjectResult[]
-  constraints?: string[]
-  decisions?: string[]
   // Paragraphs shown when the project is the latest side project (see latestSideProjectSlug).
   spotlight?: string[]
   visual: ProjectVisual
@@ -79,8 +110,22 @@ export const projects: Project[] = [
     track: "work",
     summary:
       "An authenticated document workspace with vector retrieval and streamed answers.",
-    problem:
-      "Help teams organise internal documents and retrieve relevant passages before generating an answer.",
+    // Offline, and the source is not public: nothing here can be checked from outside, and the page says so.
+    caseStudy: {
+      kind: "Freelance",
+      links: [],
+      problem:
+        "Teams needed to organise internal documents and find the right passages before an answer is written.",
+      role: "I designed, built and ran the service alone until August 2025. It is now offline.",
+      points: [
+        {
+          figure: "sequence",
+          title: "From question to streamed answer in five steps.",
+          body: "NestJS embeds the question through a FastAPI service, then asks MongoDB for the 10 closest passages out of 100 candidates. FastAPI keeps them in a short session and streams the answer back over SSE. Sign-in lives outside the application: Keycloak handles accounts through OpenID Connect, and the API only checks the signature of each access token.",
+        },
+      ],
+      actions: [],
+    },
     role: "Owned product design, application architecture, full-stack development and deployment",
     stack: [
       "Next.js",
@@ -96,16 +141,6 @@ export const projects: Project[] = [
     status: "archived",
     result:
       "The completed application combined authenticated workspaces, top-10 vector retrieval and SSE answer streaming. The service is now offline.",
-    constraints: [
-      "Keep authentication separate from application logic through OpenID Connect and validated RS256 access tokens.",
-      "Coordinate TypeScript application services with a dedicated Python GenAI runtime.",
-      "Stream generated answers without holding a long synchronous browser request open.",
-    ],
-    decisions: [
-      "Used NestJS as the authenticated application and orchestration boundary, backed by Keycloak and MongoDB.",
-      "Separated embeddings and streaming model calls into a FastAPI service using LangChain and OpenAI adapters.",
-      "Stored 1536-dimensional vectors with content records and queried a MongoDB cosine index using 100 candidates and a top-10 result limit.",
-    ],
     visual: "retrieval",
     year: "2024–2025",
   },
@@ -115,8 +150,30 @@ export const projects: Project[] = [
     track: "work",
     summary:
       "Seven practical workshops on building, deploying and evaluating conversational agents.",
-    problem:
-      "Give Master’s students enough structure and hands-on practice to build and assess a complete API-based conversational agent.",
+    // 7 workshops and 20+ students come from the resume. The title of point 1 stays neutral until the
+    // owner confirms that the seven workshops build one application.
+    caseStudy: {
+      kind: "Teaching",
+      links: [
+        { label: "Course materials", href: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024" },
+      ],
+      role: "I designed the curriculum, taught the workshops and built the reference application.",
+      points: [
+        {
+          figure: "workshops",
+          title: "Seven workshops, from a first API call to an evaluated agent.",
+          body: "I designed and taught seven practical workshops to more than 20 Master’s students at Université Côte d’Azur. The last one was a group project.",
+        },
+        {
+          figure: "files",
+          title: "The reference app fits in four files.",
+          body: "Routes, data models, the LLM service and conversation memory each have one file. Students could read the whole application in one sitting. The materials are public.",
+        },
+      ],
+      actions: [
+        { label: "Course materials", href: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024" },
+      ],
+    },
     role: "Designed the curriculum, taught the workshops and built the reference implementations",
     stack: ["Python", "FastAPI", "LangChain", "LLMs"],
     status: "completed",
@@ -131,16 +188,6 @@ export const projects: Project[] = [
         label: "course materials and reference application on GitHub",
         sourceUrl: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
       },
-    ],
-    constraints: [
-      "Fit API fundamentals, LLM orchestration and evaluation into seven progressive workshops.",
-      "Keep the reference implementation approachable while preserving a realistic service structure.",
-      "Provide exercises that connect theory to observable application behavior.",
-    ],
-    decisions: [
-      "Structured the material from REST and FastAPI fundamentals through tools, function calling and evaluation.",
-      "Separated routes, Pydantic models and the LLM service in the reference application.",
-      "Ended the sequence with a group-project workshop so students could combine the complete workflow.",
     ],
     visual: "course",
     cover: {
@@ -163,9 +210,43 @@ export const projects: Project[] = [
       "I work on it with AI coding agents: they take features on parallel branches, I set the design and test in the headset, and an in-game test harness replays scripted scenarios on SteamVR’s null headset driver to check each change.",
     ],
     // Checked against the mod's source on 2026-11-20: Patcher/GlobalGameManagersPatch.cs, VR/CameraDriver.cs,
-    // Input/VirtualGamepad.cs, Input/WheelModel.cs, Input/GrabArbiter.cs, tools/test/Run-VRTest.ps1, tests/steps/.
-    problem:
-      "Cloudpunk never shipped with VR. It is a Unity 2018 IL2CPP game, so there is no source and no readable method bodies. The mod had to turn VR on in the shipped game, then make its cockpit, cameras, menus and controls work from a headset.",
+    // Input/VirtualGamepad.cs, Input/WheelModel.cs, Input/GrabArbiter.cs, tools/test/Run-VRTest.ps1, tests/steps/
+    // (55 regression files and 10 in tools-and-probes/, listed again on 2026-11-25 in the public repository).
+    caseStudy: {
+      kind: "Side project",
+      links: [
+        { label: "Source repository", href: "https://github.com/NathanKneT/CloudpunkVRevival" },
+        { label: "Download the mod", href: "https://github.com/NathanKneT/CloudpunkVRevival/releases/latest" },
+      ],
+      problem:
+        "Cloudpunk never shipped with VR, and there is no source to read. Could a mod turn VR on in the shipped game and make the cockpit, the menus and the controls work from a headset?",
+      role: "Built with AI coding agents. I set the design and test in the headset.",
+      points: [
+        {
+          figure: "bytes",
+          title: "One string added. Every other byte copied as is.",
+          body: "Cloudpunk is a Unity 2018 game with no VR support and no source. Before the game loads, a patch adds “OpenVR” to the engine’s list of VR devices in one settings file. The game’s own cameras and input library then do the rest, driven by the headset.",
+        },
+        {
+          figure: "wheel",
+          title: "A hand that loses tracking stops steering.",
+          body: "You hold the HOVA’s wheel with your hands. The mod measures the wheel’s rim and axis from the model at run time. If one hand jumps, freezes or drifts, that hand stops steering and the wheel stays where it is.",
+        },
+        {
+          figure: "scenarios",
+          title: "55 scenarios, run in the real game without a headset.",
+          body: "A script switches SteamVR to its virtual headset, starts the game and plays a step file. Developer commands stand in for the hands. It restores SteamVR’s settings and the saves when it ends, even after a failure.",
+        },
+      ],
+      result: {
+        title: "Version 0.3.0 is out on GitHub.",
+        body: "Cloudpunk plays in VR through SteamVR. It is tested on one Steam build of the game.",
+      },
+      actions: [
+        { label: "View source", href: "https://github.com/NathanKneT/CloudpunkVRevival" },
+        { label: "Download the mod", href: "https://github.com/NathanKneT/CloudpunkVRevival/releases/latest" },
+      ],
+    },
     role: "Built the mod with AI coding agents, which take features on parallel branches while I set the design and test in the headset: the VR boot patch, cameras, input, the hand-flown cockpit, PS VR2 features and the test harness",
     stack: [
       "C#",
@@ -199,18 +280,6 @@ export const projects: Project[] = [
         sourceUrl: "https://github.com/NathanKneT/CloudpunkVRevival/tree/main/tests/steps",
       },
     ],
-    constraints: [
-      "No source and no readable method bodies (Unity 2018.4, IL2CPP): what the mod needs to know about the game, such as the shape and the axis of the steering wheel, is measured at run time.",
-      "Keep the game’s own cameras, bindings, button prompts and menus working, so the mod adds VR on top of the game and does not replace parts of it.",
-      "Test without wearing a headset: a run has to work on SteamVR’s null headset driver and leave SteamVR’s settings and the player’s saves as they were.",
-    ],
-    decisions: [
-      "Turned VR on with a small binary edit before the game loads: a BepInEx preloader patch adds “OpenVR” to the enabled VR devices in Unity’s globalgamemanagers file and copies every other object byte for byte, only shifted to keep the 8-byte alignment.",
-      "Left the game’s Cinemachine cameras in charge: just before rendering, the mod reads the pose the game chose, levels the horizon, follows the HOVA’s heading in the cockpit and adds the tracked head on top, so post-processing and the cockpit renderer stay as they are.",
-      "Sent input through InControl, the game’s own input library: the two controllers appear as one virtual PlayStation pad, so the game keeps its bindings, prompts and menus, and no Windows input is faked.",
-      "Made the wheel something you hold: its rim and axis are measured from the model, it stops at 35 degrees by default, and one arbiter gives each press to the nearest thing in reach (wheel, lift lever, charm or coffee cup). A hand whose tracking jumps, freezes or drifts stops steering.",
-      "Built an in-game test harness: a PowerShell script switches SteamVR to its null headset driver, starts the game, plays a step file (wait, waitlog, cmd, capture, mirror, unitylog) and always restores SteamVR’s settings, the saves and the lock. Developer commands simulate the hands, tracking faults included, so the wheel is checked without controllers.",
-    ],
     visual: "vr-loop",
     cover: {
       image: "/evidence/cloudpunk-cockpit-loop-poster.jpg",
@@ -234,8 +303,42 @@ export const projects: Project[] = [
     track: "side",
     summary:
       "A VR mod that makes ULTRAKILL playable with motion controllers on the game’s current Steam version, through SteamVR.",
-    problem:
-      "ULTRAKILL’s community VR mod was built on older versions of the game, and players kept reporting the same problems: a hard setup, controls that needed the game window in focus, missing controller layouts. Starting from the most recent community port, I set out to fix the most-reported problems and to add what the PS VR2 can do.",
+    // Latest release v2.0.3 (15 Nov 2026). The 18 test hooks are the table of docs/BUILDING.md#test-hooks.
+    caseStudy: {
+      kind: "Side project",
+      links: [
+        { label: "Source repository", href: "https://github.com/NathanKneT/VRTRAKILL" },
+        { label: "Download the mod", href: "https://github.com/NathanKneT/VRTRAKILL/releases/latest" },
+      ],
+      problem:
+        "ULTRAKILL’s community VR mod was built on older versions of the game, and players kept reporting the same problems. I started from the most recent community port and fixed the ones reported most.",
+      role: "Built with an AI coding assistant. I maintain it, with signed releases and a one-click installer.",
+      points: [
+        {
+          figure: "streamer",
+          title: "Large picture: what viewers get. Corner: the headset.",
+          body: "The usual monitor view is one eye of the headset, so it shakes with every head movement. I added a separate camera with smoothed head turns and a level horizon. It renders 60 frames a second into its own texture, so the headset keeps its 90 or 120 Hz.",
+        },
+        {
+          figure: "input",
+          title: "Input goes from SteamVR to the game.",
+          body: "Controls read SteamVR actions and feed the game through a virtual input layer. Buttons keep working when another window has focus, and by default no key press reaches Windows.",
+        },
+        {
+          figure: "hooks",
+          title: "18 checks run in a real level.",
+          body: "A text file tells the mod to load a level and run checks with simulated hand poses. One counts punches at given hand speeds. Another measures the angle between the crosshair and the shot for each weapon.",
+        },
+      ],
+      result: {
+        title: "Version 2.0.3 is out on GitHub.",
+        body: "It runs through SteamVR, and the same install starts flat when SteamVR is off.",
+      },
+      actions: [
+        { label: "View source", href: "https://github.com/NathanKneT/VRTRAKILL" },
+        { label: "Download the mod", href: "https://github.com/NathanKneT/VRTRAKILL/releases/latest" },
+      ],
+    },
     role: "Built version 2.0 with an AI coding assistant and maintain it: input and gameplay patches, PS VR2 features, the streamer view, the installer, signed releases and headset testing",
     stack: [
       "C#",
@@ -268,19 +371,7 @@ export const projects: Project[] = [
       },
     ],
     result:
-      "Version 2.0 is out on GitHub with signed releases and a one-click installer. It runs through SteamVR, with controller layouts for PS VR2, Quest, Index, Steam Frame, Pico, Vive and WMR, and the same install starts flat when SteamVR is off.",
-    constraints: [
-      "Change a shipped game without its source: every change is a Harmony patch on the compiled code, so the mod targets one exact game build and says so.",
-      "Keep the headset at 90 or 120 Hz: the extra camera for streaming renders at 60 frames a second into its own texture and never draws in the headset.",
-      "Make every new motion optional: punches by swinging and movement gestures always keep a button, since players stand, sit and have different comfort limits.",
-    ],
-    decisions: [
-      "Fed the game’s controls from SteamVR actions through a virtual input layer, so buttons work while another window has focus and never reach Windows or other programs.",
-      "Drove the PS VR2 through the PSVR2 Toolkit: each weapon has its own adaptive trigger effect that follows its state, and parried projectiles go where the player’s eyes look.",
-      "Rendered the monitor view from a separate camera with frame-rate-independent smoothing and a level horizon, plus a HUD and gaze overlay drawn only for viewers.",
-      "Added in-game test hooks that play scripted head and controller poses in a real level and log a pass or a difference, so punches, gestures and settings are checked without wearing the headset.",
-      "Shipped RSA-signed checksums with every release and a one-click installer that finds the game through Steam’s libraries and keeps the player’s settings.",
-    ],
+      "Version 2.0.3 is out on GitHub with signed releases and a one-click installer. It runs through SteamVR, with controller layouts for PS VR2, Quest, Index, Steam Frame, Pico, Vive and WMR, and the same install starts flat when SteamVR is off.",
     visual: "vr",
     cover: {
       image: "/evidence/vrtrakill-shotgun.jpg",
@@ -299,8 +390,61 @@ export const projects: Project[] = [
     track: "side",
     summary:
       "An unofficial PS Vita port of Twilight Princess that runs the game’s decompiled code natively on the console, without emulation.",
-    problem:
-      "Dusklight builds the Twilight Princess decompilation as a native program. I wanted to know whether the PS Vita could run it natively, at the original 30 FPS, with the game behaving exactly as it was made.",
+    // Figures from src/data/duskonvita-perf.ts. The 154 ms frame is Link's house (v61, 22 Oct) and is never
+    // set against another place; the 18.3 → 29.1 FPS result is the Hyrule Field bridge.
+    caseStudy: {
+      kind: "Side project",
+      links: [
+        { label: "Source repository", href: "https://github.com/NathanKneT/DuskOnVita" },
+        { label: "Download the VPK", href: "https://github.com/NathanKneT/DuskOnVita/releases/latest" },
+      ],
+      problem:
+        "Could the PS Vita run Twilight Princess natively, at the original 30 FPS, with the game behaving exactly as it was made?",
+      role: "I wrote the Vita side with AI assistance. That covers the GX-to-GXM renderer, audio, input, memory, the settings page and the measurement tools.",
+      constraints: [
+        {
+          title: "The game speaks GameCube",
+          text: "Every GPU command is translated to the Vita’s GXM API while the game runs. An app gets 3 ARM Cortex-A9 cores, at up to 444 MHz.",
+        },
+        {
+          title: "The game must stay exact",
+          text: "A speed-up that is on by default gives the same result bit for bit. Anything that changes the simulation is an opt-in setting.",
+        },
+        {
+          title: "No game data in the download",
+          text: "Players bring their own disc. The button prompts and the LiveArea pictures are drawn in code.",
+        },
+      ],
+      points: [
+        {
+          figure: "frame",
+          title: "One frame took 154 ms. The game needs 33.",
+          body: "On 22 October the port ran Link’s house at 6.3 FPS, with everything on one core. Preparing vertices alone cost 66 ms, 43% of the frame. I moved the GameCube command decoding to a second core and stopped re-checking geometry the game had not changed.",
+        },
+        {
+          figure: "verify",
+          title: "Same output, checked 337,408 times.",
+          body: "A speed-up is on by default only if it gives the same result as the original code. Each one has a verify mode that runs both and counts differences. Static geometry passed 337,408 comparisons with 0 mismatches.",
+        },
+        {
+          figure: "runs",
+          title: "Every console run is in the log.",
+          body: "I measure speed only on a real PS Vita 1000 and log each run with what changed. The log holds 52 runs. Two were faster and I rejected them because they dropped draws. Ordon village still runs at 9.9 FPS in its widest view.",
+        },
+      ],
+      result: {
+        title: "On the Hyrule Field bridge, 18.3 FPS became 29.1.",
+        body: "The same six places, measured on 5 November and again on 10 and 11 November. Version 0.9.0 boots from the player’s own disc image, plays the opening in Ordon and saves on a real PS Vita 1000.",
+      },
+      actions: [
+        { label: "View source", href: "https://github.com/NathanKneT/DuskOnVita" },
+        { label: "Download the VPK", href: "https://github.com/NathanKneT/DuskOnVita/releases/latest" },
+      ],
+      more: {
+        label: "More in the repository",
+        href: "https://github.com/NathanKneT/DuskOnVita/blob/main/docs/ARCHITECTURE.md",
+      },
+    },
     role: "Wrote the Vita side with AI assistance: the GX-to-GXM renderer, audio, input, memory, the settings page and the measurement tools",
     stack: [
       "C++",
@@ -338,18 +482,6 @@ export const projects: Project[] = [
     ],
     result:
       "Version 0.9.0 boots from the player’s own disc image, plays the opening in Ordon and saves on a real PS Vita 1000. On the console, the Hyrule Field bridge went from 18.3 to 29.1 FPS; the busiest places still run at 10 to 19 FPS against the original 30.",
-    constraints: [
-      "The game issues GameCube GPU commands: each one is translated into the Vita’s GXM API at run time, on the three ARM Cortex-A9 cores an application gets, at up to 444 MHz, with 512 MB of RAM.",
-      "Keep the game exact: speed-ups that are on by default must give the same results bit for bit; anything that changes the simulation is an opt-in setting.",
-      "Ship no game data or third-party artwork: players bring their own disc, and the button prompts and LiveArea pictures are drawn in code.",
-    ],
-    decisions: [
-      "Wrote a native GXM renderer with resident geometry, packed vertex formats and native primitives. On the same build it was faster outside Link’s house (22.9 to 27.2 FPS) and in the Faron fight (11.7 to 14.0), slightly slower inside the GPU-bound house (20.2 to 19.4), and it replaced the vitaGL path as the default.",
-      "Split the frame across the three cores: the game on one, a GX worker that turns commands into draws on the second, sound on the third. The first game tick now runs while the worker finishes the previous frame, which took Ordon from 20.5 to 25.9 FPS.",
-      "Cut the GX worker’s cost: unchanged pipelines are not checked again, uniforms go straight into GPU memory, and rows of identical squares go out as one draw (Palace of Twilight 7 to 13 FPS, Snowpeak Ruins room 9 from 9 to 19). Separately, rendering the sound in small steps brought late sound buffers in the Palace of Twilight from 29% to 0.2%.",
-      "Gave each fast path a verify mode that runs the original next to it and counts differences: static geometry passed 337,408 certified hits with no mismatch. Host tests compare real functions against frozen earlier versions under AddressSanitizer and UBSan, and speed is only ever measured on the console, one change per run.",
-      "Made the build strict and reproducible: a digest-pinned VitaSDK Docker image, hash-pinned dependencies and networking off, and a two-pass link that turns every missing symbol into a named trap stub, so a missing piece stops the game and names itself.",
-    ],
     visual: "port",
     cover: {
       image: "/evidence/duskonvita-livearea.png",
@@ -368,8 +500,37 @@ export const projects: Project[] = [
     track: "side",
     summary:
       "A browser-based 3D puzzle game where players push and pull blocks to create a path through each level.",
-    problem:
-      "Bring back a push-and-pull puzzle mechanic I loved and see how far it could go as a modern browser game built solo.",
+    // The source is private: the three points were read in the clone at fa48baf (12 Nov 2026), whose README
+    // still describes preview 0.3.2; the release figures (0.4.5, 13 walls, four worlds) are the owner's.
+    caseStudy: {
+      kind: "Side project",
+      links: [{ label: "Play the preview", href: "https://nathanknet.itch.io/kororo-private-playtest" }],
+      problem:
+        "I wanted to bring back a push-and-pull puzzle mechanic I loved, and see how far it goes as a browser game built alone.",
+      role: "I built the game simulation, the 3D interface, undo and replay, and the level solver.",
+      points: [
+        {
+          figure: "rules",
+          title: "The rules are one pure function.",
+          body: "A wall is written as text, one drawing per depth layer. Every move goes through one function that takes the level, the state and an action, and returns a new state. The 3D scene, the animation and the dialogue only show that state.",
+        },
+        {
+          figure: "states",
+          title: "Undo is a list of states. A replay is a list of actions.",
+          body: "A state is plain data, so the game keeps every earlier one in an array. The rules always give the same answer, so a list of actions is enough to play a whole run again, on another machine too.",
+        },
+        {
+          figure: "solver",
+          title: "The solver runs in a Web Worker and returns the shortest route.",
+          body: "The page posts a level to the worker and keeps animating. The answer is the shortest route, and it sets the par on screen. The first wall’s par is 4, computed this way. A search may visit up to 6 million states, and the dearest shipped wall uses 73% of that.",
+        },
+      ],
+      result: {
+        title: "Preview 0.4.5 is playable on itch.io.",
+        body: "13 story walls across four worlds, plus a level editor. Still in development.",
+      },
+      actions: [{ label: "Play the preview", href: "https://nathanknet.itch.io/kororo-private-playtest" }],
+    },
     role: "Built the game simulation, 3D interface, undo and replay, and level solving and validation in Web Workers",
     stack: [
       "TypeScript",
@@ -393,22 +554,13 @@ export const projects: Project[] = [
         label: "story walls across four worlds, plus a level editor",
       },
       {
-        value: "Web Workers",
-        label: "level solving and validation, off the main thread",
+        // Counted in the private clone (fa48baf): test files, not test cases, and not run.
+        value: "290",
+        label: "test files: 226 for the app, 38 for the level tools, 19 for the rules, 7 for the playtest tools",
       },
     ],
     result:
       "Playable preview 0.4.5 on itch.io: 13 story walls across four worlds, including ice where Pon slides until something stops him, a cave where light wakes the blocks and a building site where doors are joined by pipes, plus a level editor. Still in development.",
-    constraints: [
-      "Keep the puzzle rules independent of the 3D scene, so moves can be tested, undone and replayed without rendering anything.",
-      "Search for level solutions without freezing input or animation on the main thread.",
-      "Stay smooth across devices with very different graphics budgets: a performance monitor steps the pixel ratio down from 1.75 to 1 and drops the sea’s finer detail at the lowest tier.",
-    ],
-    decisions: [
-      "Wrote the rules as a pure, deterministic simulation shared by the game and its Vitest suite; animation, camera and dialogue are presentation only.",
-      "Moved level solving and validation into Web Workers, so a search never blocks the scene and can be cancelled by terminating the worker.",
-      "Bound movement to the arrow keys so controls do not depend on keyboard layout, and showed touch buttons on coarse pointers rather than on narrow windows.",
-    ],
     visual: "game",
     cover: {
       image: "/evidence/kororo-loop-poster.jpg",
@@ -430,8 +582,36 @@ export const projects: Project[] = [
     track: "side",
     summary:
       "A webcam-based interface that turns hand movements into real-time controls for Blender.",
-    problem:
-      "Control a 3D scene from a standard webcam without a physical controller or dedicated tracking hardware.",
+    // No gesture count is written until the gestures are counted again in hand_tracking.py; no latency was measured.
+    caseStudy: {
+      kind: "Side project",
+      links: [
+        { label: "Source repository", href: "https://github.com/NathanKneT/RTHT-3D" },
+        { label: "Watch demo", href: "https://www.instagram.com/reel/DJLriUMSSpy/" },
+      ],
+      problem: "Can a standard webcam control a 3D scene, with no controller and no tracking hardware?",
+      role: "I designed and wrote the vision pipeline, the gesture recognition, the UDP protocol and the Blender side.",
+      points: [
+        {
+          figure: "demo",
+          title: "Two hands and a webcam move objects in Blender.",
+          body: "MediaPipe finds 21 landmarks per hand in each webcam frame. I turn them into gestures such as pinch and fist. The demo video reached 343,000 views on Instagram.",
+        },
+        {
+          figure: "udp",
+          title: "Each frame sends one short line over UDP.",
+          body: "Tracking and Blender are two Python processes. The tracker sends the gesture and the hand position as text on a local port. Blender reads it on a listener thread and applies the change on its main thread.",
+        },
+      ],
+      result: {
+        title: "The prototype is finished.",
+        body: "It supports one-hand and two-hand scene controls.",
+      },
+      actions: [
+        { label: "View source", href: "https://github.com/NathanKneT/RTHT-3D" },
+        { label: "Watch demo", href: "https://www.instagram.com/reel/DJLriUMSSpy/" },
+      ],
+    },
     role: "Designed and implemented the vision pipeline, gesture recognition, UDP protocol and Blender integration",
     stack: ["Python", "OpenCV", "MediaPipe", "Blender", "UDP"],
     status: "completed",
@@ -456,16 +636,6 @@ export const projects: Project[] = [
         sourceUrl: "https://github.com/NathanKneT/RTHT-3D",
       },
     ],
-    constraints: [
-      "Translate noisy landmark data into gestures that remain understandable in motion.",
-      "Keep the vision process separate from Blender without making interaction feel delayed.",
-      "Support selection, movement, scaling and scene actions through a small gesture vocabulary.",
-    ],
-    decisions: [
-      "Used MediaPipe hand landmarks to derive semantic gesture states instead of coupling raw coordinates to scene actions.",
-      "Separated webcam tracking and Blender into two Python processes connected over local UDP.",
-      "Mapped one-hand and two-hand gestures to distinct operations so complex actions remain intentional.",
-    ],
     visual: "tracking",
     cover: {
       image: "/evidence/rtht-3d-cover.jpg",
@@ -484,8 +654,21 @@ export const projects: Project[] = [
     track: "side",
     summary:
       "A node-based editor for writing, checking and testing branching interactive stories.",
-    problem:
-      "Let writers manage complex story branches visually while keeping every choice and destination structurally valid.",
+    // Read in the public source (dba5fac): src/lib/graphToStoryConverter.ts, storyExporter.ts and the
+    // generate-story route. A node with no way out is a warning there, not an error.
+    caseStudy: {
+      kind: "Side project",
+      links: [{ label: "Source repository", href: "https://github.com/NathanKneT/NarrativeForge-nextjs" }],
+      role: "I designed the application, the visual editor, the graph validation and the way projects are saved.",
+      points: [
+        {
+          figure: "checks",
+          title: "The graph is checked before it becomes a story.",
+          body: "Writers build a story as a graph of nodes and choices. To test or export it, the editor converts the graph and checks it on the way. A story with no start, two starts or a choice that leads nowhere stops there. A dead end or an unreachable node comes back as a warning.",
+        },
+      ],
+      actions: [{ label: "View source", href: "https://github.com/NathanKneT/NarrativeForge-nextjs" }],
+    },
     role: "Designed the application architecture, visual editor, graph validation and persistence model",
     stack: [
       "TypeScript",
@@ -499,16 +682,6 @@ export const projects: Project[] = [
     status: "prototype",
     result:
       "The prototype saves projects locally, validates graph connections, runs stories in a reader and exports JSON or Twine files.",
-    constraints: [
-      "Keep graph state, story content and the playable reader synchronized.",
-      "Generate structured content without allowing AI output to break the story graph.",
-      "Make a dense node editor usable across different screen sizes.",
-    ],
-    decisions: [
-      "Used React Flow for typed start, story and ending nodes with explicit connections.",
-      "Kept typed node and edge state inside the React Flow editor, with browser-local persistence for iterative authoring.",
-      "Placed structured OpenAI generation behind Next.js API routes, then processed generated nodes and choices before inserting them into the graph.",
-    ],
     visual: "narrative",
     cover: {
       image: "/evidence/narrative-forge-editor.png",
@@ -558,8 +731,28 @@ export const getProject = (slug: ProjectSlug) => {
 export const projectPath = (project: Project) =>
   `${engineeringPath}${project.slug}/`
 
-export const hasCaseStudy = (project: Project) =>
-  Boolean(project.decisions?.length)
+export const hasCaseStudy = (project: Project) => Boolean(project.caseStudy)
+
+// "Next case study" goes round this loop: the side projects, newest first, then the work.
+export const caseStudyOrder: ProjectSlug[] = [
+  "cloudpunk-vrevival",
+  "vrtrakill",
+  "duskonvita",
+  "kororo",
+  "rtht-3d",
+  "conversational-agents-course",
+  "docs-retriever",
+  "narrative-forge",
+]
+
+export const nextCaseStudy = (project: Project) => {
+  const index = caseStudyOrder.indexOf(project.slug)
+  return getProject(caseStudyOrder[(index + 1) % caseStudyOrder.length])
+}
+
+// The label over a case study's title: "Side project · Active · 2026".
+export const caseStudyLabel = (project: Project) =>
+  [project.caseStudy?.kind, statusLabel[project.status], project.year].filter(Boolean).join(" · ")
 
 // Where a card or a row title leads: the case study, or the project's spot on the engineering page.
 export const projectLink = (project: Project) =>

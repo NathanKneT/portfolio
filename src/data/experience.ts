@@ -201,6 +201,53 @@ export const teaching = {
   materialsUrl: "https://github.com/NathanKneT/Master-AI-Chatbot-Course-2024",
 }
 
+// ---- Home page, career section (design-phase.md §11; approved copy: copy-review.md §1) ----
+
+// The entries of the home timeline and of the list under it: the four roles and the teaching post.
+export type CareerEntryId = RoleId | "uca-teaching"
+
+// The order of the list under the timeline: the current role first, then by start date, newest first.
+export const careerOrder: CareerEntryId[] = ["rokken", "uca-teaching", "freelance", "capgemini", "cawita"]
+
+const highlightTexts = (id: RoleId, topics: string[]) =>
+  getRole(id)
+    .highlights.filter((highlight) => topics.includes(highlight.topic))
+    .map((highlight) => highlight.text)
+
+// One line of proof per entry, and what its open panel says. Capgemini leaves out the p95
+// migration (taken off the home page, 2026-11-20); the sentence stays above for the resume.
+export const careerHighlights: Record<CareerEntryId, { proof: string; panel: string[] }> = {
+  rokken: {
+    proof: "Current role · computer-vision product, GPU scheduler",
+    panel: ["I work on the web application and the backend services around Rokken’s video-analysis pipelines."],
+  },
+  "uca-teaching": {
+    proof: "7 workshops · 20+ students",
+    panel: teaching.bullets,
+  },
+  freelance: {
+    proof: "Client web applications · DocsRetriever SaaS",
+    panel: highlightTexts("freelance", ["Client work", "DocsRetriever"]),
+  },
+  capgemini: {
+    proof: "Enterprise generative-AI applications",
+    panel: highlightTexts("capgemini", ["Generative AI", "Retrieval and delivery"]),
+  },
+  cawita: {
+    proof: "Full-stack applications and REST APIs",
+    panel: highlightTexts("cawita", ["Applications", "Delivery"]),
+  },
+}
+
+// The exchange year at Université Laval, drawn on the home timeline. Education gives years only
+// (2023–2024): the box fills the gap between Cawita and Capgemini, as on the approved canvas.
+export const exchangeYear = {
+  school: "Université Laval",
+  place: "Canada",
+  start: "2023-09",
+  end: "2024-03",
+}
+
 export const education = [
   {
     degree: "Master’s in Applied Artificial Intelligence (MIAGE)",

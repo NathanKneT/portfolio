@@ -1,0 +1,570 @@
+/* Figures of VRTRAKILL, Kororo, RTHT-3D, the course, DocsRetriever and NarrativeForge (boards
+   Case-*.dc.html). They sit in the WP1 chart shell: `chart` is the container they answer to.
+   Every `code` here resets the theme's `li > code` and `p > code` style (light background, padding). */
+
+.inlineCode,
+.ascii,
+.fnBox,
+.datagram,
+.hookTable code,
+.hookList code,
+.action code,
+.thread code,
+.files code,
+.messageList code {
+  padding: 0;
+  background: none;
+  font-family: var(--case-mono);
+}
+
+.inlineCode {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+/* ---- A loop inside a plate ---- */
+
+.videoFrame {
+  display: block;
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+/* ---- VRTRAKILL: input path, test hooks ---- */
+
+.offPath {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+}
+
+.offChip {
+  padding: 6px 12px;
+  color: var(--text-2);
+  border: 1px dashed var(--line-strong);
+  text-decoration: line-through;
+}
+
+.hookTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hookTable thead th {
+  padding: 0 16px 10px 0;
+  color: var(--faint);
+  border-bottom: 1px solid var(--line-strong);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.hookTable tbody th,
+.hookTable td {
+  padding: 10px 16px 10px 0;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-small);
+  font-weight: 400;
+  line-height: 21px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.hookTable code,
+.hookList code {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hookList {
+  display: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.hookList li {
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.hookDoes,
+.hookChecks {
+  display: block;
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+}
+
+.hookDoes {
+  margin-top: 4px;
+  color: var(--text-2);
+}
+
+.hookChecks {
+  color: var(--muted);
+}
+
+@container chart (max-width: 640px) {
+  .hookTable {
+    display: none;
+  }
+
+  .hookList {
+    display: block;
+  }
+}
+
+/* ---- Kororo: the wall as text and as a grid, the function ---- */
+
+.wall {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.wallPart {
+  min-width: 0;
+  flex: 1 1 130px;
+}
+
+.wallPart + .wallPart {
+  flex-basis: 150px;
+}
+
+.ascii {
+  display: block;
+  padding: 12px 14px;
+  color: var(--text-2);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  font-size: 15px;
+  line-height: 22px;
+  letter-spacing: 0.18em;
+}
+
+.ascii > span {
+  display: block;
+}
+
+.wallGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 3px;
+  max-width: 190px;
+}
+
+.wallCell {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cellStone {
+  background: var(--line-strong);
+}
+
+/* The block takes the pink of the game, --data-4; the letter A says what it is. */
+.cellBlock {
+  color: var(--on-accent);
+  background: var(--data-4);
+}
+
+.cellExit {
+  color: var(--text);
+  border: 2px solid var(--text);
+}
+
+.cellEmpty {
+  background: var(--bg);
+}
+
+.legend {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: 18px;
+}
+
+.fn {
+  margin-top: 18px;
+}
+
+.fnBox {
+  display: block;
+  padding: 12px 14px;
+  color: var(--text);
+  border: 2px solid var(--text);
+  background: var(--bg);
+  font-size: 14px;
+  line-height: 22px;
+  overflow-wrap: anywhere;
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.facts li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+}
+
+.facts li::before {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  background: var(--line-strong);
+  content: "";
+  transform: translateY(-3px);
+}
+
+/* The ice and the cave: a smaller capture beside a taller drawing. */
+.shotNarrow {
+  flex: 1 1 360px;
+}
+
+/* ---- Kororo: states and actions ---- */
+
+.tape {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 4px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+}
+
+.state span {
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
+.state strong {
+  color: var(--text);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: 22px;
+}
+
+.stateLast {
+  padding: 9px 3px;
+  border: 2px solid var(--text);
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--text-2);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
+.action code {
+  color: var(--text-2);
+  font-size: 12px;
+}
+
+.uses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.uses p {
+  min-width: 0;
+  flex: 1 1 260px;
+  margin: 0;
+  padding: 12px 14px;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  background: var(--bg);
+  font-size: var(--fs-caption);
+  line-height: 20px;
+}
+
+.uses strong {
+  display: block;
+  color: var(--text);
+  font-size: var(--fs-small);
+  font-weight: 650;
+  line-height: 20px;
+}
+
+/* ---- Kororo: the messages between the page and the worker ---- */
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.thread {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+}
+
+.thread strong {
+  color: var(--text);
+  font-size: var(--fs-small);
+  font-weight: 650;
+  line-height: 20px;
+}
+
+.thread code {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 18px;
+  overflow-wrap: anywhere;
+}
+
+.thread > span {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 19px;
+}
+
+.threadWorker {
+  padding: 13px 15px;
+  border: 2px solid var(--text);
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
+/* ---- RTHT-3D: a hand, then the flow ---- */
+
+.udp {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 24px;
+}
+
+.hand {
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: var(--text-2);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.landmark {
+  fill: var(--text-2);
+  stroke: none;
+}
+
+.udpFlow {
+  min-width: 0;
+  flex: 1 1 300px;
+}
+
+.datagram {
+  color: inherit;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+@container chart (max-width: 640px) {
+  .udp {
+    gap: 14px;
+  }
+
+  .fnBox {
+    font-size: 13px;
+  }
+}
+
+/* ---- Course: seven workshops, four files ---- */
+
+.workshops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workshops li {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 2px solid var(--text-2);
+}
+
+.workshops span {
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: var(--lh-micro);
+}
+
+.workshops strong {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 21px;
+}
+
+.files {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.files li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 20px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.files code {
+  color: var(--text);
+  font-size: var(--fs-small);
+  line-height: 21px;
+  overflow-wrap: anywhere;
+}
+
+.files span {
+  color: var(--muted);
+  font-size: var(--fs-small);
+  line-height: 21px;
+}
+
+@container chart (max-width: 640px) {
+  .workshops {
+    gap: 14px;
+  }
+
+  .workshops li {
+    flex: 1 1 28%;
+  }
+
+  .workshops strong {
+    font-size: 15px;
+  }
+
+  .files li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+}
+
+/* ---- NarrativeForge: the optional draft, the checks ---- */
+
+.draft {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+}
+
+.draftChip {
+  padding: 6px 12px;
+  color: var(--text-2);
+  border: 1px dashed var(--line-strong);
+}
+
+.checkLists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  margin-top: 24px;
+}
+
+.messageList {
+  min-width: 0;
+  flex: 1 1 300px;
+}
+
+.messageList ul {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.messageList li {
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+}
+
+.messageList code {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 19px;
+  overflow-wrap: anywhere;
+}
+
+@container chart (max-width: 640px) {
+  .checkLists {
+    gap: 16px;
+    margin-top: 18px;
+  }
+}

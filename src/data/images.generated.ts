@@ -11,7 +11,7 @@ export type ResponsiveImage = {
   fallback: string
 }
 
-export type ImageId = "previewNight" | "previewPortrait" | "previewUrban" | "caseDuskonvitaOrdon" | "caseNarrativeEditor" | "caseCourseTeaching"
+export type ImageId = "previewNight" | "previewPortrait" | "previewUrban" | "caseDuskonvitaOrdon" | "caseNarrativeEditor" | "caseCourseTeaching" | "caseVrtrakillShotgun" | "caseKororoDoorway" | "caseKororoIce" | "caseKororoCave" | "caseCloudpunkWheelGrab" | "caseCloudpunkPoster" | "caseKororoPoster" | "caseRthtPoster" | "caseVrtrakillLoopPoster"
 
 export const images: Record<ImageId, ResponsiveImage> = {
   previewNight: { base: "/previews/night", width: 1440, height: 1080, widths: [480, 960, 1440], fallback: "/previews/night-960.jpg" },
@@ -20,4 +20,13 @@ export const images: Record<ImageId, ResponsiveImage> = {
   caseDuskonvitaOrdon: { base: "/evidence/duskonvita-ordon", width: 1200, height: 766, widths: [480, 960, 1200], fallback: "/evidence/duskonvita-ordon-960.jpg" },
   caseNarrativeEditor: { base: "/evidence/narrative-forge-editor", width: 1440, height: 709, widths: [480, 960, 1440], fallback: "/evidence/narrative-forge-editor-960.jpg" },
   caseCourseTeaching: { base: "/evidence/conversational-agents-teaching", width: 1280, height: 1280, widths: [480, 960, 1280], fallback: "/evidence/conversational-agents-teaching-960.jpg" },
+  caseVrtrakillShotgun: { base: "/evidence/vrtrakill-shotgun", width: 800, height: 790, widths: [480, 800], fallback: "/evidence/vrtrakill-shotgun-800.jpg" },
+  caseKororoDoorway: { base: "/evidence/kororo-doorway", width: 1280, height: 720, widths: [480, 960, 1280], fallback: "/evidence/kororo-doorway-960.jpg" },
+  caseKororoIce: { base: "/evidence/kororo-ice", width: 1280, height: 720, widths: [480, 960, 1280], fallback: "/evidence/kororo-ice-960.jpg" },
+  caseKororoCave: { base: "/evidence/kororo-cave", width: 1280, height: 720, widths: [480, 960, 1280], fallback: "/evidence/kororo-cave-960.jpg" },
+  caseCloudpunkWheelGrab: { base: "/evidence/cloudpunk-36-wheel-grab", width: 1600, height: 760, widths: [480, 960, 1600], fallback: "/evidence/cloudpunk-36-wheel-grab-960.jpg" },
+  caseCloudpunkPoster: { base: "/evidence/cloudpunk-cockpit-poster", width: 640, height: 360, widths: [320, 640], fallback: "/evidence/cloudpunk-cockpit-poster-640.jpg" },
+  caseKororoPoster: { base: "/evidence/kororo-loop-still", width: 680, height: 382, widths: [320, 680], fallback: "/evidence/kororo-loop-still-680.jpg" },
+  caseRthtPoster: { base: "/evidence/rtht-3d-demo", width: 960, height: 540, widths: [320, 960], fallback: "/evidence/rtht-3d-demo-960.jpg" },
+  caseVrtrakillLoopPoster: { base: "/evidence/vrtrakill-streamer-loop", width: 960, height: 540, widths: [320, 960], fallback: "/evidence/vrtrakill-streamer-loop-960.jpg" },
 }

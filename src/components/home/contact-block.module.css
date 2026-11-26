@@ -1,0 +1,49 @@
+/* Contact block (design-phase.md §6 ContactBlock, §3 "H2 contact"). */
+
+.contact.contact {
+  padding: 104px 0 112px;
+}
+
+.title {
+  max-width: 760px;
+  margin: 12px 0 0;
+  color: var(--text);
+  font-size: var(--fs-h2-contact);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h2-contact);
+  letter-spacing: var(--ls-heading);
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  margin-top: 36px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+}
+
+.button:global(.button) {
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.25rem;
+}
+
+.email {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  font-size: var(--fs-body);
+}
+
+@media (max-width: 719px) {
+  .contact.contact {
+    padding: 56px 0 64px;
+  }
+
+  .actions {
+    margin-top: 28px;
+  }
+}

@@ -1,0 +1,64 @@
+/* Photography band (design-phase.md §11): never cropped, no object-fit. */
+
+.band {
+  display: flex;
+  margin-top: 40px;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Each item is as wide as its share of the row: the three end up one height. */
+.item {
+  display: flex;
+  min-width: 0;
+  flex: var(--ratio) 1 0px;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--text-2);
+  text-decoration: none;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--matte);
+}
+
+.label {
+  display: flex;
+  min-height: 24px;
+  align-items: center;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.25rem;
+  transition: color 150ms var(--ease);
+}
+
+.item:hover {
+  color: var(--accent-hover);
+}
+
+/* Phone: a 300 px row, edge to edge, that scrolls sideways in its own box. */
+@media (max-width: 719px) {
+  .band {
+    margin: 24px -1rem 0;
+    padding: 0 1rem;
+    gap: 12px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .item {
+    flex: none;
+  }
+
+  .image {
+    width: auto;
+    height: 300px;
+  }
+
+  .label {
+    min-height: 44px;
+  }
+}

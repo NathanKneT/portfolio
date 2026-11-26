@@ -1,0 +1,428 @@
+/* Cloudpunk VRevival: the byte strip, the wheel gauge and the scenario grid (board Case-Cloudpunk). */
+
+.inlineCode {
+  padding: 0;
+  color: var(--text-2);
+  background: none;
+  font-family: var(--case-mono);
+  font-size: 12px;
+}
+
+/* ---- Byte strip ---- */
+
+.strip {
+  --cells: var(--wide);
+}
+
+.cells,
+.stripLabels {
+  display: grid;
+  grid-template-columns: repeat(var(--cells), minmax(0, 1fr));
+  gap: 2px;
+}
+
+.cell {
+  display: flex;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-accent);
+  font-family: var(--case-mono);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.before,
+.after {
+  background: var(--line);
+}
+
+.block {
+  background: var(--line-strong);
+}
+
+/* The added string takes the data hue of "new" in this figure; its letters say what it is. */
+.added {
+  background: var(--data-5);
+}
+
+.stripLabels {
+  margin-top: 8px;
+}
+
+.stripLabel {
+  grid-column: span var(--span-wide);
+  min-width: 0;
+  padding-right: 8px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
+.labelPlain {
+  font-weight: 400;
+}
+
+.labelBlock {
+  color: var(--text-2);
+  font-weight: 650;
+}
+
+.labelAdded {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.narrowText {
+  display: none;
+}
+
+.nobreak {
+  white-space: nowrap;
+}
+
+@container chart (max-width: 640px) {
+  .strip {
+    --cells: var(--narrow);
+  }
+
+  .wideOnly {
+    display: none;
+  }
+
+  /* Two lines of labels: see narrowPlace in cloudpunk.tsx. */
+  .stripLabels {
+    row-gap: 4px;
+  }
+
+  .stripLabel {
+    grid-row: var(--narrow-row);
+    grid-column: var(--narrow-start) / var(--narrow-end);
+  }
+
+  /* Nothing follows the last label: its room runs to the strip's end ("copied, shifted" stays on one
+     line at 320 px). */
+  .stripLabel:last-child {
+    padding-right: 0;
+  }
+
+  .wideText {
+    display: none;
+  }
+
+  .narrowText {
+    display: inline;
+  }
+}
+
+/* ---- Wheel gauge beside five lines of 36-wheel.txt ---- */
+
+.wheel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.gauge {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 300px;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.hands {
+  display: flex;
+  gap: 10px;
+}
+
+.hand {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 19px;
+}
+
+.hand strong {
+  font-size: var(--fs-small);
+  font-weight: 650;
+  line-height: 20px;
+}
+
+/* A hand the wheel ignores: dashed outline; one that steers: 2 px solid. Words say it too. */
+.handLost {
+  padding: 10px 12px;
+  border: 1px dashed var(--muted);
+}
+
+.handLost strong {
+  color: var(--text-2);
+}
+
+.handOn {
+  padding: 9px 11px;
+  border: 2px solid var(--text);
+}
+
+.handOn strong {
+  color: var(--text);
+}
+
+.dial {
+  position: relative;
+  height: 28px;
+}
+
+.dialTrack {
+  position: absolute;
+  top: 13px;
+  right: 0;
+  left: 0;
+  height: 2px;
+  background: var(--line-strong);
+}
+
+.dialStop {
+  position: absolute;
+  top: 6px;
+  width: 2px;
+  height: 16px;
+  background: var(--text-2);
+}
+
+.dialZero {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  width: 1px;
+  height: 10px;
+  background: var(--line-strong);
+}
+
+.dialMarkerAt {
+  position: absolute;
+  top: 4px;
+  width: 20px;
+  height: 20px;
+  margin-left: -10px;
+}
+
+.dialMarker {
+  display: block;
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+  border: 2px solid var(--chart-surface);
+  border-radius: 50%;
+  background: var(--text);
+}
+
+.dialScale {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--lh-micro);
+}
+
+.wheelLines {
+  min-width: 0;
+  flex: 1 1 380px;
+}
+
+@container chart (max-width: 640px) {
+  .wheel {
+    gap: 24px;
+  }
+}
+
+/* ---- Scenario grid ---- */
+
+.tilesBox {
+  position: relative;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tile {
+  display: flex;
+  height: 34px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-micro);
+  font-variant-numeric: tabular-nums;
+  font-weight: 650;
+  line-height: var(--lh-micro);
+  text-decoration: none;
+  transition: border-color 150ms var(--ease), color 150ms var(--ease);
+}
+
+.tile:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline-offset: 2px;
+}
+
+.tileRegression {
+  color: var(--text-2);
+  border: 1px solid var(--line-strong);
+  background: var(--surface-raised);
+}
+
+.tileTool {
+  color: var(--muted);
+  border: 1px dashed var(--line-strong);
+  background: transparent;
+}
+
+.tileOpen {
+  color: var(--on-accent);
+  border: 1px solid var(--text);
+  background: var(--text);
+}
+
+a.tileRegression:hover,
+a.tileTool:hover {
+  color: var(--text);
+  border-color: var(--text-2);
+}
+
+a.tileOpen:hover {
+  color: var(--on-accent);
+}
+
+.bubble {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 2rem));
+  padding: 0.5rem 0.625rem;
+  color: var(--text-2);
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+  pointer-events: none;
+  transform: translate(calc(-50% + var(--nudge, 0px)), calc(-100% - 8px));
+  animation: bubble-in 150ms var(--ease);
+}
+
+.bubble strong {
+  color: var(--text);
+  font-weight: 650;
+}
+
+.bubbleHint {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+}
+
+@keyframes bubble-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.tileKey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 12px 0 0;
+  padding: 0;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: 18px;
+  list-style: none;
+}
+
+.tileKey li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.keyTile {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  box-sizing: border-box;
+}
+
+.opened {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 28px;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.openedLines {
+  min-width: 0;
+  flex: 1 1 380px;
+}
+
+.openedShot {
+  min-width: 0;
+  flex: 1 1 320px;
+  margin: 0;
+}
+
+.shotFrame {
+  display: block;
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+.shotFrame img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.openedShot figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: var(--fs-micro);
+  line-height: 18px;
+}
+
+@container chart (max-width: 640px) {
+  .tiles {
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+  }
+
+  .tile {
+    height: 30px;
+  }
+
+  .opened {
+    gap: 16px;
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bubble {
+    animation: none;
+  }
+}

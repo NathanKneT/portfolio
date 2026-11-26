@@ -1,0 +1,99 @@
+/* Proof strip: three facts under the hero, under a strong rule (design-phase.md §11). */
+
+.strip {
+  padding-bottom: 88px;
+}
+
+.rule {
+  height: 1px;
+  background: var(--line-strong);
+  transform-origin: left center;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 0 24px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  padding: 22px 0 0;
+}
+
+.value {
+  display: block;
+  color: var(--text);
+  font-size: var(--fs-value);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-value);
+  letter-spacing: var(--ls-h3);
+}
+
+.label {
+  display: block;
+  max-width: 300px;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: var(--fs-small);
+  line-height: 1.3125rem;
+}
+
+@media (max-width: 719px) {
+  .strip {
+    padding-bottom: 40px;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .item {
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+/* Opening (§11): rule 600 ms from 300 ms, facts 450 ms from 500, 620 and 740 ms.
+   The page loads with these already running; nothing waits on a script. */
+@media (prefers-reduced-motion: no-preference) {
+  .rule {
+    animation: proof-draw 600ms var(--ease) 300ms both;
+  }
+
+  .item {
+    animation: proof-rise 450ms var(--ease) 500ms both;
+  }
+
+  .item:nth-child(2) {
+    animation-delay: 620ms;
+  }
+
+  .item:nth-child(3) {
+    animation-delay: 740ms;
+  }
+}
+
+@keyframes proof-draw {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes proof-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media print {
+  .rule,
+  .item {
+    animation: none;
+  }
+}
