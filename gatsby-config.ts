@@ -24,6 +24,8 @@ const config: GatsbyConfig = {
         // The list of photography series (the theme's "projects" page). The series keep their own
         // root-level paths (/night/, /portrait/...): those come from projectsPrefix, left at its default.
         projectsUrl: `/photography`,
+        // gatsby-plugin-sharp is registered below, with the site's image formats.
+        sharp: false,
         navigation: [
           { name: `Engineering`, slug: `/engineering` },
           { name: `Photography`, slug: `/photography` },
@@ -41,6 +43,18 @@ const config: GatsbyConfig = {
             isExternal: true,
           },
         ],
+      },
+    },
+    // The photographs of the series and their list (the theme's queries): AVIF, then WebP, then the
+    // JPEG (design-phase.md §14). AVIF at 60, above the 48 to 52 of scripts/build-images.mjs: these
+    // are the photographs themselves, up to 1 600 px in the viewer.
+    {
+      resolve: `gatsby-plugin-sharp`,
+      options: {
+        defaults: {
+          formats: [`auto`, `webp`, `avif`],
+          avifOptions: { quality: 60 },
+        },
       },
     },
     `gatsby-plugin-netlify`,

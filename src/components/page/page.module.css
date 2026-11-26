@@ -1,0 +1,165 @@
+/* The pages of work package 4 (engineering, about, resume, contact, photography, 404): the frame,
+   the header, sections and buttons. Desktop values from the board Engineering, phone values (under
+   720 px) from EngineeringPhone; type sizes are the fluid tokens of global.css. */
+
+/* Two classes, to win over .portfolio-page and its !important under 800 px (global.css). */
+.page:global(.portfolio-page) {
+  padding: 0 0 96px !important;
+}
+
+/* Ends on a block with its own room (a call to action, the contact block): no more before the footer. */
+.flush:global(.portfolio-page) {
+  padding-bottom: 0 !important;
+}
+
+/* ---- Header: eyebrow, H1, lede ---- */
+
+.header {
+  padding: 72px 0 80px;
+}
+
+/* Something beside the text (the resume's PDF button): on the right, at the foot of the text. */
+.headerAside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 28px 48px;
+}
+
+.headerText {
+  min-width: 0;
+  max-width: 820px;
+}
+
+.headerAsideSlot {
+  flex: none;
+}
+
+.title {
+  margin: 0;
+  color: var(--text);
+  font-size: var(--fs-h1);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h1);
+  letter-spacing: var(--ls-h1);
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}
+
+/* Wherever the title follows an eyebrow: the page header, About's head (its own text column). */
+:global(.eyebrow) + .title {
+  margin-top: 12px;
+}
+
+.lede {
+  max-width: 720px;
+  margin: 20px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  text-wrap: pretty;
+}
+
+/* A way back, over the eyebrow (as on the case studies). */
+.back {
+  display: inline-flex;
+  min-height: 44px;
+  margin-bottom: 28px;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  text-decoration: none;
+  transition: color 150ms var(--ease);
+}
+
+.back:hover {
+  color: var(--accent-hover);
+}
+
+/* ---- Sections ---- */
+
+.section {
+  padding: 80px 0 88px;
+  border-top: 1px solid var(--line);
+}
+
+/* SectionHead (global .section-head) with its link styled as on the home page. */
+.section :global(.section-head) {
+  gap: 8px 32px;
+}
+
+/* ---- Buttons: the global .button, at the size of the boards (48 px, 15 px) ---- */
+
+.button:global(.button) {
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 0.9375rem;
+  font-weight: 650;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+/* Secondary, as on the boards: the border turns amber, the label lighter amber. */
+.button:global(.button-secondary):hover {
+  color: var(--accent-hover);
+  border-color: var(--accent);
+  background: transparent;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+}
+
+/* ---- A page that is one message (404, thank you): the footer stays low ---- */
+
+.message {
+  min-height: min(60vh, 560px);
+  /* The small viewport: a phone's address bar folding away does not move the footer. */
+  min-height: min(60svh, 560px);
+}
+
+.messageActions {
+  margin-top: 32px;
+}
+
+/* ---- Phone ---- */
+
+@media (max-width: 719px) {
+  .page:global(.portfolio-page) {
+    padding-bottom: 56px !important;
+  }
+
+  .flush:global(.portfolio-page) {
+    padding-bottom: 0 !important;
+  }
+
+  .header {
+    padding: 32px 0 44px;
+  }
+
+  .lede {
+    margin-top: 16px;
+  }
+
+  .back {
+    margin-bottom: 16px;
+  }
+
+  .section {
+    padding: 44px 0 48px;
+  }
+}
+
+@media (max-width: 479px) {
+  /* Full width on a narrow phone: two buttons side by side would wrap their labels. */
+  .actions .button:global(.button) {
+    flex: 1 1 100%;
+  }
+}

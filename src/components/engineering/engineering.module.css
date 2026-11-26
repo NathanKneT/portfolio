@@ -1,0 +1,654 @@
+/* The engineering page (boards Engineering and EngineeringPhone): the current role and the course,
+   the earlier work, the latest side project in full, then one row per side project. The frame, the
+   header and the sections are in ../page/page.module.css. */
+
+/* While a filtered address waits for the page's script (FILTER_PENDING_SCRIPT), the results stay
+   hidden: the full list never shows and then collapses. The header stays. */
+:global(html[data-tech-filter="pending"]) .results {
+  visibility: hidden;
+}
+
+/* A title that takes the focus from the script (the filter's name, "Professional work") when the
+   link that had it leaves the page: the next Tab goes on from there. No ring, as for any place a
+   script puts the focus: it is not a control. Over the global [tabindex]:focus-visible ring. */
+.results :global(h2[tabindex="-1"]:focus) {
+  outline: none;
+}
+
+/* ---- Labels ---- */
+
+/* "Active · 2026", "2026 · Active", the dates of the current role. */
+.label {
+  display: flex;
+  margin: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+/* Amber means now (design-phase.md §2). */
+.now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+}
+
+.nowSquare {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  background: var(--accent);
+}
+
+.miniLabel {
+  margin: 0;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+/* ---- Professional work: numbered blocks ---- */
+
+.entries {
+  margin-top: 0;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 24px;
+  padding: 36px 0 44px;
+  border-top: 1px solid var(--line-strong);
+}
+
+.index {
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: var(--lh-caption);
+}
+
+.entryBody {
+  min-width: 0;
+}
+
+.blockTitle {
+  margin: 10px 0 0;
+  color: var(--text);
+  font-size: var(--fs-h3-block);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h3-block);
+  letter-spacing: var(--ls-heading);
+  overflow-wrap: break-word;
+}
+
+.blockSummary {
+  max-width: 680px;
+  margin: 8px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  text-wrap: pretty;
+}
+
+/* The current role's four topics, two by two on a wide screen. */
+.highlights {
+  display: grid;
+  margin: 28px 0 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+  gap: 24px 40px;
+}
+
+.highlights > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+/* Over the global dt / dd (global.css colours every dd with !important). */
+.highlights dt,
+.facts dt {
+  margin: 0;
+  color: var(--faint);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+}
+
+.highlights dd {
+  margin: 0;
+  color: var(--text-2) !important;
+  font-size: var(--fs-body);
+  line-height: 1.625rem;
+  text-wrap: pretty;
+}
+
+.stackBlock {
+  display: flex;
+  margin-top: 28px;
+  padding-top: 14px;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.stackList {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  list-style: none;
+}
+
+.stackList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-2);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+
+.stackList li::before {
+  width: 4px;
+  height: 4px;
+  flex: none;
+  background: var(--line-strong);
+  content: "";
+}
+
+.links {
+  display: flex;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 0 24px;
+}
+
+/* The course: text on the left, its photograph on the right (7 / 5). */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.splitText {
+  min-width: 0;
+}
+
+.facts {
+  display: flex;
+  margin: 20px 0 0;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.facts dd {
+  margin: 0;
+  color: var(--text-2) !important;
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  text-wrap: pretty;
+}
+
+/* 16:10, framed as on the home card (design-phase.md §7: object-position 62% 30%). */
+.splitPicture {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+.splitPicture img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 30%;
+  transition: transform 500ms var(--ease);
+}
+
+.splitPicture:hover img {
+  transform: scale(1.03);
+}
+
+/* ---- Rows: earlier work and side projects ---- */
+
+/* The rows follow their own width, not the window's. A list ends its section: the rule of what
+   follows (the next section, the call to action) closes it, no second rule of its own. */
+.rows {
+  margin: 0;
+  padding: 0;
+  container-type: inline-size;
+  list-style: none;
+}
+
+/* Narrow column (phone): the thumbnail beside the label and the title, the rest under them. */
+.row {
+  display: grid;
+  padding: 22px 0 12px;
+  grid-template-areas:
+    "thumb label"
+    "thumb title"
+    "main main";
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  align-content: start;
+  column-gap: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.thumb {
+  overflow: hidden;
+  grid-area: thumb;
+  align-self: center;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+.thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* No picture: the slot keeps the columns in line on a wide screen, and goes in a narrow one. */
+.thumb[data-empty] {
+  border: 0;
+  background: none;
+}
+
+.rowLabel {
+  grid-area: label;
+  align-self: end;
+}
+
+/* The wide layout's label (beside the title, flush right): hidden until then. */
+.rowMeta {
+  display: none;
+  grid-area: meta;
+}
+
+.rowTitle {
+  margin: 6px 0 0;
+  grid-area: title;
+  align-self: start;
+  font-size: var(--fs-h3);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h3);
+  letter-spacing: var(--ls-h3);
+}
+
+.rowTitle a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 150ms var(--ease);
+}
+
+.rowTitle a:hover {
+  color: var(--accent-hover);
+}
+
+.rowMain {
+  display: flex;
+  min-width: 0;
+  margin-top: 10px;
+  flex-direction: column;
+  gap: 10px;
+  grid-area: main;
+}
+
+.rowMain .links {
+  margin-top: 0;
+}
+
+.rowSummary {
+  max-width: 640px;
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  text-wrap: pretty;
+}
+
+.rowStack,
+.spotlightStack {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: 1.6;
+}
+
+/* No picture in a narrow column: label, title and the rest, one under the other. */
+@container (max-width: 599px) {
+  .row:has(.thumb[data-empty]) {
+    grid-template-areas:
+      "label"
+      "title"
+      "main";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .thumb[data-empty] {
+    display: none;
+  }
+}
+
+/* A list where no row has a picture (earlier work): no column for one, at any width. */
+.rows[data-bare] .thumb {
+  display: none;
+}
+
+.rows[data-bare] .row {
+  grid-template-areas:
+    "label"
+    "title"
+    "main";
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Medium column: the 168 px thumbnail on the left of everything. */
+@container (min-width: 600px) {
+  .row {
+    padding: 28px 0 18px;
+    grid-template-areas:
+      "thumb label"
+      "thumb title"
+      "thumb main";
+    grid-template-columns: 168px minmax(0, 1fr);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 32px;
+  }
+
+  .thumb {
+    align-self: start;
+  }
+
+  .rowLabel {
+    align-self: start;
+  }
+
+  .rowTitle {
+    font-size: 1.375rem;
+    line-height: 1.6875rem;
+  }
+}
+
+/* Wide column (board Engineering): thumbnail, text, then the label on the right. */
+@container (min-width: 880px) {
+  .row {
+    grid-template-areas:
+      "thumb title meta"
+      "thumb main meta";
+    grid-template-columns: 168px minmax(0, 1fr) 170px;
+    grid-template-rows: auto 1fr;
+  }
+
+  .rowLabel {
+    display: none;
+  }
+
+  .rowMeta {
+    display: block;
+    padding-top: 6px;
+  }
+
+  .rowTitle {
+    margin-top: 0;
+  }
+
+  .rows[data-bare] .row {
+    grid-template-areas:
+      "title meta"
+      "main meta";
+    grid-template-columns: minmax(0, 1fr) 170px;
+  }
+}
+
+/* ---- The latest side project ---- */
+
+.spotlight {
+  min-width: 0;
+}
+
+.spotlightHead {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  gap: 40px;
+  align-items: end;
+}
+
+.spotlightFigure {
+  min-width: 0;
+  margin: 0;
+}
+
+.frame {
+  border: 1px solid var(--line);
+  background: var(--matte);
+}
+
+.frame img,
+.frame :global(.loop-poster) {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.caption {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  line-height: var(--lh-caption);
+}
+
+/* Its foot level with the picture's, above the caption (10 + 20 px). */
+.spotlightText {
+  min-width: 0;
+  padding-bottom: 30px;
+}
+
+.spotlightText .label {
+  margin-top: 0;
+}
+
+.spotlightBody {
+  display: grid;
+  margin-top: 36px;
+  grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+  gap: 24px 40px;
+}
+
+.spotlightBody p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  text-wrap: pretty;
+}
+
+.spotlightStack {
+  margin-top: 20px;
+}
+
+.spotlight > .links {
+  margin-top: 6px;
+}
+
+/* The latest side project's section ends with it when the side projects follow: they continue its
+   band, under their own title, and close it as a section would. */
+.continued.continued {
+  padding-bottom: 0;
+}
+
+.sideSection {
+  padding: 0 0 88px;
+}
+
+.sideTitle {
+  margin: 72px 0 0;
+  color: var(--text);
+  font-size: clamp(1.375rem, 1.287rem + 0.3756vw, 1.625rem);
+  font-weight: var(--weight-heading);
+  line-height: clamp(1.6875rem, 1.5995rem + 0.3756vw, 1.9375rem);
+  letter-spacing: -0.025em;
+}
+
+.sideTitle + .rows {
+  margin-top: 24px;
+}
+
+/* ---- Filtered by a technology: the head of the results ---- */
+
+.filterBar {
+  display: flex;
+  margin: 0 0 80px;
+  padding: 36px 40px 40px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px 48px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.filterText {
+  min-width: 0;
+  max-width: 680px;
+}
+
+.filterTitle {
+  margin: 10px 0 0;
+  color: var(--text);
+  font-size: var(--fs-h2);
+  font-weight: var(--weight-heading);
+  line-height: var(--lh-h2);
+  letter-spacing: var(--ls-heading);
+  overflow-wrap: anywhere;
+}
+
+.filterCount {
+  margin: 12px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  overflow-wrap: anywhere;
+}
+
+.filterNote {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  text-wrap: pretty;
+}
+
+/* ---- Between a phone and the sidebar: the course and the latest project stack ---- */
+
+@media (max-width: 1023px) {
+  .split,
+  .spotlightHead {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20px;
+  }
+
+  .splitPicture {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .spotlightText {
+    padding-bottom: 0;
+  }
+}
+
+/* ---- Phone (EngineeringPhone) ---- */
+
+@media (max-width: 719px) {
+  .entry {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    padding: 24px 0 28px;
+  }
+
+  .highlights {
+    margin-top: 20px;
+    gap: 16px 40px;
+  }
+
+  .stackBlock {
+    margin-top: 20px;
+  }
+
+  .spotlightBody {
+    margin-top: 24px;
+    gap: 16px;
+  }
+
+  .sideSection {
+    padding-bottom: 48px;
+  }
+
+  .sideTitle {
+    margin-top: 48px;
+  }
+
+  .sideTitle + .rows {
+    margin-top: 16px;
+  }
+
+  .filterBar {
+    margin-bottom: 44px;
+    padding: 24px 20px 28px;
+  }
+
+  .filterBar > :global(.button) {
+    flex: 1 1 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .splitPicture img {
+    transition: none;
+  }
+
+  .splitPicture:hover img {
+    transform: none;
+  }
+}
+
+/* The technology the page is filtered by, in a stack: bright and bold, no marker colour. */
+.hit {
+  color: var(--text);
+  background: none;
+  font-weight: 600;
+}

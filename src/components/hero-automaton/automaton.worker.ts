@@ -7,7 +7,12 @@ import { GRIDS, parseCounts, type GridId, type Settings } from "./settings"
 import { Automaton, type CursorInput, type SimParams } from "./sim"
 
 export const FIXED_SEED = 20261125
-export const PREROLL_TICKS = 60
+
+/** Steps run before the first frame: one full breath, then a third of the
+    next. The intro ends on a volume that is still growing, and keeps growing
+    for a few seconds. */
+export const prerollTicks = (params: SimParams) =>
+  params.cycleTicks + Math.round(0.3 * params.cycleTicks)
 
 export type WorkerRequest =
   | { type: "init"; generation: number; grid: GridId; settings: Settings }
@@ -23,6 +28,8 @@ export type WorkerRequest =
 
 export type WorkerResponse = {
   type: "state"
+  /** The fixed start state of an init, not the next step. */
+  init: boolean
   generation: number
   grid: GridId
   tick: number
@@ -50,7 +57,7 @@ function toParams(settings: Settings): SimParams {
     edgeThreshold: Math.round(settings.edgeThreshold * 255),
     birthChance: settings.birthChance,
     reseedFraction: settings.reseedPercent / 100,
-    mutationTicks: Math.round(2 * tickRate),
+    mutationTicks: Math.round(1.2 * tickRate),
   }
 }
 
@@ -65,7 +72,7 @@ let sim: Automaton | null = null
 let gridId: GridId = "desktop"
 let generation = 0
 
-function send(recycle?: ArrayBuffer): void {
+function send(init: boolean, recycle?: ArrayBuffer): void {
   if (!sim) return
   // The simulation keeps its own two buffers; what crosses the thread
   // boundary is a copy, in a buffer that ping-pongs between the two sides.
@@ -77,6 +84,7 @@ function send(recycle?: ArrayBuffer): void {
   scope.postMessage(
     {
       type: "state",
+      init,
       generation,
       grid: gridId,
       tick: sim.tick,
@@ -92,22 +100,18 @@ scope.onmessage = (event) => {
   if (message.type === "init") {
     generation = message.generation
     gridId = message.grid
-    sim = new Automaton(
-      GRIDS[gridId],
-      decodeField(gridId),
-      toParams(message.settings),
-      FIXED_SEED
-    )
-    // Same 60 steps from the same seed every time: the first live frame, the
+    const params = toParams(message.settings)
+    sim = new Automaton(GRIDS[gridId], decodeField(gridId), params, FIXED_SEED)
+    // Same steps from the same seed every time: the end of the intro, the
     // reduced-motion still and the poster all show this state.
-    sim.reset(FIXED_SEED, PREROLL_TICKS)
-    send()
+    sim.reset(FIXED_SEED, prerollTicks(params))
+    send(true)
   } else if (message.type === "params") {
     if (sim) sim.params = toParams(message.settings)
   } else if (message.type === "step") {
     if (!sim || message.generation !== generation) return
     for (const shock of message.shocks) sim.shock(shock.x, shock.y, shock.z)
     sim.step(message.cursor)
-    send(message.recycle)
+    send(false, message.recycle)
   }
 }

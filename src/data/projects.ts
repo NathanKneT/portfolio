@@ -127,17 +127,7 @@ export const projects: Project[] = [
       actions: [],
     },
     role: "Owned product design, application architecture, full-stack development and deployment",
-    stack: [
-      "Next.js",
-      "NestJS",
-      "FastAPI",
-      "LangChain",
-      "MongoDB",
-      "Keycloak",
-      "OpenID Connect",
-      "SSE",
-      "OpenAI",
-    ],
+    stack: ["Next.js", "NestJS", "FastAPI", "LangChain", "MongoDB", "Keycloak", "SSE", "OpenAI"],
     status: "archived",
     result:
       "The completed application combined authenticated workspaces, top-10 vector retrieval and SSE answer streaming. The service is now offline.",
@@ -248,18 +238,7 @@ export const projects: Project[] = [
       ],
     },
     role: "Built the mod with AI coding agents, which take features on parallel branches while I set the design and test in the headset: the VR boot patch, cameras, input, the hand-flown cockpit, PS VR2 features and the test harness",
-    stack: [
-      "C#",
-      "Unity 2018 (IL2CPP)",
-      "BepInEx 6",
-      "Harmony",
-      "OpenVR",
-      "SteamVR Input",
-      "InControl",
-      "Cinemachine",
-      "PSVR2 Toolkit",
-      "PowerShell",
-    ],
+    stack: ["C#", "Unity (IL2CPP)", "BepInEx", "Harmony", "OpenVR"],
     status: "active",
     result:
       "Version 0.3.0 is out on GitHub. Cloudpunk plays in VR through SteamVR, with a cockpit you fly with your hands, first person on foot, and PS VR2 adaptive triggers and eye select through the PSVR2 Toolkit. It is tested on one Steam build of the game. The test harness is public, with 55 regression scenarios plus probes and filming tools.",
@@ -340,15 +319,7 @@ export const projects: Project[] = [
       ],
     },
     role: "Built version 2.0 with an AI coding assistant and maintain it: input and gameplay patches, PS VR2 features, the streamer view, the installer, signed releases and headset testing",
-    stack: [
-      "C#",
-      "Unity",
-      "BepInEx",
-      "Harmony",
-      "OpenVR",
-      "SteamVR Input",
-      "PSVR2 Toolkit",
-    ],
+    stack: ["C#", "Unity", "BepInEx", "Harmony", "OpenVR"],
     status: "active",
     // Sources: VRTRAKILL README (features), docs/BUILDING.md (the table of test hooks has 18 lines).
     results: [
@@ -446,18 +417,7 @@ export const projects: Project[] = [
       },
     },
     role: "Wrote the Vita side with AI assistance: the GX-to-GXM renderer, audio, input, memory, the settings page and the measurement tools",
-    stack: [
-      "C++",
-      "GXM",
-      "vitaGL",
-      "VitaSDK",
-      "SDL3",
-      "CMake",
-      "Docker",
-      "Python",
-      "AddressSanitizer",
-      "UBSan",
-    ],
+    stack: ["C++", "GXM", "VitaSDK", "CMake", "Docker", "Python"],
     status: "active",
     // Sources in the DuskOnVita repository: README.md ("Numbers"), docs/PERFORMANCE.md, docs/benchmarks.csv.
     results: [
@@ -670,15 +630,7 @@ export const projects: Project[] = [
       actions: [{ label: "View source", href: "https://github.com/NathanKneT/NarrativeForge-nextjs" }],
     },
     role: "Designed the application architecture, visual editor, graph validation and persistence model",
-    stack: [
-      "TypeScript",
-      "Next.js",
-      "React Flow",
-      "Zustand",
-      "OpenAI",
-      "Jest",
-      "Playwright",
-    ],
+    stack: ["TypeScript", "Next.js", "React Flow", "OpenAI"],
     status: "prototype",
     result:
       "The prototype saves projects locally, validates graph connections, runs stories in a reader and exports JSON or Twine files.",
@@ -717,6 +669,9 @@ export const statusLabel: Record<ProjectStatus, string> = {
 }
 
 export const engineeringPath = "/engineering/"
+
+// The engineering page showing only the work that uses one technology (src/data/tech-filter.ts).
+export const techFilterPath = (name: string) => `${engineeringPath}?tech=${encodeURIComponent(name)}`
 
 export const getProject = (slug: ProjectSlug) => {
   const project = projects.find((candidate) => candidate.slug === slug)

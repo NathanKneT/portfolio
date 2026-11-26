@@ -29,3 +29,15 @@ export function whenIdle(task: () => void, timeout = 2000): () => void {
     if (timer) clearTimeout(timer)
   }
 }
+
+/** Resolves in a new task, so the work before and after it are separate tasks. */
+export function nextTask(): Promise<void> {
+  return new Promise((resolve) => {
+    const channel = new MessageChannel()
+    channel.port1.onmessage = () => {
+      channel.port1.close()
+      resolve()
+    }
+    channel.port2.postMessage(null)
+  })
+}

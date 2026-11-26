@@ -1,0 +1,174 @@
+/* The contact page (/contact/): the copy and the ways to reach me on the left, the form on a plate on
+   the right (one column under 1 024 px). Fields are 52 px tall and 16 px text (no zoom on a phone);
+   their borders are --faint, 5.3:1 on the plate (WCAG 1.4.11 asks 3:1). */
+
+@media (min-width: 1024px) {
+  .layout:global(.portfolio-page) {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+    gap: 0 64px;
+  }
+
+  /* Level with the eyebrow. */
+  .form {
+    margin-top: 72px;
+  }
+}
+
+.channels {
+  max-width: 720px;
+  margin: 4px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+}
+
+/* The first one, after the lede. */
+.channelsFirst {
+  margin-top: 24px;
+}
+
+.channelLink {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  transition: color 150ms var(--ease), text-decoration-color 150ms var(--ease);
+}
+
+.channelLink:hover {
+  color: var(--accent-hover);
+  text-decoration-color: var(--accent-hover);
+}
+
+/* ---- The form ---- */
+
+.form {
+  display: grid;
+  min-width: 0;
+  padding: 40px;
+  gap: 24px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.field {
+  display: grid;
+  min-width: 0;
+  gap: 8px;
+}
+
+.field label {
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 52px;
+  margin: 0;
+  padding: 13px 14px;
+  color: var(--text);
+  border: 1px solid var(--faint);
+  border-radius: 0;
+  background: var(--bg);
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  transition: border-color 150ms var(--ease);
+}
+
+.field input:hover,
+.field select:hover,
+.field textarea:hover {
+  border-color: var(--muted);
+}
+
+.field textarea {
+  min-height: 176px;
+  resize: vertical;
+}
+
+/* A drawn chevron in --muted: the native arrow differs on every system. */
+.field select {
+  padding-right: 44px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23ada69b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 16px center;
+  background-repeat: no-repeat;
+  background-size: 12px 12px;
+  cursor: pointer;
+}
+
+/* The placeholder choice reads as a prompt, not as an answer. */
+.field select:has(option[value=""]:checked) {
+  color: var(--muted);
+}
+
+.field select option {
+  color: var(--text);
+  background: var(--surface);
+}
+
+/* A field that needs something: a red-orange border (the data palette's sixth hue, 5:1 on the plate)
+   and the message under it, which says what to do. The colour is never the only sign. */
+.field [aria-invalid="true"] {
+  border-color: var(--data-6);
+  box-shadow: inset 0 0 0 1px var(--data-6);
+}
+
+.error {
+  margin: 0;
+  color: var(--data-6);
+  font-size: var(--fs-small);
+  font-weight: 600;
+  line-height: 1.25rem;
+}
+
+.submitRow {
+  display: flex;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.submit:global(.button):disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.status {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--fs-body);
+  line-height: 1.5rem;
+}
+
+/* "header.header": over the page frame's .header, whatever order the two files load in. */
+@media (max-width: 1023px) {
+  header.header {
+    padding-bottom: 48px;
+  }
+}
+
+@media (max-width: 719px) {
+  header.header {
+    padding-bottom: 36px;
+  }
+
+  .form {
+    padding: 24px 20px 28px;
+    gap: 20px;
+  }
+
+  .submit:global(.button) {
+    flex: 1 1 100%;
+  }
+}

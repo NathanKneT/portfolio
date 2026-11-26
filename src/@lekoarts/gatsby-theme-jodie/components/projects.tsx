@@ -1,17 +1,16 @@
-/** @jsx jsx */
-import { jsx } from "theme-ui"
 import * as React from "react"
+import { Link } from "gatsby"
 import type { HeadFC, PageProps } from "gatsby"
 import { GatsbyImage, type IGatsbyImageData } from "gatsby-plugin-image"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import Seo from "./seo"
-import GridItem from "./grid-item"
+import PageHeader from "../../../components/page/page-header"
+import { SERIES_LIST_SIZES, withSizes } from "../../../components/photography/gallery"
+import * as page from "../../../components/page/page.module.css"
+import * as styles from "../../../components/photography/photography.module.css"
 
 const Image = GatsbyImage as unknown as (
   props: React.ComponentProps<typeof GatsbyImage>
-) => React.ReactElement
-const ProjectLink = GridItem as unknown as (
-  props: React.ComponentProps<typeof GridItem>
 ) => React.ReactElement
 
 type PhotographyProjectsProps = {
@@ -28,32 +27,35 @@ type PhotographyProjectsProps = {
   }
 }
 
+/**
+ * The photography series (/photography/): one tile per series, its cover at its own ratio, never
+ * cropped, then its name. Newest first, as the theme's query sorts them. The first cover is the
+ * page's largest image: it loads at once.
+ */
 const Projects: React.FC<PageProps<PhotographyProjectsProps>> = ({
   data: { projects },
 }) => (
   <Layout>
-    <h1 className="visually-hidden">Photography</h1>
-    <div
-      aria-label="Photography series"
-      sx={{
-        display: `grid`,
-        gridTemplateColumns: [`1fr`, `1fr 1fr`],
-        gridAutoRows: `50vw`,
-      }}
-    >
-      {projects.nodes.map((project) => (
-        <ProjectLink
-          to={project.slug}
-          key={project.slug}
-          data-testid={project.shortTitle}
-        >
-          <Image
-            image={project.cover.childImageSharp.gatsbyImageData}
-            alt={`${project.shortTitle} photography series by Nathan Rihet`}
-          />
-          <span>{project.shortTitle}</span>
-        </ProjectLink>
-      ))}
+    <div className={`portfolio-page ${page.page}`}>
+      <PageHeader eyebrow="Visual practice" title="Photography">
+        <p className={page.lede}>
+          My photography covers portraits, cities and live events across France, Canada and Japan.
+        </p>
+      </PageHeader>
+      <ul className={styles.list} aria-label="Photography series">
+        {projects.nodes.map((project, index) => (
+          <li key={project.slug}>
+            <Link className={styles.tile} to={project.slug} data-testid={project.shortTitle}>
+              <Image
+                image={withSizes(project.cover.childImageSharp.gatsbyImageData, SERIES_LIST_SIZES)}
+                alt=""
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+              <span className={styles.tileLabel}>{project.shortTitle}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   </Layout>
 )

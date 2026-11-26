@@ -1,6 +1,7 @@
 // Career data: roles, teaching, education and one skills list.
 // The resume page, the About page's stack, the engineering page's Rokken block and the home hero read from here.
-// The PDF (static/nathan-rihet-resume.pdf) is a separate file: keep it in sync by hand.
+// The PDF (static/nathan-rihet-resume.pdf) is a separate file: keep it in sync by hand, then run
+// npm run resume-text.
 //
 // Facts only. A technology is listed with the contexts where it was really used: a role, the teaching
 // post, or a project slug from projects.ts. An empty list means the context is still to be confirmed.
@@ -301,6 +302,7 @@ export type SkillGroup = {
   skills: Skill[]
 }
 
+// Curated with the owner (2026-11-26): only what carries weight and can be defended in an interview; tool details stay in the case-study text.
 // Sources: the role bullets above, the About page (AWS services), and each project's stack in projects.ts.
 export const skillGroups: SkillGroup[] = [
   {
@@ -326,8 +328,6 @@ export const skillGroups: SkillGroup[] = [
       { name: "SQL", usedIn: ["rokken"] },
       { name: "C#", usedIn: ["cloudpunk-vrevival", "vrtrakill"] },
       { name: "C++", usedIn: ["duskonvita"] },
-      { name: "Bash", usedIn: ["cawita"] },
-      { name: "PowerShell", usedIn: ["cloudpunk-vrevival"] },
     ],
   },
   {
@@ -342,9 +342,6 @@ export const skillGroups: SkillGroup[] = [
       { name: "Three.js", usedIn: ["kororo"] },
       { name: "React Three Fiber", usedIn: ["kororo"] },
       { name: "Web Workers", usedIn: ["kororo"] },
-      { name: "Gatsby", usedIn: ["portfolio"] },
-      { name: "React Flow", usedIn: ["narrative-forge"], detail: true },
-      { name: "Zustand", usedIn: ["narrative-forge"], detail: true },
     ],
   },
   {
@@ -362,7 +359,6 @@ export const skillGroups: SkillGroup[] = [
       { name: "MongoDB", usedIn: ["cawita", "freelance", "docs-retriever"] },
       { name: "REST APIs", usedIn: ["cawita", "uca-teaching"] },
       { name: "Keycloak", usedIn: ["docs-retriever"] },
-      { name: "OpenID Connect", usedIn: ["docs-retriever"] },
       { name: "SSE", usedIn: ["docs-retriever"] },
     ],
   },
@@ -380,7 +376,7 @@ export const skillGroups: SkillGroup[] = [
       { name: "Jenkins", usedIn: ["cawita"] },
       { name: "CI/CD", usedIn: ["rokken", "capgemini", "cawita"] },
       { name: "Linux", usedIn: ["cawita"] },
-      { name: "CMake", usedIn: ["duskonvita"], detail: true },
+      { name: "CMake", usedIn: ["duskonvita"] },
     ],
   },
   {
@@ -390,11 +386,7 @@ export const skillGroups: SkillGroup[] = [
       { name: "pytest", usedIn: ["rokken"] },
       { name: "Cypress", usedIn: ["rokken"] },
       { name: "Vitest", usedIn: ["kororo"] },
-      { name: "Jest", usedIn: ["narrative-forge"] },
-      { name: "Playwright", usedIn: ["narrative-forge"] },
       { name: "integration and end-to-end testing", usedIn: ["rokken"] },
-      { name: "AddressSanitizer", usedIn: ["duskonvita"], detail: true },
-      { name: "UBSan", usedIn: ["duskonvita"], detail: true },
     ],
   },
   {
@@ -419,20 +411,9 @@ export const skillGroups: SkillGroup[] = [
       { name: "BepInEx", usedIn: ["cloudpunk-vrevival", "vrtrakill"] },
       { name: "Harmony", usedIn: ["cloudpunk-vrevival", "vrtrakill"] },
       { name: "OpenVR", usedIn: ["cloudpunk-vrevival", "vrtrakill"] },
-      { name: "SteamVR Input", usedIn: ["cloudpunk-vrevival", "vrtrakill"] },
-      { name: "Blender", usedIn: ["rtht-3d"] },
-      {
-        name: "PSVR2 Toolkit",
-        usedIn: ["cloudpunk-vrevival", "vrtrakill"],
-        detail: true,
-      },
-      { name: "InControl", usedIn: ["cloudpunk-vrevival"], detail: true },
-      { name: "Cinemachine", usedIn: ["cloudpunk-vrevival"], detail: true },
-      { name: "GXM", usedIn: ["duskonvita"], detail: true },
-      { name: "vitaGL", usedIn: ["duskonvita"], detail: true },
-      { name: "VitaSDK", usedIn: ["duskonvita"], detail: true },
-      { name: "SDL3", usedIn: ["duskonvita"], detail: true },
-      { name: "UDP", usedIn: ["rtht-3d"], detail: true },
+      { name: "GXM", usedIn: ["duskonvita"] },
+      { name: "VitaSDK", usedIn: ["duskonvita"] },
+      { name: "UDP", usedIn: ["rtht-3d"] },
     ],
   },
 ]
@@ -449,6 +430,46 @@ export const mainSkillGroups = (): SkillGroup[] =>
     area: group.area,
     skills: group.skills.filter((skill) => !skill.detail),
   }))
+
+// The order of the groups where they sit in columns (the home stack ledger, the About page): three
+// balanced columns on a wide screen (boards Main and M09). A group missing here still shows, at the end.
+const SKILL_AREA_ORDER = [
+  "Languages",
+  "Frontend",
+  "AI Applications",
+  "Backend & Data",
+  "Cloud & Delivery",
+  "Workflows & Testing",
+  "VR, Games & Consoles",
+]
+
+export const inColumnOrder = (groups: SkillGroup[]): SkillGroup[] => [
+  ...SKILL_AREA_ORDER.map((area) => {
+    const group = groups.find((candidate) => candidate.area === area)
+    if (!group) throw new Error(`Unknown skill group: ${area}`)
+    return group
+  }),
+  ...groups.filter((group) => !SKILL_AREA_ORDER.includes(group.area)),
+]
+
+// A phrase starts with a capital on screen ("Integration and end-to-end testing"); a name keeps its own
+// spelling ("pytest").
+export const skillDisplayName = (name: string) =>
+  name.includes(" ") && name.charAt(0) === name.charAt(0).toLowerCase()
+    ? name.charAt(0).toUpperCase() + name.slice(1)
+    : name
+
+// The same name however it was typed: case, spaces at the ends and between words do not count.
+export const techKey = (name: string) => name.trim().replace(/\s+/g, " ").toLowerCase()
+
+export const findSkill = (name: string): Skill | undefined => {
+  const key = techKey(name)
+  for (const group of skillGroups) {
+    const skill = group.skills.find((candidate) => techKey(candidate.name) === key)
+    if (skill) return skill
+  }
+  return undefined
+}
 
 // "AWS (Amazon S3, Amazon ECS)": the two services read better next to their platform.
 export const skillLine = (group: SkillGroup) => {

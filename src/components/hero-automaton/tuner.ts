@@ -16,7 +16,9 @@ const GROUPS: { title: string; sliders: Slider[] }[] = [
   {
     title: "Rhythm",
     sliders: [
-      { key: "tickRate", label: "Tick rate", min: 2, max: 20, step: 1, hint: "steps / s" },
+      { key: "tickRate", label: "Tick rate", min: 1, max: 10, step: 0.25, hint: "steps / s" },
+      { key: "transitionMs", label: "Birth length", min: 100, max: 900, step: 10, hint: "ms" },
+      { key: "stagger", label: "Stagger", min: 0, max: 0.5, step: 0.01, hint: "share of a tick" },
       { key: "cycleSeconds", label: "Cycle length", min: 6, max: 60, step: 1, hint: "s" },
       { key: "growthShare", label: "Growth share", min: 0.2, max: 0.9, step: 0.05 },
     ],
@@ -32,7 +34,7 @@ const GROUPS: { title: string; sliders: Slider[] }[] = [
   {
     title: "Cursor",
     sliders: [
-      { key: "cursorRadius", label: "Radius", min: 1, max: 8, step: 0.5, hint: "cells" },
+      { key: "cursorRadius", label: "Radius", min: 1, max: 6, step: 0.5, hint: "cells" },
       { key: "cursorStrength", label: "Strength", min: 0, max: 3, step: 0.1 },
       { key: "parallax", label: "Parallax", min: 0, max: 3, step: 0.1 },
     ],
@@ -65,6 +67,7 @@ const CSS = `
 .automaton-tuner label.wide{grid-template-columns:104px 1fr}
 .automaton-tuner output{text-align:right;color:#d8d1c5}
 .automaton-tuner input[type=range]{width:100%;accent-color:#ce8b45}
+.automaton-tuner input[type=checkbox]{justify-self:start;accent-color:#ce8b45}
 .automaton-tuner input[type=text],.automaton-tuner select{width:100%;padding:3px 6px;color:#f2ede4;background:#0e0c0a;border:1px solid #6b6053;border-radius:3px;font:inherit}
 .automaton-tuner button{padding:5px 9px;color:#f2ede4;background:#241f18;border:1px solid #6b6053;border-radius:3px;font:inherit;cursor:pointer}
 .automaton-tuner button:hover{border-color:#ce8b45}
@@ -191,6 +194,18 @@ export function mountTuner(scene: HeroScene, heroRoot: HTMLElement): () => void 
     group.sliders.forEach((slider) => addSlider(slider))
   }
 
+  // Intro -----------------------------------------------------------------
+  panel.appendChild(el("h3", "Intro"))
+  const introLabel = el("label", undefined, "wide")
+  introLabel.appendChild(el("span", "On load"))
+  const introBox = el("input")
+  introBox.type = "checkbox"
+  introBox.addEventListener("change", () => apply({ intro: introBox.checked }))
+  refreshers.push(() => (introBox.checked = scene.getSettings().intro))
+  introLabel.appendChild(introBox)
+  panel.appendChild(introLabel)
+  addSlider({ key: "introSeconds", label: "Length", min: 1, max: 6, step: 0.1, hint: "s" })
+
   // Grid ------------------------------------------------------------------
   panel.appendChild(el("h3", "Grid"))
   const gridLabel = el("label", undefined, "wide")
@@ -198,9 +213,9 @@ export function mountTuner(scene: HeroScene, heroRoot: HTMLElement): () => void 
   const grid = el("select")
   for (const [value, text] of [
     ["auto", "Auto"],
-    ["desktop", "Desktop 64 × 36 × 12"],
-    ["phone", "Phone 32 × 52 × 8"],
-    ["fallback", "Fallback 48 × 27 × 10"],
+    ["desktop", "Desktop 40 × 22 × 6"],
+    ["phone", "Phone 18 × 28 × 5"],
+    ["fallback", "Fallback 32 × 18 × 5"],
   ]) {
     const option = el("option", text)
     option.value = value
@@ -235,12 +250,18 @@ export function mountTuner(scene: HeroScene, heroRoot: HTMLElement): () => void 
     apply({ ...DEFAULT_SETTINGS })
     refresh()
   })
-  button("Restart", () => scene.restart())
+  button("Replay intro", () => {
+    if (!scene.getSettings().intro) {
+      apply({ intro: true })
+      refresh()
+    }
+    scene.restart()
+  })
   button("Poster", () => {
     // Saves the rest pose of the current grid: the file for static/hero/.
     const name = scene.stats().grid === "phone" ? "automaton-phone" : "automaton-desktop"
     const link = el("a")
-    link.href = scene.capture(name === "automaton-phone" ? 500 : 1280)
+    link.href = scene.capture(name === "automaton-phone" ? 560 : 1280)
     link.download = `${name}.webp`
     link.click()
   })
@@ -248,7 +269,7 @@ export function mountTuner(scene: HeroScene, heroRoot: HTMLElement): () => void 
 
   const timer = window.setInterval(() => {
     const s = scene.stats()
-    stats.textContent = `${s.running ? `${s.fps || "…"} fps` : "paused"} · dpr ${s.dpr} · ${s.grid} · ${s.alivePercent.toFixed(1)} % alive · tick ${s.tick}`
+    stats.textContent = `${s.running ? `${s.fps || "…"} fps` : "paused"}${s.intro ? " · intro" : ""} · dpr ${s.dpr} · ${s.grid} · ${s.alivePercent.toFixed(1)} % alive · tick ${s.tick}`
   }, 500)
 
   document.body.appendChild(panel)

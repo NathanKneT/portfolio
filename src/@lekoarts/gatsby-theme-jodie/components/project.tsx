@@ -1,11 +1,21 @@
-/** @jsx jsx */
-import { jsx } from "theme-ui"
 import * as React from "react"
+import { Link } from "gatsby"
 import type { HeadFC, PageProps } from "gatsby"
 import { GatsbyImage, type IGatsbyImageData } from "gatsby-plugin-image"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import Seo from "./seo"
 import PhotoLightbox from "../../../components/photo-lightbox"
+import PageHeader from "../../../components/page/page-header"
+import { InLink } from "../../../components/case-study/primitives"
+import {
+  SERIES_PHOTO_SIZES,
+  placementStyle,
+  ratioOf,
+  twoColumns,
+  withSizes,
+} from "../../../components/photography/gallery"
+import * as page from "../../../components/page/page.module.css"
+import * as styles from "../../../components/photography/photography.module.css"
 
 const Image = GatsbyImage as unknown as (
   props: React.ComponentProps<typeof GatsbyImage>
@@ -38,9 +48,15 @@ type ProjectData = {
   }
 }
 
-const Project: React.FC<
-  React.PropsWithChildren<PageProps<ProjectData>>
-> = ({ data: { project, images }, children }) => {
+/**
+ * A photography series: its name and text, then every photograph at its own ratio, never cropped,
+ * in the order of its file names (01-, 02- …). Two columns from 720 px, each photograph under the
+ * shorter one; one column on a phone. Any photograph opens in the full-screen viewer.
+ */
+const Project: React.FC<React.PropsWithChildren<PageProps<ProjectData>>> = ({
+  data: { project, images },
+  children,
+}) => {
   const [openIndex, setOpenIndex] = React.useState<number | null>(null)
   const gallery = [...images.nodes]
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -49,53 +65,51 @@ const Project: React.FC<
       image: image.childImageSharp.gatsbyImageData,
       alt: `${project.shortTitle} photography by Nathan Rihet — image ${index + 1}`,
     }))
+  const { placements, style } = twoColumns(gallery.map((photo) => ratioOf(photo.image)))
 
   return (
-  <Layout color={project.color || undefined}>
-    <header
-      sx={{
-        variant: `content.project`,
-        color: `var(--text)`,
-        "h1, p": { color: `var(--text)` },
-      }}
-    >
-      <p
-        sx={{
-          color: `var(--faint)`,
-          fontSize: 2,
-          fontWeight: 700,
-          textTransform: `uppercase`,
-          letterSpacing: `wider`,
-          mb: 2,
-        }}
-      >
-        {project.category}
-      </p>
-      <h1 sx={{ color: `var(--text)`, mt: 0 }}>
-        {project.title}
-      </h1>
-      <div sx={{ maxWidth: `var(--measure)`, my: 4, color: `var(--text-2)` }}>{children}</div>
-    </header>
-    <section
-      aria-label={`${project.shortTitle} photo gallery`}
-      sx={{ backgroundColor: `var(--gallery)` }}
-    >
-      <div sx={{ variant: `content.imageList` }}>
-        {gallery.map((photo, index) => (
-          <button
-            type="button"
-            key={photo.name}
-            className="photo-open"
-            aria-label={`Open image ${index + 1} of ${gallery.length}`}
-            onClick={() => setOpenIndex(index)}
-          >
-            <Image alt={photo.alt} image={photo.image} />
-          </button>
-        ))}
+    <Layout color={project.color || undefined}>
+      <div className={`portfolio-page ${page.page} ${page.flush}`}>
+        <PageHeader
+          back={
+            <Link className={page.back} to="/photography/">
+              <span aria-hidden="true">←</span>
+              Photography
+            </Link>
+          }
+          eyebrow={`${gallery.length} photographs`}
+          title={project.shortTitle}
+        >
+          <div className={styles.lede}>{children}</div>
+        </PageHeader>
       </div>
-    </section>
-    <PhotoLightbox images={gallery} index={openIndex} onChange={setOpenIndex} />
-  </Layout>
+      <section className={styles.gallery} aria-label={`${project.shortTitle} photo gallery`}>
+        <div className={styles.galleryInner}>
+          <ul className={styles.masonry} style={style}>
+            {gallery.map((photo, index) => (
+              <li key={photo.name} className={styles.photo} style={placementStyle(placements[index])}>
+                <button
+                  type="button"
+                  className="photo-open"
+                  aria-label={`Open image ${index + 1} of ${gallery.length}`}
+                  onClick={() => setOpenIndex(index)}
+                >
+                  <Image
+                    alt={photo.alt}
+                    image={withSizes(photo.image, SERIES_PHOTO_SIZES)}
+                    loading={index < 2 ? "eager" : "lazy"}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <div className={`portfolio-page ${page.page} ${styles.after}`}>
+        <InLink href="/photography/">View all photography series</InLink>
+      </div>
+      <PhotoLightbox images={gallery} index={openIndex} onChange={setOpenIndex} />
+    </Layout>
   )
 }
 

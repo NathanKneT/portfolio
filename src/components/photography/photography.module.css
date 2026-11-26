@@ -1,0 +1,158 @@
+/* Photography: the list of series (/photography/) and a series (/night/ …). The photographs are
+   never cropped: each keeps its own ratio, at every width. */
+
+/* ---- The list: one tile per series, the system grid (three columns of 357 px at 1 440) ---- */
+
+.list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  align-items: start;
+  gap: 40px 24px;
+  list-style: none;
+}
+
+.tile {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.tile:hover {
+  color: var(--text);
+}
+
+.tile :global(.gatsby-image-wrapper) {
+  display: block;
+  width: 100%;
+  background: var(--matte);
+  transition: filter 240ms var(--ease);
+}
+
+.tile:hover :global(.gatsby-image-wrapper) {
+  filter: brightness(1.06);
+}
+
+.tileLabel {
+  display: block;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-micro);
+  font-weight: var(--weight-label);
+  line-height: var(--lh-micro);
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  transition: color 150ms var(--ease);
+}
+
+.tile:hover .tileLabel {
+  color: var(--accent-hover);
+}
+
+/* ---- A series ---- */
+
+/* The text of the series' MDX file. */
+.lede > p {
+  max-width: 720px;
+  margin: 20px 0 0;
+  color: var(--text-2);
+  font-size: var(--fs-lede);
+  line-height: var(--lh-lede);
+  text-wrap: pretty;
+}
+
+/* A darker band behind the photographs, the width of the page. */
+.gallery {
+  padding: 48px 0;
+  background: var(--gallery);
+}
+
+.galleryInner {
+  width: min(var(--content-width), calc(100% - 3rem));
+  margin: 0 auto;
+  container-type: inline-size;
+}
+
+/* One column, in the series' order: on a phone, and wherever container units are missing (Safari
+   before 16), since the two columns are drawn with them. */
+.masonry {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  gap: 16px;
+  list-style: none;
+}
+
+/* Two columns from 720 px: every photograph is placed on the server (gallery.ts), in column widths. */
+@supports (width: 1cqi) {
+  @media (min-width: 720px) {
+    .masonry {
+      --gap: 24px;
+      --col: calc((100cqi - var(--gap)) / 2);
+      display: block;
+      position: relative;
+      height: max(
+        calc(var(--h0) * var(--col) + var(--n0) * var(--gap)),
+        calc(var(--h1) * var(--col) + var(--n1) * var(--gap))
+      );
+    }
+
+    .photo {
+      position: absolute;
+      top: calc(var(--top) * var(--col) + var(--above) * var(--gap));
+      left: calc(var(--column) * (var(--col) + var(--gap)));
+      width: var(--col);
+    }
+  }
+
+  @media (min-width: 720px) and (max-width: 1023px) {
+    .masonry {
+      --gap: 16px;
+    }
+  }
+}
+
+.photo :global(.photo-open) {
+  display: block;
+}
+
+.photo :global(.gatsby-image-wrapper) {
+  display: block;
+  width: 100%;
+  background: var(--matte);
+}
+
+/* Above the page frame's padding (two classes and !important in page.module.css), whatever order
+   the two files load in. */
+.after.after:global(.portfolio-page) {
+  padding-top: 48px !important;
+}
+
+/* The page's own gutters under 801 px (global.css, .portfolio-page). */
+@media (max-width: 800px) {
+  .galleryInner {
+    width: min(var(--content-width), calc(100% - 2rem));
+  }
+}
+
+/* A phone: the one column (above), closer to the edges. */
+@media (max-width: 719px) {
+  .gallery {
+    padding: 24px 0;
+  }
+
+  .after.after:global(.portfolio-page) {
+    padding-top: 36px !important;
+  }
+
+  .list {
+    gap: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile :global(.gatsby-image-wrapper) {
+    transition: none;
+  }
+}

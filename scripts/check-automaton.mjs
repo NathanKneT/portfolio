@@ -39,7 +39,7 @@ for (const pair of pairs) {
 
 const grid = GRIDS[gridId]
 const field = Uint8Array.from(Buffer.from(FIELD_DATA[gridId], "base64"))
-const sim = new Automaton(grid, field, {
+const params = {
   survive: parseCounts(settings.survive),
   birth: parseCounts(settings.birth),
   growthBirth: parseCounts(settings.growthBirth),
@@ -50,11 +50,14 @@ const sim = new Automaton(grid, field, {
   birthChance: settings.birthChance,
   edgeThreshold: Math.round(settings.edgeThreshold * 255),
   reseedFraction: settings.reseedPercent / 100,
-  mutationTicks: Math.round(2 * settings.tickRate),
-})
+  mutationTicks: Math.round(1.2 * settings.tickRate),
+}
+const sim = new Automaton(grid, field, params)
 
+// Same start as the worker (automaton.worker.ts, prerollTicks).
+const prerollTicks = params.cycleTicks + Math.round(0.3 * params.cycleTicks)
 const started = performance.now()
-sim.reset(20261125, 60)
+sim.reset(20261125, prerollTicks)
 const preroll = performance.now() - started
 const pct = (n) => ((100 * n) / sim.size).toFixed(1).padStart(5)
 const census = () => {
@@ -65,15 +68,16 @@ const census = () => {
   }
   return { visible, hot }
 }
-console.log(`${gridId} ${grid.x}×${grid.y}×${grid.z}, preroll 60 ticks in ${preroll.toFixed(0)} ms`)
+console.log(`${gridId} ${grid.x}×${grid.y}×${grid.z}, preroll ${prerollTicks} ticks in ${preroll.toFixed(0)} ms`)
 console.log("    s  alive%  visible%  amber% of visible  births/tick % of visible")
 const total = Math.round(Number(seconds) * settings.tickRate)
+const every = Math.max(1, Math.round(settings.tickRate * 4)) // a line every 4 s
 let stepMs = 0, min = 100, max = 0
 for (let t = 0; t <= total; t++) {
-  if (t % (settings.tickRate * 4) === 0) {
+  if (t % every === 0) {
     const { visible, hot } = census()
     console.log(
-      `${String(t / settings.tickRate).padStart(5)}  ${pct(sim.alive)}  ${pct(visible)}  ${(visible ? (100 * hot) / visible : 0).toFixed(1).padStart(5)}  ${(visible ? (100 * sim.births) / visible : 0).toFixed(1).padStart(5)}`
+      `${String(Math.round(t / settings.tickRate)).padStart(5)}  ${pct(sim.alive)}  ${pct(visible)}  ${(visible ? (100 * hot) / visible : 0).toFixed(1).padStart(5)}  ${(visible ? (100 * sim.births) / visible : 0).toFixed(1).padStart(5)}`
     )
   }
   const share = (100 * sim.alive) / sim.size
