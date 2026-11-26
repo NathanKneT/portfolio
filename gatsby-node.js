@@ -8,6 +8,21 @@ exports.createPages = ({ actions }) => {
     redirectInBrowser: true,
   })
 
+  // Renamed in November 2026: the engineering list and the photography list.
+  createRedirect({
+    fromPath: `/dev-projects/`,
+    toPath: `/engineering/`,
+    isPermanent: true,
+    redirectInBrowser: true,
+  })
+
+  createRedirect({
+    fromPath: `/projects/`,
+    toPath: `/photography/`,
+    isPermanent: true,
+    redirectInBrowser: true,
+  })
+
   createRedirect({
     fromPath: `/hire/`,
     toPath: `/contact/`,

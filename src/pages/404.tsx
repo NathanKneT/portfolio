@@ -9,7 +9,7 @@ const NotFound = (_props: PageProps) => (
       <h1>404</h1>
       <p>Page not found.</p>
       <p>
-        <a href="/">Return home</a> or <a href="/dev-projects/">browse engineering work</a>.
+        <a href="/">Return home</a> or <a href="/engineering/">browse engineering work</a>.
       </p>
     </div>
   </Layout>

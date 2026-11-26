@@ -3,52 +3,96 @@ import { Link } from "gatsby"
 import Layout from "@lekoarts/gatsby-theme-jodie/src/components/layout"
 import SEO from "../@lekoarts/gatsby-theme-jodie/components/seo"
 import LoopVideo from "../components/loop-video"
-import { projectPath, projects } from "../data/projects"
+import ProjectVisual from "../components/project-visual"
+import { currentRole, proofPoints } from "../data/experience"
+import {
+  engineeringPath,
+  featuredProjects,
+  hasCaseStudy,
+  projectLink,
+  statusLabel,
+} from "../data/projects"
+
+const rokken = currentRole()
 
 const LandingPage = () => (
   <Layout>
     <main className="portfolio-page landing-page">
       <section className="landing-hero" aria-labelledby="landing-title">
-        <p className="eyebrow">Nathan Rihet · Osaka, Japan</p>
-        <h1 id="landing-title">Full Stack Engineer in Osaka</h1>
-        <p className="hero-copy">
-          I design and build web applications with TypeScript, Next.js, Python
-          and FastAPI. Outside work, I build real-time software:{" "}
-          <Link className="inline-link" to="/dev-projects/">
-            VR mods, console ports and 3D games
-          </Link>
-          . I also photograph people, cities and live events.
+        <p className="eyebrow">
+          Nathan Rihet · Full Stack Engineer · Osaka, Japan
         </p>
+        <h1 id="landing-title">
+          I build web applications around computer-vision pipelines and GPU
+          workloads.
+        </h1>
+        <p className="hero-copy">
+          Full Stack Engineer at Rokken in Osaka. Before that, Capgemini,
+          freelance work and Cawita Technologies. I work mostly with
+          TypeScript, Next.js, Python, FastAPI, PostgreSQL and Temporal.
+        </p>
+        <ul className="proof-strip" aria-label="Key facts">
+          {proofPoints.map((point) => (
+            <li key={point.value}>
+              <strong>{point.value}</strong> {point.label}
+            </li>
+          ))}
+        </ul>
         <div className="button-row">
-          <Link className="button button-primary" to="/dev-projects/">
-            Explore Engineering
+          <Link className="button button-primary" to={engineeringPath}>
+            See my work
           </Link>
-          <Link className="button button-secondary" to="/projects/">
-            Explore Photography
-          </Link>
+          <a className="button button-secondary" href="/nathan-rihet-resume.pdf">
+            Resume (PDF)
+          </a>
         </div>
         <nav className="text-links" aria-label="Profile links">
+          <Link to="/photography/">Photography</Link>
           <a href="https://github.com/NathanKneT">GitHub</a>
           <a href="https://www.linkedin.com/in/nathan-rihet/">LinkedIn</a>
           <Link to="/contact/">Contact</Link>
         </nav>
       </section>
 
+      <section className="split-section section-block" aria-labelledby="focus-heading">
+        <div>
+          <p className="eyebrow">Current focus</p>
+          <h2 id="focus-heading">Rokken, since September 2025</h2>
+        </div>
+        <div>
+          <p>
+            I work on the web application and the backend services around
+            Rokken’s video-analysis pipelines.
+          </p>
+          <p className="project-stack">{(rokken.focus ?? []).join(" · ")}</p>
+          <p className="project-stack">{rokken.stack.join(" · ")}</p>
+          <div className="text-links">
+            <Link to={`${engineeringPath}#rokken`}>How it is built</Link>
+            <Link to="/resume/">Full resume</Link>
+            <Link to="/biography/">How I got to Osaka</Link>
+          </div>
+        </div>
+      </section>
+
       <section className="section-block" aria-labelledby="engineering-heading">
         <div className="section-heading">
           <p className="eyebrow">Selected work</p>
           <h2 id="engineering-heading">Engineering</h2>
-          <Link to="/dev-projects/">View all engineering work</Link>
+          <Link to={engineeringPath}>View all engineering work</Link>
         </div>
         <div className="project-grid">
-          {projects.slice(0, 3).map((project) => (
+          {featuredProjects().map((project) => (
             <article className="project-card" key={project.title}>
               <Link
                 className="project-card-link"
-                to={projectPath(project)}
-                aria-label={`View ${project.title} case study`}
+                to={projectLink(project)}
+                aria-label={
+                  hasCaseStudy(project)
+                    ? `View ${project.title} case study`
+                    : `See ${project.title} on the engineering page`
+                }
               >
-                {project.cover && (
+                {project.cover ? (
                   <div className="project-card-media">
                     {project.cover.loop ? (
                       <LoopVideo
@@ -62,16 +106,19 @@ const LandingPage = () => (
                       />
                     )}
                   </div>
+                ) : (
+                  <ProjectVisual project={project} compact />
                 )}
                 <div className="project-meta">
-                  <span>{project.status}</span>
+                  <span>{statusLabel[project.status]}</span>
                   <span>{project.year}</span>
                 </div>
                 <h3>{project.title}</h3>
                 <p>{project.summary}</p>
                 <p className="stack">{project.stack.join(" · ")}</p>
                 <span className="card-action">
-                  View case study <span aria-hidden="true">→</span>
+                  {hasCaseStudy(project) ? "View case study" : "See the project"}{" "}
+                  <span aria-hidden="true">→</span>
                 </span>
               </Link>
             </article>
@@ -83,7 +130,7 @@ const LandingPage = () => (
         <div className="section-heading">
           <p className="eyebrow">Visual practice</p>
           <h2 id="photography-heading">Photography</h2>
-          <Link to="/projects/">View all photography series</Link>
+          <Link to="/photography/">View all photography series</Link>
         </div>
         <div className="photo-preview-grid">
           <Link to="/night/" className="photo-preview">
@@ -113,27 +160,6 @@ const LandingPage = () => (
         </div>
       </section>
 
-      <section className="split-section section-block" aria-labelledby="focus-heading">
-        <div>
-          <p className="eyebrow">Current focus</p>
-          <h2 id="focus-heading">Full-stack engineering at Rokken</h2>
-        </div>
-        <div>
-          <p>
-            I build web applications and backend services around
-            computer-vision pipelines, including video upload and playback,
-            human review of results and access-controlled sharing.
-          </p>
-          <p>
-            My recent work includes GPU job scheduling and background workflows
-            that handle retries, cancellation and failure recovery.
-          </p>
-          <Link className="inline-link" to="/biography/">
-            More about my path
-          </Link>
-        </div>
-      </section>
-
       <section className="cta-section" aria-labelledby="contact-heading">
         <p className="eyebrow">Let’s connect</p>
         <h2 id="contact-heading">
@@ -153,7 +179,7 @@ export const Head = () => (
   <SEO
     pathname="/"
     title="Full Stack Engineer in Osaka"
-    description="Nathan Rihet is a Full Stack Engineer and photographer in Osaka. Explore his work with TypeScript, Next.js, Python, FastAPI and applied AI, and his VR mods, console ports and 3D games."
+    description="Nathan Rihet is a Full Stack Engineer at Rokken in Osaka. He builds web applications around computer-vision pipelines with TypeScript, Next.js, Python, FastAPI and PostgreSQL, and VR mods and a console port on the side."
     imageAlt="Nathan Rihet — Full Stack Engineer in Osaka"
     schemaType="ProfilePage"
   />

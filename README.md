@@ -55,7 +55,7 @@ npm run check
 ## Content structure
 
 - `src/pages/index.tsx` — dual-track landing page
-- `src/pages/dev-projects.tsx` — selected engineering case studies
+- `src/pages/engineering.tsx` — selected engineering case studies
 - `content/pages/biography/index.mdx` — professional biography
 - `content/projects/*` — photography series and source images
 - `src/data/projects.ts` — typed engineering project data
