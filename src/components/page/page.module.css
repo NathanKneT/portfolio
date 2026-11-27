@@ -18,7 +18,7 @@
   padding: 72px 0 80px;
 }
 
-/* Something beside the text (the resume's PDF button): on the right, at the foot of the text. */
+/* Something beside the text (the resume's PDF buttons): on the right, at the foot of the text. */
 .headerAside {
   display: flex;
   flex-wrap: wrap;
@@ -34,6 +34,8 @@
 
 .headerAsideSlot {
   flex: none;
+  /* Never wider than the page: what it holds can wrap on a narrow phone. */
+  max-width: 100%;
 }
 
 .title {

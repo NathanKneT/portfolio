@@ -9,7 +9,7 @@ type PageHeaderProps = {
   back?: React.ReactNode
   // The lede and anything under it.
   children?: React.ReactNode
-  // Beside the text on a wide screen (the resume's PDF button), under it on a phone.
+  // Beside the text on a wide screen (the resume's PDF buttons), under it on a phone.
   aside?: React.ReactNode
   className?: string
 }
