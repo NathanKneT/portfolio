@@ -111,11 +111,13 @@ const Project: React.FC<React.PropsWithChildren<PageProps<ProjectData>>> = ({
               </li>
             ))}
           </ul>
+          {/* Inside the band, under the photographs: on a band of its own, between the photographs
+              and the site footer, this link read as a second footer. */}
+          <p className={styles.allSeries}>
+            <InLink href="/photography/">View all photography series</InLink>
+          </p>
         </div>
       </section>
-      <div className={`portfolio-page ${page.page} ${styles.after}`}>
-        <InLink href="/photography/">View all photography series</InLink>
-      </div>
       <PhotoLightbox images={gallery} index={openIndex} onChange={setOpenIndex} />
     </Layout>
   )

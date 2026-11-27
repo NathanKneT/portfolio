@@ -123,10 +123,10 @@
   background: var(--matte);
 }
 
-/* Above the page frame's padding (two classes and !important in page.module.css), whatever order
-   the two files load in. */
-.after.after:global(.portfolio-page) {
-  padding-top: 48px !important;
+/* The way back to the list, at the foot of the band: the page then ends on the band, and the site
+   footer is the only thing under it. */
+.allSeries {
+  margin: 40px 0 0;
 }
 
 /* The page's own gutters under 801 px (global.css, .portfolio-page). */
@@ -139,11 +139,11 @@
 /* A phone: the one column (above), closer to the edges. */
 @media (max-width: 719px) {
   .gallery {
-    padding: 24px 0;
+    padding: 24px 0 32px;
   }
 
-  .after.after:global(.portfolio-page) {
-    padding-top: 36px !important;
+  .allSeries {
+    margin-top: 32px;
   }
 
   .list {
