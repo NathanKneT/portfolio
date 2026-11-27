@@ -578,13 +578,18 @@
 }
 
 /* The rule over each row is its own element: it draws with the row's bar, the text never hides.
-   The row is a grid with the button's own columns: the organisation's mark (a link of its own, so
-   not inside the button) sits in the name's column, over the room the button keeps for it. */
+   The row is a grid with the button's own columns (--columns, one value for both): the
+   organisation's mark, a link of its own and so not inside the button, sits at the start of the
+   name's column, over the room the name keeps for it (--mark-room: the tile's 44 px and 16 px). */
 .role {
+  --period: 190px;
+  --columns: var(--period) 330px minmax(0, 1fr) 12px;
+  --gap: 24px;
+  --mark-room: 60px;
   position: relative;
   display: grid;
-  grid-template-columns: 190px 330px minmax(0, 1fr) 12px;
-  column-gap: 24px;
+  grid-template-columns: var(--columns);
+  column-gap: var(--gap);
   border-top: 1px solid transparent;
 }
 
@@ -605,8 +610,8 @@
   min-height: 68px;
   margin: 0;
   padding: 18px 0;
-  grid-template-columns: 190px 330px minmax(0, 1fr) 12px;
-  gap: 24px;
+  grid-template-columns: var(--columns);
+  gap: var(--gap);
   align-items: baseline;
   color: inherit;
   border: 0;
@@ -624,11 +629,10 @@
   line-height: 1.375rem;
 }
 
-/* Room on the left for the mark: its 44 px and 16 px. */
 .who {
   display: flex;
   min-width: 0;
-  padding-left: 60px;
+  padding-left: var(--mark-room);
   flex-direction: column;
   gap: 2px;
 }
@@ -711,7 +715,7 @@
 /* Under the name, in line with it. */
 .panel {
   display: flex;
-  padding: 0 0 28px 274px;
+  padding: 0 0 28px calc(var(--period) + var(--gap) + var(--mark-room));
   grid-column: 1 / -1;
   grid-row: 2;
   flex-direction: column;
@@ -789,15 +793,15 @@
 /* Medium: the proof line goes under the name. */
 @container roles (max-width: 899px) {
   .role {
-    grid-template-columns: 150px minmax(0, 1fr) 12px;
+    --period: 150px;
+    --columns: var(--period) minmax(0, 1fr) 12px;
   }
 
   .roleButton {
     grid-template-areas:
       "period who chevron"
       "period proof chevron";
-    grid-template-columns: 150px minmax(0, 1fr) 12px;
-    gap: 6px 24px;
+    gap: 6px var(--gap);
   }
 
   .period {
@@ -809,23 +813,19 @@
   }
 
   .proof {
-    padding-left: 60px;
+    padding-left: var(--mark-room);
     grid-area: proof;
   }
 
   .chevron {
     grid-area: chevron;
   }
-
-  .panel {
-    padding-left: 234px;
-  }
 }
 
 /* Narrow (phone): name, title, dates and place; the proof line opens with the panel. */
 @container roles (max-width: 559px) {
   .role {
-    grid-template-columns: minmax(0, 1fr);
+    --columns: minmax(0, 1fr);
   }
 
   .roleMark {

@@ -11,8 +11,9 @@ import {
   getRole,
   teaching,
 } from "../../data/experience"
-import type { CareerEntryId, OrgMark as Mark } from "../../data/experience"
+import type { CareerEntryId, OrgMarkSource } from "../../data/experience"
 import { engineeringPath } from "../../data/projects"
+import DotList from "./dot-list"
 import { makeScale, monthNumber } from "./timeline-scale"
 import { useBuildDate } from "./use-build-date"
 import type { Scale } from "./timeline-scale"
@@ -27,7 +28,7 @@ type Entry = {
   // On the timeline, where it differs from the name: the teaching post's course.
   barName: string
   website?: string
-  mark: Mark
+  mark: OrgMarkSource
   title: string
   period: string
   place: string
@@ -257,10 +258,10 @@ const CareerTimeline = ({ headingId = "career-heading" }: Props) => {
                       {entry.place}
                     </span>
                     <span className={styles.metaNarrow}>{entry.title}</span>
+                    {/* The dates and the place each in one piece: beside the mark, a narrow line breaks
+                        between them, never inside the dates (dot-list.tsx). */}
                     <span className={styles.whenNarrow}>
-                      {entry.period}
-                      {DOT}
-                      {entry.place}
+                      <DotList items={[entry.period, entry.place].map((part) => ({ key: part, content: part }))} />
                     </span>
                   </span>
                   <span className={styles.proof}>{proof}</span>
