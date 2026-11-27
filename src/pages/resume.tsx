@@ -53,6 +53,58 @@ const EntryHead = ({ name, title, note, period, place }: {
   </header>
 )
 
+const RESUME_PDF = "/nathan-rihet-resume.pdf"
+
+// 18 px line icons in the label's colour, hidden from assistive technology (the label says it all).
+const Icon = ({ children }: { children: React.ReactNode }) => (
+  <svg
+    className={styles.pdfIcon}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.75"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    {children}
+  </svg>
+)
+
+/**
+ * The PDF: read in the browser's own viewer (a new tab, no download attribute: Netlify serves it
+ * inline, as application/pdf) or saved. The names start with the visible label (WCAG 2.5.3).
+ */
+const PdfActions = () => (
+  <div className={styles.pdfActions}>
+    <a
+      className={`button button-secondary ${page.button} ${styles.pdfButton}`}
+      href={RESUME_PDF}
+      target="_blank"
+      rel="noopener"
+      aria-label="View PDF of the resume (opens in a new tab)"
+    >
+      <Icon>
+        <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z" />
+        <circle cx="12" cy="12" r="3" />
+      </Icon>
+      View PDF
+    </a>
+    <a
+      className={`button button-secondary ${page.button} ${styles.pdfButton}`}
+      href={RESUME_PDF}
+      download
+      aria-label="Download PDF of the resume"
+    >
+      <Icon>
+        <path d="M12 4v11M7 10.5l5 5 5-5M4 19.5h16" />
+      </Icon>
+      Download PDF
+    </a>
+  </div>
+)
+
 const Bullets = ({ items }: { items: string[] }) => (
   <ul className={styles.bullets}>
     {items.map((item) => (
@@ -68,15 +120,7 @@ const ResumePage = () => (
         eyebrow="Resume"
         title="Nathan Rihet"
         className={styles.header}
-        aside={
-          <a
-            className={`button button-secondary ${page.button} ${styles.download}`}
-            href="/nathan-rihet-resume.pdf"
-            download
-          >
-            Download PDF
-          </a>
-        }
+        aside={<PdfActions />}
       >
         <p className={page.lede}>{resumeHeadline}</p>
       </PageHeader>

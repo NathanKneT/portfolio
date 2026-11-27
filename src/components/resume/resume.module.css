@@ -2,14 +2,36 @@
    on the left and its entries on the right (one column under the sidebar's width); dates and places
    align right, in tabular figures. */
 
-/* The PDF button sits at the foot of the header, on the right. "header.header": over the page
+/* The PDF buttons sit at the foot of the header, on the right. "header.header": over the page
    frame's .header (page.module.css), whatever order the two files load in. */
 header.header {
   padding-bottom: 56px;
 }
 
-.download {
+/* View PDF and Download PDF, side by side; one under the other below about 380 px. */
+.pdfActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pdfButton {
+  gap: 10px;
   white-space: nowrap;
+}
+
+.pdfIcon {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+
+/* A phone: once they wrap, each takes the full width, as the site's other button pairs do
+   (page.module.css .actions). */
+@media (max-width: 479px) {
+  .pdfButton {
+    flex: 1 1 auto;
+  }
 }
 
 /* ---- Parts ---- */
@@ -238,7 +260,7 @@ header.header {
     --line-strong: #999;
   }
 
-  .download {
+  .pdfActions {
     display: none !important;
   }
 
