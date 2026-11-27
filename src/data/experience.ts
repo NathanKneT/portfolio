@@ -17,11 +17,11 @@ export type ContextId = RoleId | "uca-teaching" | "portfolio" | ProjectSlug
 // An organisation's mark, shown beside its name on the engineering page and the home timeline: a
 // file in static/logos/, or "site" for this site's own "NR." mark (freelance work). Each file is the
 // organisation's own mark in one tone (--text, its own shades kept as opacity), taken from its site:
-//   rokken.png          rokken.tech, the black-and-white logo (rokken_logo_bw.png)
+//   rokken.png          rokken.tech, the black-and-white logo (rokken_logo_bw.png), mid tones lifted
 //   univ-cotedazur.svg  univ-cotedazur.fr, "Nos logos", 2-line pack, white web SVG: the dot symbol
 //   capgemini.svg       capgemini.com, the spade of its small-screen logo (capgemini-mobile-logo-white.svg)
 //   cawita.png          cawita.com, the lion of its site icon (Favicon_cawita.png), without its dark disc
-export type OrgMark = "site" | `/logos/${string}`
+export type OrgMarkSource = "site" | `/logos/${string}`
 
 export type RoleHighlight = {
   // Short topic, shown as a label on the engineering page.
@@ -35,7 +35,7 @@ export type Role = {
   company: string
   // The company's website, opened in a new tab from its mark and its name. None for freelance work.
   website?: string
-  mark: OrgMark
+  mark: OrgMarkSource
   title: string
   // ISO months, for the career timeline. No end: current role.
   start: string
@@ -210,7 +210,7 @@ export const teaching = {
   id: "uca-teaching" as const,
   institution: "Université Côte d’Azur",
   website: "https://univ-cotedazur.fr/",
-  mark: "/logos/univ-cotedazur.svg" as OrgMark,
+  mark: "/logos/univ-cotedazur.svg" as OrgMarkSource,
   title: "Academic Instructor — Conversational Agents",
   start: "2024-12",
   end: "2025-01",

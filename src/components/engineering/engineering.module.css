@@ -92,7 +92,16 @@
 }
 
 /* The name leads to the organisation's website, as its mark does: either one under the pointer
-   lights both. Plain at rest, as a side project's title is. */
+   lights both, and the name's keyboard focus lights the mark. Plain at rest, as a side project's
+   title is. */
+.org:has(a:hover, a:focus-visible) :global(a.org-mark) {
+  border-color: var(--line-strong);
+}
+
+.org:has(a:hover, a:focus-visible) :global(a.org-mark img) {
+  opacity: 1;
+}
+
 .nameLink {
   color: var(--text);
   text-decoration: none;
@@ -141,6 +150,7 @@
   color: var(--text-2);
   font-size: var(--fs-body);
   line-height: 1.5rem;
+  text-wrap: pretty;
 }
 
 /* "Sep 2025 – present · Osaka, Japan", and the freelance note: a line each. */

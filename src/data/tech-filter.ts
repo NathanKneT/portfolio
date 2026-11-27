@@ -8,7 +8,7 @@
 // is said in words, never hidden.
 
 import { careerOrder, findSkill, getRole, roles, skillDisplayName, skillGroups, teaching, techKey } from "./experience"
-import type { CareerEntryId, ContextId, OrgMark, Role, RoleId } from "./experience"
+import type { CareerEntryId, ContextId, OrgMarkSource, Role, RoleId } from "./experience"
 import { getProject, latestSideProject, projects } from "./projects"
 import type { Project, ProjectSlug } from "./projects"
 import { resumeText } from "./resume"
@@ -20,7 +20,7 @@ export type ExperienceEntry = {
   // The company or the school, its website and its mark.
   name: string
   website?: string
-  mark: OrgMark
+  mark: OrgMarkSource
   title: string
   period: string
   location: string

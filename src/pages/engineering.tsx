@@ -12,7 +12,7 @@ import FilterBar, { countSentence, elsewhereSentence, suggestionSentence } from 
 import DotList from "../components/home/dot-list"
 import ContactBlock from "../components/home/contact-block"
 import LoopVideo from "../components/loop-video"
-import OrgMark, { WEBSITE_SUFFIX } from "../components/org-mark"
+import OrgMark from "../components/org-mark"
 import Picture from "../components/picture"
 import SectionHead from "../components/section-head"
 import { step, useReveal } from "../components/charts/use-reveal"
@@ -110,17 +110,27 @@ const rowLabel = (project: Project) => rowLabelParts(project).join(" · ")
 const caseStudyName = (slug: ProjectSlug) =>
   slug === teaching.project ? "Course case study" : `${getProject(slug).title} case study`
 
-// The organisation's name, linked to its website when it has one: the last word and the arrow keep to
-// one line, as ExtLink's do.
+// Said once on the page, after the name of each link to an organisation's website.
+const NEW_TAB_NOTE = "new-tab-note"
+
+// The organisation's name, linked to its website when it has one. In the heading it reads "Rokken
+// website"; that it opens in a new tab is its description, out of the heading's name. The last word
+// and the arrow keep to one line, as ExtLink's do.
 const OrgName = ({ entry }: { entry: ExperienceEntry }) => {
   if (!entry.website) return <>{entry.name}</>
   const cut = entry.name.lastIndexOf(" ") + 1
   return (
-    <a className={styles.nameLink} href={entry.website} target="_blank" rel="noopener noreferrer">
+    <a
+      className={styles.nameLink}
+      href={entry.website}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-describedby={NEW_TAB_NOTE}
+    >
       {entry.name.slice(0, cut)}
       <span className={styles.nameTail}>
         {entry.name.slice(cut)}
-        <span className="visually-hidden">{WEBSITE_SUFFIX}</span>
+        <span className="visually-hidden"> website</span>
         <span className={styles.nameArrow} aria-hidden="true">
           ↗
         </span>
@@ -141,8 +151,8 @@ const Role = ({ entry }: { entry: ExperienceEntry }) => (
           Current role
         </p>
       )}
-      <div className={`${styles.org} org-group`}>
-        <OrgMark name={entry.name} mark={entry.mark} website={entry.website} nameLinks />
+      <div className={styles.org}>
+        <OrgMark name={entry.name} mark={entry.mark} website={entry.website} duplicateOfName />
         <div className={styles.orgText}>
           <h3 className={styles.roleName}>
             <OrgName entry={entry} />
@@ -335,6 +345,10 @@ const EngineeringPage = ({ location }: PageProps) => {
 
         <p className="visually-hidden" role="status">
           {announcement}
+        </p>
+        {/* The description of the links to the organisations' websites (OrgName). */}
+        <p id={NEW_TAB_NOTE} hidden>
+          Opens in a new tab
         </p>
 
         <HighlightProvider value={filter}>
