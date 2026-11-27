@@ -1867,3 +1867,57 @@ html[data-lightbox-open] {
     --chart-border-inline: 0;
   }
 }
+
+/* ---- Organisation marks (src/components/org-mark.tsx): an employer's or a school's mark in a
+   square tile, beside its name, on the engineering page and the home timeline. One quiet tone at
+   rest; the full tone and a stronger edge when lit. The files are drawn in --text, the tile dims
+   them. 44 px: a touch target on a phone. ---- */
+
+.org-mark {
+  display: flex;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  transition: border-color 150ms var(--ease);
+}
+
+.org-mark img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* This site's own mark, set as the sidebar sets it. */
+.org-mark-site {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.org-mark img,
+.org-mark-site {
+  opacity: 0.86;
+  transition: opacity 150ms var(--ease);
+}
+
+/* Lit: the tile under the pointer or the keyboard, or, where the name beside it links to the same
+   website (.org-group, the engineering page), the name under the pointer or the keyboard. */
+a.org-mark:hover,
+a.org-mark:focus-visible,
+.org-group:has(a:hover, a:focus-visible) a.org-mark {
+  border-color: var(--line-strong);
+}
+
+a.org-mark:hover img,
+a.org-mark:focus-visible img,
+.org-group:has(a:hover, a:focus-visible) a.org-mark img {
+  opacity: 1;
+}

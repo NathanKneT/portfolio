@@ -577,9 +577,14 @@
   list-style: none;
 }
 
-/* The rule over each row is its own element: it draws with the row's bar, the text never hides. */
+/* The rule over each row is its own element: it draws with the row's bar, the text never hides.
+   The row is a grid with the button's own columns: the organisation's mark (a link of its own, so
+   not inside the button) sits in the name's column, over the room the button keeps for it. */
 .role {
   position: relative;
+  display: grid;
+  grid-template-columns: 190px 330px minmax(0, 1fr) 12px;
+  column-gap: 24px;
   border-top: 1px solid transparent;
 }
 
@@ -595,6 +600,8 @@
 .roleButton {
   display: grid;
   width: 100%;
+  grid-column: 1 / -1;
+  grid-row: 1;
   min-height: 68px;
   margin: 0;
   padding: 18px 0;
@@ -617,11 +624,25 @@
   line-height: 1.375rem;
 }
 
+/* Room on the left for the mark: its 44 px and 16 px. */
 .who {
   display: flex;
   min-width: 0;
+  padding-left: 60px;
   flex-direction: column;
   gap: 2px;
+}
+
+/* The mark (global.css, "Organisation marks"): at the top of the name's column, its middle level
+   with the name and the line under it. */
+.roleMark {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+  justify-self: start;
+  margin-top: 20px;
 }
 
 .name {
@@ -687,9 +708,12 @@
   transform: rotate(180deg);
 }
 
+/* Under the name, in line with it. */
 .panel {
   display: flex;
-  padding: 0 0 28px 214px;
+  padding: 0 0 28px 274px;
+  grid-column: 1 / -1;
+  grid-row: 2;
   flex-direction: column;
   gap: 16px;
 }
@@ -764,6 +788,10 @@
 
 /* Medium: the proof line goes under the name. */
 @container roles (max-width: 899px) {
+  .role {
+    grid-template-columns: 150px minmax(0, 1fr) 12px;
+  }
+
   .roleButton {
     grid-template-areas:
       "period who chevron"
@@ -781,6 +809,7 @@
   }
 
   .proof {
+    padding-left: 60px;
     grid-area: proof;
   }
 
@@ -789,12 +818,21 @@
   }
 
   .panel {
-    padding-left: 174px;
+    padding-left: 234px;
   }
 }
 
 /* Narrow (phone): name, title, dates and place; the proof line opens with the panel. */
 @container roles (max-width: 559px) {
+  .role {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roleMark {
+    grid-column: 1;
+    margin-top: 14px;
+  }
+
   .roleButton {
     display: flex;
     min-height: 64px;
