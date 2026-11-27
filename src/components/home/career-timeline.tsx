@@ -202,7 +202,7 @@ const CareerTimeline = ({ headingId = "career-heading" }: Props) => {
   return (
     <section className={home.section} aria-labelledby={headingId}>
       <div className={`${home.head} ${home.headLarge}`}>
-        <SectionHead id={headingId} eyebrow="Career" title="From Antibes to Osaka" link={{ to: "/resume/", label: "Full resume" }} />
+        <SectionHead id={headingId} eyebrow="Career" title="Where I’ve worked" link={{ to: "/resume/", label: "Full resume" }} />
       </div>
 
       <div ref={reveal} id={revealId} className={styles.reveal}>
