@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react"
 import type { CSSProperties } from "react"
 import { Link } from "gatsby"
 import { atLoadScript, step, useReveal } from "../charts/use-reveal"
+import OrgMark from "../org-mark"
 import SectionHead from "../section-head"
 import {
   careerHighlights,
@@ -10,7 +11,7 @@ import {
   getRole,
   teaching,
 } from "../../data/experience"
-import type { CareerEntryId } from "../../data/experience"
+import type { CareerEntryId, OrgMark as Mark } from "../../data/experience"
 import { engineeringPath } from "../../data/projects"
 import { makeScale, monthNumber } from "./timeline-scale"
 import { useBuildDate } from "./use-build-date"
@@ -25,6 +26,8 @@ type Entry = {
   name: string
   // On the timeline, where it differs from the name: the teaching post's course.
   barName: string
+  website?: string
+  mark: Mark
   title: string
   period: string
   place: string
@@ -73,6 +76,8 @@ const entryOf = (id: CareerEntryId, now: number): Entry => {
       id,
       name: teaching.institution,
       barName: "Conversational Agents course",
+      website: teaching.website,
+      mark: teaching.mark,
       title: teaching.title,
       period: keepDates(teaching.period),
       place: teaching.location,
@@ -89,6 +94,8 @@ const entryOf = (id: CareerEntryId, now: number): Entry => {
     id,
     name: role.company,
     barName: role.company,
+    website: role.website,
+    mark: role.mark,
     title: role.title,
     period: keepDates(role.period),
     place: role.location,
@@ -231,6 +238,9 @@ const CareerTimeline = ({ headingId = "career-heading" }: Props) => {
                   data-step="draw-x"
                   style={step(BAR_AT[entry.id], barTime(entry.id))}
                 />
+                {/* The organisation's mark, on the left of its name: a link to its website (the row
+                    itself opens the role), laid over the room the row keeps for it. */}
+                <OrgMark className={styles.roleMark} name={entry.name} mark={entry.mark} website={entry.website} />
                 <button
                   type="button"
                   className={styles.roleButton}

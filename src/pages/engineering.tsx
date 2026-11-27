@@ -12,6 +12,7 @@ import FilterBar, { countSentence, elsewhereSentence, suggestionSentence } from 
 import DotList from "../components/home/dot-list"
 import ContactBlock from "../components/home/contact-block"
 import LoopVideo from "../components/loop-video"
+import OrgMark, { WEBSITE_SUFFIX } from "../components/org-mark"
 import Picture from "../components/picture"
 import SectionHead from "../components/section-head"
 import { step, useReveal } from "../components/charts/use-reveal"
@@ -109,8 +110,28 @@ const rowLabel = (project: Project) => rowLabelParts(project).join(" · ")
 const caseStudyName = (slug: ProjectSlug) =>
   slug === teaching.project ? "Course case study" : `${getProject(slug).title} case study`
 
+// The organisation's name, linked to its website when it has one: the last word and the arrow keep to
+// one line, as ExtLink's do.
+const OrgName = ({ entry }: { entry: ExperienceEntry }) => {
+  if (!entry.website) return <>{entry.name}</>
+  const cut = entry.name.lastIndexOf(" ") + 1
+  return (
+    <a className={styles.nameLink} href={entry.website} target="_blank" rel="noopener noreferrer">
+      {entry.name.slice(0, cut)}
+      <span className={styles.nameTail}>
+        {entry.name.slice(cut)}
+        <span className="visually-hidden">{WEBSITE_SUFFIX}</span>
+        <span className={styles.nameArrow} aria-hidden="true">
+          ↗
+        </span>
+      </span>
+    </a>
+  )
+}
+
 // One role of Experience: who and when on the left, two lines from the resume, the stack and the case
-// study on the right. The dates and the place are a line of their own, as read (no capitals).
+// study on the right. The organisation's mark sits on the left of who and when; it and the name lead to
+// its website. The dates and the place are a line of their own, as read (no capitals).
 const Role = ({ entry }: { entry: ExperienceEntry }) => (
   <article className={styles.role} id={entry.id}>
     <div className={styles.roleHead}>
@@ -120,12 +141,19 @@ const Role = ({ entry }: { entry: ExperienceEntry }) => (
           Current role
         </p>
       )}
-      <h3 className={styles.roleName}>{entry.name}</h3>
-      <p className={styles.roleTitle}>{entry.title}</p>
-      <p className={styles.when}>
-        <DotList items={[entry.period, entry.location].map((part) => ({ key: part, content: part }))} />
-      </p>
-      {entry.note && <p className={styles.when}>{entry.note}</p>}
+      <div className={`${styles.org} org-group`}>
+        <OrgMark name={entry.name} mark={entry.mark} website={entry.website} nameLinks />
+        <div className={styles.orgText}>
+          <h3 className={styles.roleName}>
+            <OrgName entry={entry} />
+          </h3>
+          <p className={styles.roleTitle}>{entry.title}</p>
+          <p className={styles.when}>
+            <DotList items={[entry.period, entry.location].map((part) => ({ key: part, content: part }))} />
+          </p>
+          {entry.note && <p className={styles.when}>{entry.note}</p>}
+        </div>
+      </div>
     </div>
     <div className={styles.roleBody}>
       <ul className={styles.bullets}>

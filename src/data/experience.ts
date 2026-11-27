@@ -14,6 +14,15 @@ export type RoleId = "rokken" | "freelance" | "capgemini" | "cawita"
 // Where a skill was used: a role, the teaching post, this site, or a project.
 export type ContextId = RoleId | "uca-teaching" | "portfolio" | ProjectSlug
 
+// An organisation's mark, shown beside its name on the engineering page and the home timeline: a
+// file in static/logos/, or "site" for this site's own "NR." mark (freelance work). Each file is the
+// organisation's own mark in one tone (--text, its own shades kept as opacity), taken from its site:
+//   rokken.png          rokken.tech, the black-and-white logo (rokken_logo_bw.png)
+//   univ-cotedazur.svg  univ-cotedazur.fr, "Nos logos", 2-line pack, white web SVG: the dot symbol
+//   capgemini.svg       capgemini.com, the spade of its small-screen logo (capgemini-mobile-logo-white.svg)
+//   cawita.png          cawita.com, the lion of its site icon (Favicon_cawita.png), without its dark disc
+export type OrgMark = "site" | `/logos/${string}`
+
 export type RoleHighlight = {
   // Short topic, shown as a label on the engineering page.
   topic: string
@@ -24,6 +33,9 @@ export type RoleHighlight = {
 export type Role = {
   id: RoleId
   company: string
+  // The company's website, opened in a new tab from its mark and its name. None for freelance work.
+  website?: string
+  mark: OrgMark
   title: string
   // ISO months, for the career timeline. No end: current role.
   start: string
@@ -45,6 +57,9 @@ export const roles: Role[] = [
   {
     id: "rokken",
     company: "Rokken",
+    // Rokken Inc., Osaka. The address picks the visitor's language (/en, /fr or /ja).
+    website: "https://rokken.tech/",
+    mark: "/logos/rokken.png",
     title: "Full Stack Engineer",
     start: "2025-09",
     period: "Sep 2025 – present",
@@ -89,6 +104,8 @@ export const roles: Role[] = [
   {
     id: "freelance",
     company: "Freelance",
+    // This site's mark, and no link: the freelance work's website is this one.
+    mark: "site",
     title: "Full Stack Developer",
     start: "2024-05",
     end: "2025-08",
@@ -111,6 +128,8 @@ export const roles: Role[] = [
   {
     id: "capgemini",
     company: "Capgemini",
+    website: "https://www.capgemini.com/",
+    mark: "/logos/capgemini.svg",
     title: "Software Engineer",
     start: "2024-04",
     end: "2025-03",
@@ -145,6 +164,8 @@ export const roles: Role[] = [
   {
     id: "cawita",
     company: "Cawita Technologies",
+    website: "https://www.cawita.com/",
+    mark: "/logos/cawita.png",
     title: "Full Stack Developer",
     start: "2022-09",
     end: "2023-08",
@@ -188,6 +209,8 @@ export const currentRole = () => getRole("rokken")
 export const teaching = {
   id: "uca-teaching" as const,
   institution: "Université Côte d’Azur",
+  website: "https://univ-cotedazur.fr/",
+  mark: "/logos/univ-cotedazur.svg" as OrgMark,
   title: "Academic Instructor — Conversational Agents",
   start: "2024-12",
   end: "2025-01",

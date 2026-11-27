@@ -8,7 +8,7 @@
 // is said in words, never hidden.
 
 import { careerOrder, findSkill, getRole, roles, skillDisplayName, skillGroups, teaching, techKey } from "./experience"
-import type { CareerEntryId, ContextId, Role, RoleId } from "./experience"
+import type { CareerEntryId, ContextId, OrgMark, Role, RoleId } from "./experience"
 import { getProject, latestSideProject, projects } from "./projects"
 import type { Project, ProjectSlug } from "./projects"
 import { resumeText } from "./resume"
@@ -17,8 +17,10 @@ import { resumePdfText } from "./resume-pdf.generated"
 // A role or the teaching post, as the engineering page's Experience lists it.
 export type ExperienceEntry = {
   id: CareerEntryId
-  // The company or the school.
+  // The company or the school, its website and its mark.
   name: string
+  website?: string
+  mark: OrgMark
   title: string
   period: string
   location: string
@@ -46,6 +48,8 @@ const experienceEntry = (id: CareerEntryId): ExperienceEntry => {
     return {
       id,
       name: teaching.institution,
+      website: teaching.website,
+      mark: teaching.mark,
       title: teaching.title,
       period: teaching.period,
       location: teaching.location,
@@ -59,6 +63,8 @@ const experienceEntry = (id: CareerEntryId): ExperienceEntry => {
   return {
     id,
     name: role.company,
+    website: role.website,
+    mark: role.mark,
     title: role.title,
     period: role.period,
     location: role.location,

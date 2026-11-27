@@ -78,6 +78,54 @@
   min-width: 0;
 }
 
+/* The organisation's mark on the left of its name, title and dates (the tile: global.css,
+   "Organisation marks"). */
+.org {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  column-gap: 16px;
+  align-items: start;
+}
+
+.orgText {
+  min-width: 0;
+}
+
+/* The name leads to the organisation's website, as its mark does: either one under the pointer
+   lights both. Plain at rest, as a side project's title is. */
+.nameLink {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 150ms var(--ease);
+}
+
+.nameLink:hover,
+.org:has(a:hover) .nameLink {
+  color: var(--accent-hover);
+}
+
+/* The name's last word and its arrow, on one line. */
+.nameTail {
+  white-space: nowrap;
+}
+
+/* Off the site, as ExtLink's arrow says; quieter than the name until lit. */
+.nameArrow {
+  display: inline-block;
+  margin-left: 6px;
+  color: var(--muted);
+  font-size: var(--fs-caption);
+  font-weight: 400;
+  line-height: 1;
+  vertical-align: 0.15em;
+  transition: color 150ms var(--ease);
+}
+
+.nameLink:hover .nameArrow,
+.org:has(a:hover) .nameArrow {
+  color: inherit;
+}
+
 .roleName {
   margin: 0;
   color: var(--text);
